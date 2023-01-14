@@ -15,17 +15,17 @@ namespace TD { namespace utility {
 
         BoundPlane() = default;
 
-        auto origin() -> Point2D;
+        auto origin() -> const Point2D;
 
-        auto topCenter() -> Point2D;
-        auto bottomCenter() -> Point2D;
-        auto leftCenter() -> Point2D;
-        auto rightCenter() -> Point2D;
+        auto topCenter() -> const Point2D;
+        auto bottomCenter() -> const Point2D;
+        auto leftCenter() -> const Point2D;
+        auto rightCenter() -> const Point2D;
 
-        auto bottomLeft() -> Point2D;
-        auto bottomRight() -> Point2D;
-        auto topLeft() -> Point2D;
-        auto topRight() -> Point2D;
+        auto bottomLeft() -> const Point2D;
+        auto bottomRight() -> const Point2D;
+        auto topLeft() -> const Point2D;
+        auto topRight() -> const Point2D;
 
     };
 

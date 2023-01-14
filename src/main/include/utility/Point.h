@@ -12,8 +12,8 @@ namespace TD { namespace utility {
 
         Point2D(float x, float y): x(x), y(y) {}
 
-        auto distanceTo(Point2D& to) -> double;
-        auto squaredDistanceTo(Point2D& to) -> double;
+        auto distanceTo(Point2D const& to) -> double;
+        auto squaredDistanceTo(Point2D const& to) -> double;
     };
 
     class Point3D: public Point2D {
@@ -22,8 +22,8 @@ namespace TD { namespace utility {
 
         Point3D(float x, float y, float z): Point2D(x, y), z(z) {}
 
-        auto distanceTo(Point3D& to) -> double;
-        auto squaredDistanceTo(Point3D& to) -> double;
+        auto distanceTo(Point3D const& to) -> double;
+        auto squaredDistanceTo(Point3D const& to) -> double;
     };
 
 }}

@@ -148,15 +148,15 @@ namespace PID
 	}
 
 	namespace PlanarElevator {
-		constexpr double Px = 0.01;
-		constexpr double Ix = 0.0;
-		constexpr double Dx = 0.0;
-		constexpr double TOLERANCEx = 0.5;
+		constexpr double P_X = 0.01;
+		constexpr double I_X = 0.0;
+		constexpr double D_X = 0.0;
+		constexpr double TOLERANCE_X = 0.5;
 
-		constexpr double Py = 0.01;
-		constexpr double Iy = 0.0;
-		constexpr double Dy = 0.0;
-		constexpr double TOLERANCEy = 0.5;
+		constexpr double P_Y = 0.01;
+		constexpr double I_Y = 0.0;
+		constexpr double D_Y = 0.0;
+		constexpr double TOLERANCE_Y = 0.5;
 
 	}
 }
@@ -195,6 +195,7 @@ namespace Speed
 	constexpr double TURRET = 1;
 	constexpr double FEEDER = 1;
 	constexpr double ELEVATOR = 1;
+	constexpr double PLANAR_ELEVATOR = 1;
 }
 
 namespace Time

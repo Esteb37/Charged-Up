@@ -1,9 +1,11 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
+#include <frc2/command/CommandPtr.h>
 
 #include "subsystems/ElevatorBase.h"
 #include "../utility/Plane.h"
+#include "../utility/Vector.h"
 
 namespace TD {
   class PlanarElevator : frc2::SubsystemBase {
@@ -13,31 +15,37 @@ namespace TD {
 
     void Periodic() override;
 
-    void MoveTo(utility::Point2D const &point);
+    double GetX();
+    double GetY();
+    utility::Point2D GetPosition();
+
+    bool MoveTo(utility::Point2D const& point, double speed);
+    bool MoveBy(utility::Vector2D const& vec, double speed);
 
     void MoveHorizontally(float amount);
     void MoveVertically(float amount);
 
-    // TODO: Translate into commands.
+    frc2::CommandPtr GotoPositiveX(double speed);
+    frc2::CommandPtr GotoPositiveY(double speed);
+    frc2::CommandPtr GotoNegativeX(double speed);
+    frc2::CommandPtr GotoNegativeY(double speed);
 
-    void GotoTopLeft();
-    void GotoTopRight();
-    void GotoBottomLeft();
-    void GotoBottomRight();
+    frc2::CommandPtr CenterHorizontally(double speed);
+    frc2::CommandPtr CenterVertically(double speed);
 
-    void GotoOrigin();
+    frc2::CommandPtr GotoTopLeft(double speed);
+    frc2::CommandPtr GotoTopRight(double speed);
+    frc2::CommandPtr GotoBottomLeft(double speed);
+    frc2::CommandPtr GotoBottomRight(double speed);
 
-    void GotoPositiveX();
-    void GotoNegativeX();
-    void GotoPositiveY();
-    void GotoNegativeY();
+    frc2::CommandPtr GotoOrigin(double speed);
 
     private:
 
     ElevatorBase *xAxis;
     ElevatorBase *yAxis;
 
-    utility::BoundPlane<1> plane{};
+    utility::BoundPlane<1> plane = utility::BoundPlane<1>();
     
   };
 }

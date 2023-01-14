@@ -1,57 +1,98 @@
 #include "subsystems/PlanarElevator.h"
 
+#include "Constants.h"
+
 namespace TD {
 
     void PlanarElevator::Periodic() {
     }
 
-    void PlanarElevator::MoveTo(utility::Point2D const &point) {
-        xAxis->SetPosition(point.x, point.y);
+    double PlanarElevator::GetX() {
+        return xAxis->GetPosition();
+    }
+
+    double PlanarElevator::GetY() {
+        return yAxis->GetPosition();
+    }
+
+    utility::Point2D PlanarElevator::GetPosition() {
+        return utility::Point2D(GetX(), GetY());
+    }
+
+    bool PlanarElevator::MoveTo(utility::Point2D const &point, double speed) {
+        return
+            xAxis->SetPosition(point.x, speed) &&
+            yAxis->SetPosition(point.y, speed);
+    }
+
+    bool PlanarElevator::MoveBy(utility::Vector2D const &vec, double speed) {
+        return
+            xAxis->SetPosition(GetX() + vec.x, speed) &&
+            yAxis->SetPosition(GetY() + vec.y, speed);
     }
 
     void PlanarElevator::MoveHorizontally(float amount) {
-        xAxis->Move(amount);
+        return xAxis->Move(amount);
     }
 
     void PlanarElevator::MoveVertically(float amount) {
-        yAxis->Move(amount);
+        return yAxis->Move(amount);
     }
 
-    void PlanarElevator::GotoTopLeft() {
-        MoveTo(plane.topLeft());
+    frc2::CommandPtr PlanarElevator::GotoPositiveX(double speed) {
+        return this -> RunOnce([this] {}).Until([this, &speed] {
+            return MoveTo(utility::Point2D(plane.axisLength, GetY()), speed);
+        });
     }
 
-    void PlanarElevator::GotoTopRight() {
-        MoveTo(plane.topRight());
+    frc2::CommandPtr PlanarElevator::GotoPositiveY(double speed) {
+        return this -> RunOnce([this] {}).Until([this, &speed] {
+            return MoveTo(utility::Point2D(GetX(), plane.axisLength), speed);
+        });
     }
 
-    void PlanarElevator::GotoBottomLeft() {
-        MoveTo(plane.bottomLeft());
+    frc2::CommandPtr PlanarElevator::GotoNegativeX(double speed) {
+        return this -> RunOnce([this] {}).Until([this, &speed] {
+            return MoveTo(utility::Point2D(-plane.axisLength, GetY()), speed);
+        });
     }
 
-    void PlanarElevator::GotoBottomRight() {
-        MoveTo(plane.bottomRight());
+    frc2::CommandPtr PlanarElevator::GotoNegativeY(double speed) {
+        return this -> RunOnce([this] {}).Until([this, &speed] {
+            return MoveTo(utility::Point2D(GetX(), -plane.axisLength), speed);
+        });
     }
 
-    void PlanarElevator::GotoOrigin() {
-        MoveTo(plane.origin());
+    frc2::CommandPtr PlanarElevator::CenterHorizontally(double speed) {
+        return this -> RunOnce([this] {}).Until([this, &speed] {
+            return MoveTo(utility::Point2D(0, GetY()), speed);
+        });
     }
 
-    void PlanarElevator::GotoPositiveX() {
-        MoveTo(plane.topCenter());
+    frc2::CommandPtr PlanarElevator::CenterVertically(double speed) {
+        return this -> RunOnce([this] {}).Until([this, &speed] {
+            return MoveTo(utility::Point2D(GetX(), 0), speed);
+        });
     }
 
-    void PlanarElevator::GotoNegativeX() {
-        MoveTo(plane.bottomCenter());
+    frc2::CommandPtr PlanarElevator::GotoTopRight(double speed) {
+        return GotoPositiveX(speed).AlongWith(GotoPositiveY(speed));
     }
 
-    void PlanarElevator::GotoPositiveY() {
-        MoveTo(plane.rightCenter());
+    frc2::CommandPtr PlanarElevator::GotoTopLeft(double speed) {
+        return GotoNegativeX(speed).AlongWith(GotoPositiveY(speed));
     }
 
-    void PlanarElevator::GotoNegativeY() {
-        MoveTo(plane.leftCenter());
+    frc2::CommandPtr PlanarElevator::GotoBottomRight(double speed) {
+        return GotoPositiveX(speed).AlongWith(GotoNegativeY(speed));
     }
 
+    frc2::CommandPtr PlanarElevator::GotoBottomLeft(double speed) {
+        return GotoPositiveX(speed).AlongWith(GotoNegativeY(speed));
+    }
+
+    frc2::CommandPtr PlanarElevator::GotoOrigin(double speed) {
+        return CenterHorizontally(speed).AlongWith(CenterVertically(speed));
+    }
 
 }
