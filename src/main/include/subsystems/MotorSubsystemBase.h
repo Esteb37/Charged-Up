@@ -85,6 +85,8 @@ namespace TD
 
 		void SetMaxSpeed(double);
 
+		void SetVoltage(units::voltage::volt_t volts);
+
 		/**
 		 * @brief Gets the Motor speed
 		 */

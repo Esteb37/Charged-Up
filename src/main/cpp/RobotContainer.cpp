@@ -22,6 +22,7 @@ RobotContainer::RobotContainer()
 
 void RobotContainer::InitializeSubsystems()
 {
+/*
 	m_drivetrain.Initialize(
 		M::CAN::FRONT_RIGHT,
 		M::CAN::FRONT_LEFT,
@@ -62,6 +63,7 @@ void RobotContainer::InitializeSubsystems()
 						DIO::Encoder::TURRET_B);
 
 	m_limelight.Initialize(LL::ANGLE_DEG, LL::HEIGHT);
+*/
 }
 
 void RobotContainer::ConfigureSubsystems()
@@ -69,11 +71,6 @@ void RobotContainer::ConfigureSubsystems()
 	m_drivetrain.InvertMove(true);
 	m_drivetrain.InvertRotation(true);
 }
-
-void RobotContainer::ConfigureControllerBindings() {}
-
-void RobotContainer::TeleopInit() {}
-void RobotContainer::TeleopPeriodic() {}
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
@@ -89,3 +86,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 					   { m_drivetrain.TankDriveVolts(0_V, 0_V); },
 					   {}));
 }
+
+void RobotContainer::TeleopInit() {}
+void RobotContainer::TeleopPeriodic() {}
+void RobotContainer::ConfigureControllerBindings() {}

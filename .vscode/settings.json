@@ -14,5 +14,13 @@
     "**/.factorypath": true,
     "**/*~": true
   },
-  "C_Cpp.default.configurationProvider": "vscode-wpilib"
+  "C_Cpp.default.configurationProvider": "vscode-wpilib",
+  "files.associations": {
+    "type_traits": "cpp",
+    "ratio": "cpp",
+    "array": "cpp",
+    "*.inc": "cpp",
+    "*.tcc": "cpp",
+    "random": "cpp"
+  }
 }

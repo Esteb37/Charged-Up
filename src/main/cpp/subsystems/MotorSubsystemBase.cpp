@@ -255,6 +255,22 @@ namespace TD
 		}
 	}
 
+	void MotorSubsystemBase::SetVoltage(units::voltage::volt_t volts) {
+		switch (m_motorConfig) {
+			case MotorConfig::NEO:
+			case MotorConfig::SPARK:
+				m_motorSpark->SetVoltage(volts);
+				break;
+			
+			case MotorConfig::VICTOR_CAN:
+				m_motorVictorPWM->SetVoltage(volts);
+				break;
+
+			default:
+				throw std::domain_error("MotorSubsystemBase: Cannot set voltage on a controller that is not one of the following: SparkMax (REV), VictorSP (CTRE)");
+		}
+	}
+
 	double MotorSubsystemBase::GetMotor()
 	{
 

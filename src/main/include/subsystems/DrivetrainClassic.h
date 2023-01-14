@@ -44,7 +44,7 @@ namespace TD
 	class DrivetrainClassic : public Drivetrain
 	{
 	public:
-		DrivetrainClassic();
+		DrivetrainClassic() = default;
 
 		static DrivetrainClassic &GetInstance();
 
