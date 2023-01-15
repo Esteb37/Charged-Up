@@ -13,14 +13,17 @@ namespace TD {
 
     PlanarElevator() = default;
 
+    void Initialize();
+
     void Periodic() override;
 
     double GetX();
     double GetY();
+
     utility::Point2D GetPosition();
 
-    bool MoveTo(utility::Point2D const& point, double speed);
-    bool MoveBy(utility::Vector2D const& vec, double speed);
+    bool MoveTo(utility::Point2D &point, double speed);
+    bool MoveBy(utility::Vector2D &vec, double speed);
 
     void MoveHorizontally(float amount);
     void MoveVertically(float amount);

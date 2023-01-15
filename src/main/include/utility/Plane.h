@@ -1,5 +1,4 @@
-#ifndef PLANE_HH
-#define PLANE_HH
+#pragma once
 
 #include <array>
 
@@ -30,4 +29,3 @@ namespace TD { namespace utility {
     };
 
 }}
-#endif

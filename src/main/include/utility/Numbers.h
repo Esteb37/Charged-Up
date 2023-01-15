@@ -1,5 +1,4 @@
-#ifndef NUMBERS_HH
-#define NUMBERS_HH
+#pragma once
 
 #include <type_traits>
 
@@ -11,5 +10,3 @@ namespace TD { namespace utility {
     };
 
 }}
-
-#endif // NUMBERS_HH
