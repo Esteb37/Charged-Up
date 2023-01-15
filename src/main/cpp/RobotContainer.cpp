@@ -22,16 +22,6 @@ RobotContainer::RobotContainer()
 
 void RobotContainer::InitializeSubsystems()
 {
-
-	m_drivetrain.Initialize(
-		M::CAN::FRONT_RIGHT,
-		M::CAN::FRONT_LEFT,
-		M::CAN::BACK_RIGHT,
-		M::CAN::BACK_LEFT,
-		DIO::Encoder::DRIVETRAIN_RA,
-		DIO::Encoder::DRIVETRAIN_RB,
-		DIO::Encoder::DRIVETRAIN_LA,
-		DIO::Encoder::DRIVETRAIN_LB);
 }
 
 void RobotContainer::ConfigureSubsystems()

@@ -58,10 +58,16 @@ public:
 	void TeleopPeriodic();
 
 private:
-	Drivetrain<VictorSP> m_drivetrain;
-
-	// Limelight m_limelight = Limelight::GetInstance();
+	Drivetrain<CLASSIC> m_drivetrain{
+		M::PWM::FRONT_RIGHT,
+		M::PWM::FRONT_LEFT,
+		M::PWM::BACK_RIGHT,
+		M::PWM::BACK_LEFT,
+		DIO::Encoder::DRIVETRAIN_RA,
+		DIO::Encoder::DRIVETRAIN_RB,
+		DIO::Encoder::DRIVETRAIN_LA,
+		DIO::Encoder::DRIVETRAIN_LB};
 
 	XboxController m_controller = XboxController(0);
-	// CommandXboxController m_commandController = CommandXboxController(0);
+	CommandXboxController m_commandController = CommandXboxController(0);
 };

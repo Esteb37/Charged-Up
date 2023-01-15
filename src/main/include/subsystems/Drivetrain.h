@@ -75,18 +75,29 @@ namespace TD
 	public:
 		Drivetrain();
 
-		static Drivetrain &GetInstance();
+		/**
+		 * @brief Construct a new Drivetrain object with only motors
+		 * @param frontRight The CAN ID or PWM port of the front right motor
+		 * @param frontLeft The CAN ID or PWM port of the front left motor
+		 * @param backRight The CAN ID or PWM port of the back right motor
+		 * @param backLeft The CAN ID or PWM port of the back left motor
+		 */
+		Drivetrain(unsigned int, unsigned int, unsigned int, unsigned int);
 
 		/**
-		 * @brief Construct a new Drivetrain object
-		 * @param frontRight The CAN ID of the front right motor
-		 * @param frontLeft The CAN ID of the front left motor
-		 * @param backRight The CAN ID of the back right motor
-		 * @param backLeft The CAN ID of the back left motor
+		 * @brief Construct a new Drivetrain object with motors and encoders
+		 * @param frontRight The CAN ID or PWM port of the front right motor
+		 * @param frontLeft The CAN ID or PWM port of the front left motor
+		 * @param backRight The CAN ID or PWM port of the back right motor
+		 * @param backLeft The CAN ID or PWM port of the back left motor
+		 * @param frontRightEncoderA The DIO port of the front right encoder A
+		 * @param frontRightEncoderB The DIO port of the front right encoder B
+		 * @param frontLeftEncoderA The DIO port of the front left encoder A
+		 * @param frontLeftEncoderB The DIO port of the front left encoder B
 		 */
-		void Initialize(unsigned int, unsigned int, unsigned int, unsigned int);
+		Drivetrain(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
 
-		void Initialize(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
+		static Drivetrain &GetInstance();
 
 		void Periodic() override;
 

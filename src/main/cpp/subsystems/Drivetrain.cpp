@@ -31,20 +31,15 @@
 using namespace TD;
 
 template <typename T>
-Drivetrain<T>::Drivetrain()
-{
-	SetName("Drivetrain");
-}
-
-template <typename T>
 Drivetrain<T> &Drivetrain<T>::GetInstance()
 {
 	static Drivetrain<T> instance;
 	return instance;
 }
 template <>
-void Drivetrain<NEO>::Initialize(unsigned int frontRight, unsigned int frontLeft, unsigned int backRight, unsigned int backLeft)
+Drivetrain<NEO>::Drivetrain(unsigned int frontRight, unsigned int frontLeft, unsigned int backRight, unsigned int backLeft)
 {
+	SetName("Drivetrain");
 
 	m_frontRight = new CANSparkMax(frontRight, CANSparkMaxLowLevel::MotorType::kBrushless);
 	m_frontLeft = new CANSparkMax(frontLeft, CANSparkMaxLowLevel::MotorType::kBrushless);
@@ -66,8 +61,9 @@ void Drivetrain<NEO>::Initialize(unsigned int frontRight, unsigned int frontLeft
 }
 
 template <>
-void Drivetrain<CLASSIC>::Initialize(unsigned int frontRight, unsigned int frontLeft, unsigned int backRight, unsigned int backLeft)
+Drivetrain<CLASSIC>::Drivetrain(unsigned int frontRight, unsigned int frontLeft, unsigned int backRight, unsigned int backLeft)
 {
+	SetName("Drivetrain");
 
 	m_frontRight = new VictorSP(frontRight);
 	m_frontLeft = new VictorSP(frontLeft);
@@ -83,8 +79,10 @@ void Drivetrain<CLASSIC>::Initialize(unsigned int frontRight, unsigned int front
 }
 
 template <>
-void Drivetrain<CLASSIC>::Initialize(unsigned int frontRight, unsigned int frontLeft, unsigned int backRight, unsigned int backLeft, unsigned int encoderRightA, unsigned int encoderRightB, unsigned int encoderLeftA, unsigned int encoderLeftB)
+Drivetrain<CLASSIC>::Drivetrain(unsigned int frontRight, unsigned int frontLeft, unsigned int backRight, unsigned int backLeft, unsigned int encoderRightA, unsigned int encoderRightB, unsigned int encoderLeftA, unsigned int encoderLeftB)
 {
+	SetName("Drivetrain");
+
 	m_frontRight = new VictorSP(frontRight);
 	m_frontLeft = new VictorSP(frontLeft);
 	m_backRight = new VictorSP(backRight);
