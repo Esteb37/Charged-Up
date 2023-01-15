@@ -13,6 +13,7 @@
  * command-specific namespaces within this header, which can then be used where
  * they are needed.
  */
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <units/length.h>
 
@@ -150,7 +151,8 @@ namespace PID
 		constexpr double TOLERANCE = 0.5;
 	}
 
-	namespace PlanarElevator {
+	namespace PlanarElevator
+	{
 		constexpr double P_X = 0.01;
 		constexpr double I_X = 0.0;
 		constexpr double D_X = 0.0;
@@ -180,7 +182,7 @@ namespace Wheel
 	constexpr double CIRCUMFERENCE = DIAMETER * M_PI;
 	constexpr double RADIUS = DIAMETER / 2;
 	constexpr double GEAR_RATIO = 10.71;
-	constexpr auto   TRACK_WIDTH = 0.55_m;
+	constexpr auto TRACK_WIDTH = 0.55_m;
 }
 
 namespace DPR

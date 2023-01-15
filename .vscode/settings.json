@@ -21,6 +21,9 @@
     "array": "cpp",
     "*.inc": "cpp",
     "*.tcc": "cpp",
-    "random": "cpp"
-  }
+    "random": "cpp",
+    "typeinfo": "cpp",
+    "new": "cpp"
+  },
+  "C_Cpp.intelliSenseEngineFallback": "disabled"
 }

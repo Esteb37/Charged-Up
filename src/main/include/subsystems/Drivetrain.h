@@ -27,6 +27,7 @@
 #pragma once
 
 #include <frc/ADIS16448_IMU.h>
+#include <frc/Encoder.h>
 #include <frc/Filesystem.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/RamseteController.h>
@@ -35,6 +36,7 @@
 #include <frc/kinematics/DifferentialDriveKinematics.h>
 #include <frc/kinematics/DifferentialDriveOdometry.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
+#include <frc/motorcontrol/VictorSP.h>
 #include <frc/simulation/DifferentialDrivetrainSim.h>
 #include <frc/simulation/EncoderSim.h>
 #include <frc/smartdashboard/Field2d.h>
@@ -63,6 +65,11 @@ using namespace std;
 
 namespace TD
 {
+
+	typedef CANSparkMax NEO;
+	typedef VictorSP CLASSIC;
+
+	template <typename T>
 	class Drivetrain : public SubsystemBase
 	{
 	public:
@@ -78,6 +85,8 @@ namespace TD
 		 * @param backLeft The CAN ID of the back left motor
 		 */
 		void Initialize(unsigned int, unsigned int, unsigned int, unsigned int);
+
+		void Initialize(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
 
 		void Periodic() override;
 
@@ -447,13 +456,13 @@ namespace TD
 
 		// ----- Motors -----
 
-		CANSparkMax *m_frontLeft;
+		T *m_frontLeft;
 
-		CANSparkMax *m_frontRight;
+		T *m_frontRight;
 
-		CANSparkMax *m_backLeft;
+		T *m_backLeft;
 
-		CANSparkMax *m_backRight;
+		T *m_backRight;
 
 		// ----- Motor controller groups-----
 
@@ -475,7 +484,11 @@ namespace TD
 
 		SparkMaxRelativeEncoder *m_backLeftEncoder;
 
-		// ADIS16448_IMU *m_gyro;
+		Encoder *m_rightEncoder;
+
+		Encoder *m_leftEncoder;
+
+		ADIS16448_IMU m_gyro;
 
 		// ----- Auto -----
 
