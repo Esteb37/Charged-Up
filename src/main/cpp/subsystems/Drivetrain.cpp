@@ -196,7 +196,7 @@ void Drivetrain::SetPositionConversionFactor(double pcf_meters)
 
 double Drivetrain::GetGyro()
 {
-	return m_gyro.GetAngle().value() * m_gyroDirection;
+	return 0;
 }
 
 double Drivetrain::GetGyroHeading()
@@ -217,7 +217,7 @@ double Drivetrain::GetGyroHeadingRad()
 void Drivetrain::ResetGyro()
 {
 	m_gyroHeading = GetGyroHeading();
-	m_gyro.Reset();
+	// m_gyro->Reset();
 }
 
 void Drivetrain::InvertGyro(bool invert)
@@ -341,7 +341,7 @@ void Drivetrain::PrintCurrentPosition()
 bool Drivetrain::SetAngleWithTarget(double angle, double speed)
 {
 	m_alignPIDController.SetSetpoint(angle);
-	double output = m_alignPIDController.Calculate(m_limelight.GetHorizontalAngle() * m_alignPIDDirection);
+	double output = m_alignPIDController.Calculate(0); // m_limelight.GetHorizontalAngle()l* m_alignPIDDirection);
 	output = clamp(output, -1.0, 1.0);
 	Drive(0, output * speed);
 	return m_alignPIDController.AtSetpoint();
@@ -372,7 +372,7 @@ void Drivetrain::PrintAlignError()
 bool Drivetrain::SetDistanceWithTarget(double objectiveHeight, double distance, double speed)
 {
 	m_distancePIDController.SetSetpoint(distance);
-	double output = m_distancePIDController.Calculate(m_limelight.GetDistanceToTarget(objectiveHeight) * m_distancePIDDirection);
+	double output = m_distancePIDController.Calculate(0); // m_limelight.GetDistanceToTarget(objectiveHeight) * m_distancePIDDirection);
 	output = clamp(output, -1.0, 1.0);
 	Drive(output * speed, 0);
 	return m_distancePIDController.AtSetpoint();

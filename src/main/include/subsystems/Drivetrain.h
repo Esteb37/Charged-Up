@@ -50,8 +50,8 @@
 #include <rev/CANSparkMax.h>
 #include <wpi/fs.h>
 
-#include "subsystems/Limelight.h"
 #include "Constants.h"
+#include "subsystems/Limelight.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -475,7 +475,7 @@ namespace TD
 
 		SparkMaxRelativeEncoder *m_backLeftEncoder;
 
-		ADIS16448_IMU m_gyro;
+		// ADIS16448_IMU *m_gyro;
 
 		// ----- Auto -----
 
@@ -488,7 +488,7 @@ namespace TD
 		PIDController m_distancePIDController{0.1, 0, 0};
 
 	protected:
-		Limelight m_limelight = Limelight::GetInstance();
+		// Limelight::GetInstance();
 
 		// ----- Attributes -----s
 

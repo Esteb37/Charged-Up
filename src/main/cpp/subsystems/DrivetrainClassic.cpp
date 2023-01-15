@@ -107,3 +107,8 @@ void DrivetrainClassic::SetPositionConversionFactor(double pcf_meters)
 	m_leftEncoder->SetDistancePerPulse(pcf_meters);
 	m_rightEncoder->SetDistancePerPulse(pcf_meters);
 }
+
+double DrivetrainClassic::GetEncodersAverage()
+{
+	return (GetRightEncoder() + GetLeftEncoder()) / 2;
+}

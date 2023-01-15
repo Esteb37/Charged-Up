@@ -103,6 +103,8 @@ namespace TD
 		 */
 		void SetPositionConversionFactor(double);
 
+		double GetEncodersAverage();
+
 		// ----- Odometry -----
 
 		using Velocity =
@@ -134,7 +136,6 @@ namespace TD
 		Encoder *m_leftEncoder;
 
 	protected:
-
 		// ----- Attributes -----s
 
 		int m_rightEncoderDirection = 1;
@@ -152,6 +153,5 @@ namespace TD
 			units::meter_t{GetLeftEncoder()},
 			units::meter_t{GetRightEncoder()},
 			frc::Pose2d{0_m, 0_m, 0_rad}};
-
 	};
 }

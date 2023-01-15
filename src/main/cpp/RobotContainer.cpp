@@ -22,7 +22,9 @@ RobotContainer::RobotContainer()
 
 void RobotContainer::InitializeSubsystems()
 {
-	m_drivetrain.Initialize(
+	m_drivetrain = new DrivetrainClassic();
+
+	/*m_drivetrain->Initialize(
 		M::CAN::FRONT_RIGHT,
 		M::CAN::FRONT_LEFT,
 		M::CAN::BACK_RIGHT,
@@ -30,75 +32,37 @@ void RobotContainer::InitializeSubsystems()
 		DIO::Encoder::DRIVETRAIN_RA,
 		DIO::Encoder::DRIVETRAIN_RB,
 		DIO::Encoder::DRIVETRAIN_LA,
-		DIO::Encoder::DRIVETRAIN_LB
-	);
-
-/*
-
-	m_shooter.Initialize(
-		MotorConfig::SPARK,
-		EncoderConfig::FRC,
-		M::CAN::SHOOTER,
-		DIO::Encoder::SHOOTER_A,
-		DIO::Encoder::SHOOTER_B);
-
-	m_intake.Initialize(MotorConfig::SPARK,
-						M::CAN::INTAKE,
-						Solenoid::INTAKE_RIGHT_FORWARD,
-						Solenoid::INTAKE_RIGHT_REVERSE,
-						Solenoid::INTAKE_LEFT_FORWARD,
-						Solenoid::INTAKE_LEFT_REVERSE);
-
-	m_feeder.Initialize(MotorConfig::VICTOR_PWM, M::PWM::FEEDER);
-
-	m_elevator.Initialize(MotorConfig::SPARK,
-						  EncoderConfig::FRC,
-						  {M::CAN::ELEVATOR_LEFT, M::CAN::ELEVATOR_RIGHT},
-						  DIO::Encoder::ELEVATOR_A,
-						  DIO::Encoder::ELEVATOR_B);
-
-	m_claw.Initialize(Solenoid::CLAW_FORWARD,
-					  Solenoid::CLAW_REVERSE,
-					  Solenoid::WRIST_FORWARD,
-					  Solenoid::WRIST_REVERSE);
-
-	m_turret.Initialize(MotorConfig::VICTOR_PWM,
-						EncoderConfig::FRC,
-						M::PWM::TURRET,
-						DIO::Encoder::TURRET_A,
-						DIO::Encoder::TURRET_B);
-
-	m_limelight.Initialize(LL::ANGLE_DEG, LL::HEIGHT);
-*/
+		DIO::Encoder::DRIVETRAIN_LB);*/
 }
 
 void RobotContainer::ConfigureSubsystems()
 {
-	m_drivetrain.SetPositionConversionFactor(DPR::DRIVETRAIN);
+	/*m_drivetrain->SetPositionConversionFactor(DPR::DRIVETRAIN);*/
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
-	auto [command, trajectory] = m_drivetrain.OpenPath("path.json");
+	/*auto [command, trajectory] = m_drivetrain->OpenPath("path.json");
 
 	// Reset odometry to the starting pose of the trajectory.
-	m_drivetrain.ConfigurePosition(trajectory.InitialPose());
+	m_drivetrain->ConfigurePosition(trajectory.InitialPose());
 
 	// no auto
 	return new SequentialCommandGroup(
 		move(command),
 		InstantCommand([this]
-					   { m_drivetrain.TankDriveVolts(0_V, 0_V); },
-					   {}));
+					   { m_drivetrain->TankDriveVolts(0_V, 0_V); },
+					   {}));*/
 }
 
 void RobotContainer::TeleopInit() {}
-void RobotContainer::TeleopPeriodic() {
+void RobotContainer::TeleopPeriodic()
+{
 
-	m_drivetrain.Drive(m_controller.GetLeftY(), m_controller.GetLeftX());
+	/*m_drivetrain->Drive(m_controller.GetLeftY(), m_controller.GetLeftX());
 
-	m_drivetrain.PrintPosition();
-	m_drivetrain.PrintEncoders();
-	m_drivetrain.PrintGyro();
+	m_drivetrain->PrintPosition();
+	m_drivetrain->PrintEncoders();
+	m_drivetrain->PrintGyro();*/
 }
 void RobotContainer::ConfigureControllerBindings() {}

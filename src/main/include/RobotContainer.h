@@ -4,8 +4,11 @@
 
 #pragma once
 
+#include "Constants.h"
+#include "subsystems/DrivetrainClassic.h"
+#include "subsystems/ElevatorBase.h"
+#include "subsystems/Limelight.h"
 #include <frc/XboxController.h>
-#include <frc2/command/button/CommandXboxController.h>
 #include <frc/controller/PIDController.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc2/command/Command.h>
@@ -14,11 +17,8 @@
 #include <frc2/command/ParallelRaceGroup.h>
 #include <frc2/command/RunCommand.h>
 #include <frc2/command/SequentialCommandGroup.h>
-
-#include "Constants.h"
-#include "subsystems/DrivetrainClassic.h"
-#include "subsystems/ElevatorBase.h"
-#include "subsystems/Limelight.h"
+#include <frc2/command/button/CommandXboxController.h>
+#include <subsystems/MotorSubsystemBase.h>
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -59,11 +59,10 @@ public:
 	void TeleopPeriodic();
 
 private:
-	DrivetrainClassic m_drivetrain;
+	DrivetrainClassic *m_drivetrain;
 
 	// Limelight m_limelight = Limelight::GetInstance();
 
 	XboxController m_controller = XboxController(0);
 	CommandXboxController m_commandController = CommandXboxController(0);
-
 };
