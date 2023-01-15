@@ -51,6 +51,7 @@
 #include <wpi/fs.h>
 
 #include "subsystems/Limelight.h"
+#include "Constants.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -535,7 +536,7 @@ namespace TD
 
 		Field2d m_field;
 
-		DifferentialDriveKinematics m_kinematics{0.77_m};
+		DifferentialDriveKinematics m_kinematics{Wheel::TRACK_WIDTH};
 
 		Trajectory m_path;
 

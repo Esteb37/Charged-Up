@@ -122,7 +122,7 @@ namespace TD
 
 		double m_mountHeight = 60;
 
-		std::shared_ptr<nt::NetworkTable> limelight;
+		std::shared_ptr<nt::NetworkTable> *limelight;
 	};
 
 }

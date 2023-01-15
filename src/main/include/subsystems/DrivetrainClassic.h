@@ -57,75 +57,6 @@ namespace TD
 		 */
 		void Initialize(unsigned int frontRight, unsigned int frontLeft, unsigned int backRight, unsigned int backLeft, unsigned int encoderRightA, unsigned int encoderRightB, unsigned int encoderLeftA, unsigned int encoderLeftB);
 
-		void Periodic() override;
-
-		// --------------------- Actions ----------------------
-
-		/**
-		 * @brief Use drivetrain ArcadeDrive to move the chasis
-		 * @param speed Speed and direction to move
-		 * @param rotation Rotation to turn
-		 */
-		void Drive(double, double);
-
-		/**
-		 * @brief Reset all systems
-		 */
-		void ResetSensors();
-
-		/**
-		 * @brief Set maximum move and turn speed
-		 * @param moveSpeed Maximum speed to move
-		 * @param turnSpeed Maximum speed to turn
-		 */
-		void SetMaxSpeeds(double, double);
-
-		/**
-		 * @brief Invert the direction of movement
-		 *
-		 * @param invert True to invert, false to not
-		 */
-		void InvertMove(bool);
-
-		/**
-		 * @brief Invert the direction of rotation
-		 * @param invert True to invert, false to not
-		 */
-		void InvertRotation(bool);
-
-		/**
-		 *
-		 * @brief Enable drivetrain safety
-		 * @param enable True to enable, false to not
-		 */
-		void SetSafetyEnabled(bool);
-
-		// ---------------------- Motors ----------------------
-
-		/**
-		 * @brief Resets motor factory default
-		 * @warning Use only once and before everything else
-		 */
-		void ResetMotors();
-
-		/**
-		 * @brief Invert direction of the right motor group
-		 * @param invert True to invert, false to not
-		 */
-		void InvertRight(bool);
-
-		/**
-		 * @brief Invert direction of the left motor group
-		 * @param invert True to invert, false to not
-		 */
-		void InvertLeft(bool);
-
-		/**
-		 * @brief Publishes all motors to the dashboard
-		 *
-		 */
-		void PrintMotors();
-
 		// --------------------- Encoders ---------------------
 
 		/**
@@ -139,12 +70,6 @@ namespace TD
 		 * @return double average
 		 */
 		double GetLeftEncoder();
-
-		/**
-		 * @brief Gets the average of the all encoders
-		 * @return double average
-		 */
-		double GetEncoderAverage();
 
 		double GetRightEncoderTotal();
 
@@ -178,222 +103,7 @@ namespace TD
 		 */
 		void SetPositionConversionFactor(double);
 
-		// ----------------------- Gyro -----------------------
-
-		/**
-		 * @brief Gets the current angle of the gyro in degrees
-		 * @return double angle
-		 */
-		double GetGyro();
-
-		/**
-		 * @brief Get the absolute angle to which the robot is heading
-		 * @return double the absolute angle
-		 */
-		double GetGyroHeading();
-
-		/**
-		 * @brief Get the gyro angle in radians
-		 * @return double angle radians
-		 */
-		double GetGyroRad();
-
-		double GetGyroHeadingRad();
-
-		/**
-		 * @brief Resets the angle to 0
-		 */
-		void ResetGyro();
-
-		/**
-		 * @brief Invert the direction of the gyro
-		 * @param invert True to invert, false to not
-		 */
-		void InvertGyro(bool);
-
-		/**
-		 * @brief Publish the value of the gyro to the dashboard
-		 */
-		void PrintGyro();
-
-		/**
-		 * @brief Publish the angle in radians to the dashboard
-		 */
-		void PrintGyroRad();
-
-		Rotation2d GetRotation2d();
-
-		// ----------------------- Auto -----------------------
-
-		/**
-		 * @brief Sets the drivetrain to a given heading.
-		 * @param distance The desired heading in meters.
-		 * @param speed The speed at which to drive.
-		 * @return Wether or not the drivetrain is at the desired heading.
-		 */
-		bool
-		Move(double, double);
-
-		/**
-		 * @brief Prints the move PID error to the dashboard
-		 */
-		void PrintMoveError();
-
-		/**
-		 * @brief Resets the Move PID
-		 */
-		void ResetMovePIDController();
-
-		/**
-		 * @brief Configures move auto PID values and tolerance
-		 * @param p The proportional value
-		 * @param i The integral value
-		 * @param d The derivative value
-		 * @param tolerance The tolerance value
-		 * @param inverted Invert output calculation
-		 */
-		void ConfigureMovePID(double, double, double, double, bool = false);
-
-		/**
-		 * @brief Turns the drievtrain to a given angle.
-		 * @param angle The desired angle in degrees.
-		 * @param speed The speed at which to turn.
-		 * @return Whether or not the drivetrain has reached the desired angle
-		 */
-		bool Turn(double, double);
-
-		/**
-		 * @brief Prints the turn PID error to the dashboard
-		 */
-		void PrintTurnError();
-
-		/**
-		 * @brief Resets the Turn PID
-		 */
-		void ResetTurnPIDController();
-
-		/**
-		 * @brief Configures turn auto PID values and tolerance
-		 * @param p The proportional value
-		 * @param i The integral value
-		 * @param d The derivative value
-		 * @param tolerance The tolerance value
-		 * @param inverted Invert output calculation
-		 */
-		void ConfigureTurnPID(double, double, double, double, bool = false);
-
-		/**
-		 * @brief Moves the drivetrain to a given coordinate in meters
-		 * @param x The desired x coordinate.
-		 * @param y The desired y coordinate.
-		 * @param speed The speed at which to drive.
-		 * @param turnSpeed The speed at which to turn.
-		 * @return Whether or not the drivetrain has reached the desired coordinate.
-		 */
-		bool MoveTo(double, double, double, double);
-
-		/**
-		 * @brief Prints the move to PID error to the dashboard
-		 */
-		void PrintMoveToError();
-
-		/**
-		 * @brief Prints the current coordinates to the dashboard
-		 */
-		void PrintCurrentPosition();
-
-		/**
-		 * @brief Set drivetrain to a specific angle from the target
-		 * @param angle The angle to the target in degrees.
-		 * @param speed The speed at which to drive.
-		 * @return Whether or not the drivetrain has reached the desired angle
-		 */
-		bool SetAngleWithTarget(double, double);
-
-		/**
-		 * @brief Align chasis to target
-		 * @param speed The speed at which to drive.
-		 * @return Whether or not the drivetrain has aligned to the target.
-		 */
-		bool AlignWithTarget(double);
-
-		/**
-		 * @brief Prints the align PID error to the dashboard
-		 */
-		void PrintAlignError();
-
-		/**
-		 * @brief Resets the Align with target PID
-		 */
-		void ResetAlignPIDController();
-
-		/**
-		 * @brief Configures align PID values, tolerance and direction
-		 * @param p The proportional value
-		 * @param i The integral value
-		 * @param d The derivative value
-		 * @param tolerance The tolerance value
-		 * @param inverted Invert output calculation
-		 */
-		void ConfigureAlignPID(double, double, double, double, bool = false);
-
-		/**
-		 * @brief Set drivetrain to a specific distance from the target
-		 * @param targetHeight The height from the floor to the center of the target
-		 * @param distance The distance to the target in meters.
-		 * @param speed The speed at which to drive.
-		 * @return Whether or not the drivetrain has reached the desired distance
-		 */
-		bool SetDistanceWithTarget(double, double, double);
-
-		/**
-		 * @brief Prints the distance PID error to the dashboard
-		 */
-		void PrintSetDistanceError();
-
-		/**
-		 * @brief Resets the Distance to target PID
-		 */
-		void ResetDistancePIDController();
-
-		/**
-		 * @brief Configures distance PID values and tolerance
-		 * @param p The proportional value
-		 * @param i The integral value
-		 * @param d The derivative value
-		 * @param tolerance The tolerance value
-		 * @param inverted Invert output calculation
-		 */
-		void ConfigureDistancePID(double, double, double, double, bool = false);
-
-		/**
-		 * @brief Get the absolute angle from a coordinate independent of quadrant
-		 * @param x The x coordinate
-		 * @param y The y coordinate
-		 * @return double the angle
-		 */
-		double GetAbsoluteAngle(double, double);
-
-		/**
-		 * @brief Resets all PID controllers
-		 */
-		void ResetPIDControllers();
-
 		// ----- Odometry -----
-
-		/**
-		 * @brief Configures the odometry object for position estimation
-		 * @param startingPose the starting position of the robot
-		 */
-		void ConfigurePosition(Pose2d);
-
-		void UpdatePosition();
-
-		void ResetPosition();
-
-		Pose2d GetPosition();
-
-		void PrintPosition();
 
 		using Velocity =
 			units::compound_unit<units::meters, units::inverse<units::seconds>>;
@@ -407,22 +117,6 @@ namespace TD
 								 units::inverse<units::squared<units::meters>>>;
 		using zeta_unit = units::inverse<units::radians>;
 
-		// ----- Follow path -----
-
-		DifferentialDriveWheelSpeeds GetWheelSpeeds();
-
-		void TankDriveVolts(units::volt_t left, units::volt_t right);
-
-		pair<RamseteCommand, Trajectory> OpenPath(string);
-
-		void ConfigurePathFollower(units::unit_t<b_unit>,
-								   units::unit_t<zeta_unit>,
-								   units::volt_t,
-								   units::unit_t<kv_unit>,
-								   units::unit_t<ka_unit>);
-
-		void ConfigurePathPIDs(double, double, double, double, double, double);
-
 		// ----- Motors -----
 
 		VictorSP *m_frontLeft;
@@ -433,36 +127,13 @@ namespace TD
 
 		VictorSP *m_backRight;
 
-		// ----- Motor controller groups-----
-
-		MotorControllerGroup *m_right;
-
-		MotorControllerGroup *m_left;
-
-		// ----- Chasis drive object -----
-
-		DifferentialDrive *m_drive;
-
 		// ----- Sensors -----
 
 		Encoder *m_rightEncoder;
 
 		Encoder *m_leftEncoder;
 
-		ADIS16448_IMU m_gyro;
-
-		// ----- Auto -----
-
-		PIDController m_movePIDController{0.1, 0, 0};
-
-		PIDController m_turnPIDController{0.1, 0, 0};
-
-		PIDController m_alignPIDController{0.1, 0, 0};
-
-		PIDController m_distancePIDController{0.1, 0, 0};
-
 	protected:
-		Limelight m_limelight = Limelight::GetInstance();
 
 		// ----- Attributes -----s
 
@@ -470,49 +141,11 @@ namespace TD
 
 		int m_leftEncoderDirection = 1;
 
-		int m_gyroDirection = 1;
-
-		int m_moveDirection = 1;
-
-		int m_rotationDirection = 1;
-
-		int m_movePIDDirection = 1;
-
-		int m_turnPIDDirection = 1;
-
-		int m_alignPIDDirection = 1;
-
-		int m_distancePIDDirection = 1;
-
-		double m_currentX = 0;
-
-		double m_currentY = 0;
-
-		double m_maxMoveSpeed = 1;
-
-		double m_maxTurnSpeed = 1;
-
-		bool m_reachedAngle = false;
-
-		double m_trackWidth = 60;
-
 		double m_rightEncoderTotal = 0;
 
 		double m_leftEncoderTotal = 0;
 
-		double m_gyroHeading = 0;
-
 		// ---- Kinematics ----
-
-		double m_odometryConfigured = false;
-
-		Pose2d m_position;
-
-		Field2d m_field;
-
-		DifferentialDriveKinematics m_kinematics{0.77_m};
-
-		Trajectory m_path;
 
 		DifferentialDriveOdometry m_odometry{
 			GetRotation2d(),
@@ -520,19 +153,5 @@ namespace TD
 			units::meter_t{GetRightEncoder()},
 			frc::Pose2d{0_m, 0_m, 0_rad}};
 
-		// ----- Path follower -----
-
-		units::unit_t<b_unit> m_pathB;
-		units::unit_t<zeta_unit> m_pathZeta;
-		units::volt_t m_pathKs;
-		units::unit_t<kv_unit> m_pathKv;
-		units::unit_t<ka_unit> m_pathKa;
-
-		double m_pathRightP = 8.5;
-		double m_pathRightI = 0;
-		double m_pathRightD = 0;
-		double m_pathLeftP = 8.5;
-		double m_pathLeftI = 0;
-		double m_pathLeftD = 0;
 	};
 }

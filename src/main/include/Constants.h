@@ -13,8 +13,8 @@
  * command-specific namespaces within this header, which can then be used where
  * they are needed.
  */
-#define _USE_MATH_DEFINES
 #include <math.h>
+#include <units/length.h>
 
 using port = unsigned int;
 
@@ -68,8 +68,11 @@ namespace DIO
 		constexpr port TURRET_B = 3;
 		constexpr port ELEVATOR_A = 6;
 		constexpr port ELEVATOR_B = 7;
-		constexpr port TEST_ENCODER_A = 0;
-		constexpr port TEST_ENCODER_B = 1;
+		constexpr port DRIVETRAIN_RA = 0;
+		constexpr port DRIVETRAIN_RB = 1;
+		constexpr port DRIVETRAIN_LA = 2;
+		constexpr port DRIVETRAIN_LB = 3;
+
 	}
 
 	namespace Limit
@@ -173,10 +176,11 @@ namespace LL
 namespace Wheel
 {
 	constexpr double DIAMETER_IN = 6;
-	constexpr double DIAMETER = DIAMETER_IN * 2.54;
+	constexpr double DIAMETER = DIAMETER_IN * 2.54 / 100;
 	constexpr double CIRCUMFERENCE = DIAMETER * M_PI;
 	constexpr double RADIUS = DIAMETER / 2;
 	constexpr double GEAR_RATIO = 10.71;
+	constexpr auto   TRACK_WIDTH = 0.55_m;
 }
 
 namespace DPR

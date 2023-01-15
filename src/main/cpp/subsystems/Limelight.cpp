@@ -30,7 +30,7 @@ using namespace TD;
 
 Limelight::Limelight()
 {
-	limelight = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+	(*limelight) = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
 }
 
 Limelight &Limelight::GetInstance()
@@ -46,37 +46,37 @@ void Limelight::Initialize(double angle, double height)
 }
 double Limelight::GetArea()
 {
-	return limelight->GetEntry("ta").GetDouble(0);
+	return (*limelight)->GetEntry("ta").GetDouble(0);
 }
 
 double Limelight::GetHorizontalAngle()
 {
-	return limelight->GetEntry("tx").GetDouble(0);
+	return (*limelight)->GetEntry("tx").GetDouble(0);
 }
 
 double Limelight::GetVerticalAngle()
 {
-	return limelight->GetEntry("ty").GetDouble(0);
+	return (*limelight)->GetEntry("ty").GetDouble(0);
 }
 
 double Limelight::GetSkew()
 {
-	return limelight->GetEntry("ts").GetDouble(0);
+	return (*limelight)->GetEntry("ts").GetDouble(0);
 }
 
 double Limelight::GetPipeline()
 {
-	return limelight->GetEntry("getpipe").GetDouble(0);
+	return (*limelight)->GetEntry("getpipe").GetDouble(0);
 }
 
 double Limelight::GetValid()
 {
-	return limelight->GetEntry("tv").GetDouble(0);
+	return (*limelight)->GetEntry("tv").GetDouble(0);
 }
 
 double Limelight::GetTarget()
 {
-	return limelight->GetEntry("target").GetDouble(0);
+	return (*limelight)->GetEntry("target").GetDouble(0);
 }
 
 double Limelight::GetDistanceToTarget(double objectiveHeight)
@@ -96,62 +96,62 @@ void Limelight::SetMountHeight(double height)
 
 void Limelight::SetPipeline(int pipeline)
 {
-	limelight->GetEntry("pipeline").SetDouble(pipeline);
+	(*limelight)->GetEntry("pipeline").SetDouble(pipeline);
 }
 
 void Limelight::SetLED(int led)
 {
-	limelight->GetEntry("ledMode").SetDouble(led);
+	(*limelight)->GetEntry("ledMode").SetDouble(led);
 }
 
 void Limelight::SetCamMode(int mode)
 {
-	limelight->GetEntry("camMode").SetDouble(mode);
+	(*limelight)->GetEntry("camMode").SetDouble(mode);
 }
 
 void Limelight::SetStream(int stream)
 {
-	limelight->GetEntry("stream").SetDouble(stream);
+	(*limelight)->GetEntry("stream").SetDouble(stream);
 }
 
 void Limelight::SetSnapshot(int snapshot)
 {
-	limelight->GetEntry("snapshot").SetDouble(snapshot);
+	(*limelight)->GetEntry("snapshot").SetDouble(snapshot);
 }
 
 void Limelight::SetLight(int light)
 {
-	limelight->GetEntry("light").SetDouble(light);
+	(*limelight)->GetEntry("light").SetDouble(light);
 }
 
 void Limelight::SetLEDMode(int mode)
 {
-	limelight->GetEntry("ledMode").SetDouble(mode);
+	(*limelight)->GetEntry("ledMode").SetDouble(mode);
 }
 
 void Limelight::SetLEDFrequency(int freq)
 {
-	limelight->GetEntry("ledFrequency").SetDouble(freq);
+	(*limelight)->GetEntry("ledFrequency").SetDouble(freq);
 }
 
 void Limelight::SetLEDIntensity(int intensity)
 {
-	limelight->GetEntry("ledIntensity").SetDouble(intensity);
+	(*limelight)->GetEntry("ledIntensity").SetDouble(intensity);
 }
 
 void Limelight::SetLEDState(int state)
 {
-	limelight->GetEntry("ledState").SetDouble(state);
+	(*limelight)->GetEntry("ledState").SetDouble(state);
 }
 
 void Limelight::SetLEDOff()
 {
-	limelight->GetEntry("ledMode").SetDouble(0);
+	(*limelight)->GetEntry("ledMode").SetDouble(0);
 }
 
 void Limelight::SetLEDOn()
 {
-	limelight->GetEntry("ledMode").SetDouble(1);
+	(*limelight)->GetEntry("ledMode").SetDouble(1);
 }
 
 void Limelight::PrintHorizontalAngle()

@@ -22,12 +22,18 @@ RobotContainer::RobotContainer()
 
 void RobotContainer::InitializeSubsystems()
 {
-/*
 	m_drivetrain.Initialize(
 		M::CAN::FRONT_RIGHT,
 		M::CAN::FRONT_LEFT,
 		M::CAN::BACK_RIGHT,
-		M::CAN::BACK_LEFT);
+		M::CAN::BACK_LEFT,
+		DIO::Encoder::DRIVETRAIN_RA,
+		DIO::Encoder::DRIVETRAIN_RB,
+		DIO::Encoder::DRIVETRAIN_LA,
+		DIO::Encoder::DRIVETRAIN_LB
+	);
+
+/*
 
 	m_shooter.Initialize(
 		MotorConfig::SPARK,
@@ -68,8 +74,7 @@ void RobotContainer::InitializeSubsystems()
 
 void RobotContainer::ConfigureSubsystems()
 {
-	m_drivetrain.InvertMove(true);
-	m_drivetrain.InvertRotation(true);
+	m_drivetrain.SetPositionConversionFactor(DPR::DRIVETRAIN);
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
@@ -88,5 +93,12 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 }
 
 void RobotContainer::TeleopInit() {}
-void RobotContainer::TeleopPeriodic() {}
+void RobotContainer::TeleopPeriodic() {
+
+	m_drivetrain.Drive(m_controller.GetLeftY(), m_controller.GetLeftX());
+
+	m_drivetrain.PrintPosition();
+	m_drivetrain.PrintEncoders();
+	m_drivetrain.PrintGyro();
+}
 void RobotContainer::ConfigureControllerBindings() {}

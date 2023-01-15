@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <frc/XboxController.h>
 #include <frc2/command/button/CommandXboxController.h>
 #include <frc/controller/PIDController.h>
 #include <frc/smartdashboard/SendableChooser.h>
@@ -15,14 +16,9 @@
 #include <frc2/command/SequentialCommandGroup.h>
 
 #include "Constants.h"
-#include "subsystems/Drivetrain.h"
+#include "subsystems/DrivetrainClassic.h"
 #include "subsystems/ElevatorBase.h"
-#include "subsystems/FeederBase.h"
-#include "subsystems/IntakeBase.h"
 #include "subsystems/Limelight.h"
-#include "subsystems/ShooterBase.h"
-#include "subsystems/TurretBase.h"
-#include "subsystems/SolenoidClawBase.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -63,23 +59,11 @@ public:
 	void TeleopPeriodic();
 
 private:
-	Drivetrain m_drivetrain;
+	DrivetrainClassic m_drivetrain;
 
-	ShooterBase m_shooter;
+	// Limelight m_limelight = Limelight::GetInstance();
 
-	IntakeBase m_intake;
+	XboxController m_controller = XboxController(0);
+	CommandXboxController m_commandController = CommandXboxController(0);
 
-	FeederBase m_feeder;
-
-	ElevatorBase m_elevator;
-
-	SolenoidClawBase m_claw;
-
-	TurretBase m_turret;
-
-	Limelight m_limelight = Limelight::GetInstance();
-
-	CommandXboxController m_controller = CommandXboxController(0);
-
-	DifferentialDriveKinematics kDriveKinematics{0.77_m};
 };
