@@ -38,8 +38,6 @@ namespace TD
 	public:
 		IntakeBase();
 
-		static IntakeBase &GetInstance();
-
 		/**
 		 * @brief Construct a new Intake object with a single motor and a single solenoid
 		 *
@@ -72,7 +70,6 @@ namespace TD
 		/**
 		 * @brief Construct a new Intake object with multiple motors and multiple solenoids
 		 *
-		 * @param motorConfig The motor configuration
 		 * @param motorPorts The motor ports
 		 * @param rightSolenoidForward The right solenoid forward port
 		 * @param rightSolenoidReverse The right solenoid reverse port

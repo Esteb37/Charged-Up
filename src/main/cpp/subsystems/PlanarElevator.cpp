@@ -6,8 +6,10 @@ namespace TD
 {
     PlanarElevator::PlanarElevator()
     {
-        yAxis->SetLimitSafety(true);
-        xAxis->SetLimitSafety(true);
+        yAxis.SetLimitSafety(true);
+        xAxis.SetLimitSafety(true);
+        yAxis.SetName("Y Axis");
+        xAxis.SetName("X Axis");
     }
 
     void PlanarElevator::Periodic()
@@ -16,12 +18,12 @@ namespace TD
 
     double PlanarElevator::GetX()
     {
-        return xAxis->GetPosition();
+        return xAxis.GetPosition();
     }
 
     double PlanarElevator::GetY()
     {
-        return yAxis->GetPosition();
+        return yAxis.GetPosition();
     }
 
     utility::Point2D PlanarElevator::GetPosition()
@@ -31,24 +33,24 @@ namespace TD
 
     bool PlanarElevator::MoveTo(utility::Point2D &point, double speed)
     {
-        return xAxis->SetPosition(point.GetX(), speed) &&
-               yAxis->SetPosition(point.GetY(), speed);
+        return xAxis.SetPosition(point.GetX(), speed) &&
+               yAxis.SetPosition(point.GetY(), speed);
     }
 
     bool PlanarElevator::MoveBy(utility::Vector2D &vec, double speed)
     {
-        return xAxis->SetPosition(GetX() + vec.GetX(), speed) &&
-               yAxis->SetPosition(GetY() + vec.GetY(), speed);
+        return xAxis.SetPosition(GetX() + vec.GetX(), speed) &&
+               yAxis.SetPosition(GetY() + vec.GetY(), speed);
     }
 
     void PlanarElevator::MoveHorizontally(float amount)
     {
-        return xAxis->Move(amount);
+        return xAxis.Move(amount);
     }
 
     void PlanarElevator::MoveVertically(float amount)
     {
-        return yAxis->Move(amount);
+        return yAxis.Move(amount);
     }
 
     frc2::CommandPtr PlanarElevator::GotoPositiveX(double speed)

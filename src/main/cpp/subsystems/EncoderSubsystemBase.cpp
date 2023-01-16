@@ -29,46 +29,39 @@
 using namespace TD;
 using namespace EncoderTypes;
 
-template <class MotorType, class EncoderType>
-EncoderSubsystemBase<MotorType, EncoderType> &EncoderSubsystemBase<MotorType, EncoderType>::GetInstance()
-{
-	static EncoderSubsystemBase<MotorType, EncoderType> instance;
-	return instance;
-}
-
 template <>
-EncoderSubsystemBase<MotorTypes::SPARK, NEO>::EncoderSubsystemBase(unsigned int motorPort) : MotorSubsystemBase(motorPort, true)
+EncoderSubsystemBase<MotorTypes::SPARK, NEO>::EncoderSubsystemBase(unsigned int motorPort) : MotorSubsystemBase<MotorTypes::SPARK>(motorPort, true)
 {
 	m_encoder = new SparkMaxRelativeEncoder(m_motor->GetEncoder());
-	SetName("EncoderSubsystem");
+	SubsystemBase::SetName("EncoderSubsystem");
 }
 
 template <class MotorType, class EncoderType>
-EncoderSubsystemBase<MotorType, EncoderType>::EncoderSubsystemBase(unsigned int motorPort, unsigned int encoderA, unsigned int encoderB) : MotorSubsystemBase(motorPort, false)
+EncoderSubsystemBase<MotorType, EncoderType>::EncoderSubsystemBase(unsigned int motorPort, unsigned int encoderA, unsigned int encoderB) : MotorSubsystemBase<MotorType>(motorPort, false)
 {
 	static_assert(!std::is_same<EncoderType, NEO>::value, "NEO encoder has to be used with SPARK MAX motor");
 
 	m_encoder = new Encoder(encoderA, encoderB, false, Encoder::EncodingType::k4X);
 
-	SetName("EncoderSubsystem");
+	SubsystemBase::SetName("EncoderSubsystem");
 }
 
 template <>
-EncoderSubsystemBase<MotorTypes::SPARK, NEO>::EncoderSubsystemBase(vector<unsigned int> motorPorts) : MotorSubsystemBase(motorPorts, true)
+EncoderSubsystemBase<MotorTypes::SPARK, NEO>::EncoderSubsystemBase(vector<unsigned int> motorPorts) : MotorSubsystemBase<MotorTypes::SPARK>(motorPorts, true)
 {
 	m_encoder = new SparkMaxRelativeEncoder(m_motorList[0]->GetEncoder());
-	SetName("EncoderSubsystem");
+	SubsystemBase::SetName("EncoderSubsystem");
 }
 
 template <class MotorType, class EncoderType>
-EncoderSubsystemBase<MotorType, EncoderType>::EncoderSubsystemBase(vector<unsigned int> motorPorts, unsigned int encoderA, unsigned int encoderB) : MotorSubsystemBase(motorPorts, false)
+EncoderSubsystemBase<MotorType, EncoderType>::EncoderSubsystemBase(vector<unsigned int> motorPorts, unsigned int encoderA, unsigned int encoderB) : MotorSubsystemBase<MotorType>(motorPorts, false)
 {
 
 	static_assert(!std::is_same<EncoderType, NEO>::value, "NEO encoder has to be used with SPARK MAX motor");
 
 	m_encoder = new Encoder(encoderA, encoderB, false, Encoder::EncodingType::k4X);
 
-	SetName("EncoderSubsystem");
+	SubsystemBase::SetName("EncoderSubsystem");
 }
 
 template <class MotorType, class EncoderType>
@@ -100,7 +93,7 @@ void EncoderSubsystemBase<MotorType, EncoderType>::SetMotor(double speed)
 		}
 	}
 
-	MotorSubsystemBase::SetMotor(speed);
+	MotorSubsystemBase<MotorType>::SetMotor(speed);
 }
 
 template <class MotorType, class EncoderType>
@@ -119,7 +112,7 @@ void EncoderSubsystemBase<MotorType, EncoderType>::SetMotors(double speed)
 		}
 	}
 
-	MotorSubsystemBase::SetMotors(speed);
+	MotorSubsystemBase<MotorType>::SetMotors(speed);
 }
 
 template <class MotorType, class EncoderType>
@@ -140,7 +133,7 @@ void EncoderSubsystemBase<MotorType, EncoderType>::SetMotors(vector<double> spee
 		}
 	}
 
-	MotorSubsystemBase::SetMotors(speeds);
+	MotorSubsystemBase<MotorType>::SetMotors(speeds);
 }
 
 template <class MotorType, class EncoderType>
@@ -189,7 +182,7 @@ bool EncoderSubsystemBase<MotorType, EncoderType>::SetPosition(double position, 
 
 	double output = m_positionPID.Calculate(GetPosition() * m_positionPIDDirection);
 
-	SetMotor(output * speed);
+	MotorSubsystemBase<MotorType>::SetMotor(output * speed);
 
 	return m_positionPID.AtSetpoint();
 }
@@ -224,13 +217,13 @@ void EncoderSubsystemBase<MotorType, EncoderType>::ResetPositionPID()
 template <class MotorType, class EncoderType>
 void EncoderSubsystemBase<MotorType, EncoderType>::PrintPosition()
 {
-	SmartDashboard::PutNumber(GetName() + " Encoder Position", GetPosition());
+	SmartDashboard::PutNumber(SubsystemBase::GetName() + " Encoder Position", GetPosition());
 }
 
 template <class MotorType, class EncoderType>
 void EncoderSubsystemBase<MotorType, EncoderType>::PrintPositionError()
 {
-	SmartDashboard::PutNumber(GetName() + " Encoder Position Error", m_positionPID.GetPositionError());
+	SmartDashboard::PutNumber(SubsystemBase::GetName() + " Encoder Position Error", m_positionPID.GetPositionError());
 }
 
 template <class MotorType, class EncoderType>
@@ -246,7 +239,7 @@ bool EncoderSubsystemBase<MotorType, EncoderType>::SetRPM(double speed, double a
 
 	double output = m_RPMPID.Calculate(GetPosition() * m_RPMPIDDirection);
 
-	SetMotor(output * acceleration);
+	MotorSubsystemBase<MotorType>::SetMotor(output * acceleration);
 
 	return m_positionPID.AtSetpoint();
 }
@@ -294,13 +287,13 @@ void EncoderSubsystemBase<MotorType, EncoderType>::ResetRPMPID()
 template <class MotorType, class EncoderType>
 void EncoderSubsystemBase<MotorType, EncoderType>::PrintRPM()
 {
-	SmartDashboard::PutNumber(GetName() + " Encoder Speed", GetRPM());
+	SmartDashboard::PutNumber(SubsystemBase::GetName() + " Encoder Speed", GetRPM());
 }
 
 template <class MotorType, class EncoderType>
 void EncoderSubsystemBase<MotorType, EncoderType>::PrintRPMError()
 {
-	SmartDashboard::PutNumber(GetName() + " Encoder Speed Error", m_RPMPID.GetPositionError());
+	SmartDashboard::PutNumber(SubsystemBase::GetName() + " Encoder Speed Error", m_RPMPID.GetPositionError());
 }
 
 template <class MotorType, class EncoderType>

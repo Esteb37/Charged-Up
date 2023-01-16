@@ -29,35 +29,29 @@
 using namespace TD;
 
 template <class T>
-IntakeBase<T> &IntakeBase<T>::GetInstance()
+IntakeBase<T>::IntakeBase(unsigned int port, unsigned int solenoidForward, unsigned int solenoidReverse) : MotorSubsystemBase<T>(port),
+																										   SolenoidSubsystemBase(solenoidForward, solenoidReverse)
 {
-	static IntakeBase instance;
-	return instance;
+	SubsystemBase::SetName("Intake");
 }
 
 template <class T>
-IntakeBase<T>::IntakeBase(unsigned int port, unsigned int solenoidForward, unsigned int solenoidReverse) : MotorSubsystemBase(config, port), SolenoidSubsystemBase(solenoidForward, solenoidReverse)
+IntakeBase<T>::IntakeBase(vector<unsigned int> ports, unsigned int solenoidForward, unsigned int solenoidReverse) : MotorSubsystemBase<T>(ports), SolenoidSubsystemBase(solenoidForward, solenoidReverse)
 {
-	SetName("Intake");
-}
-
-template <class T>
-IntakeBase<T>::IntakeBase(vector<unsigned int> ports, unsigned int solenoidForward, unsigned int solenoidReverse) : MotorSubsystemBase(config, ports), SolenoidSubsystemBase(solenoidForward, solenoidReverse)
-{
-	SetName("Intake");
+	SubsystemBase::SetName("Intake");
 }
 
 template <class T>
 IntakeBase<T>::IntakeBase(unsigned int port, unsigned int rightForward, unsigned int rightReverse, unsigned int leftForward, unsigned int leftReverse)
-	: MotorSubsystemBase(config, port), SolenoidSubsystemBase(rightForward, rightReverse, leftForward, leftReverse)
+	: MotorSubsystemBase<T>(port), SolenoidSubsystemBase(rightForward, rightReverse, leftForward, leftReverse)
 {
-	SetName("Intake");
+	SubsystemBase::SetName("Intake");
 }
 
 template <class T>
-IntakeBase<T>::IntakeBase(vector<unsigned int> ports, unsigned int rightForward, unsigned int rightReverse, unsigned int leftForward, unsigned int leftReverse) : MotorSubsystemBase(config, ports), SolenoidSubsystemBase(rightForward, rightReverse, leftForward, leftReverse)
+IntakeBase<T>::IntakeBase(vector<unsigned int> ports, unsigned int rightForward, unsigned int rightReverse, unsigned int leftForward, unsigned int leftReverse) : MotorSubsystemBase<T>(ports), SolenoidSubsystemBase(rightForward, rightReverse, leftForward, leftReverse)
 {
-	SetName("Intake");
+	SubsystemBase::SetName("Intake");
 }
 
 template <class T>
@@ -68,13 +62,13 @@ void IntakeBase<T>::Periodic()
 template <class T>
 void IntakeBase<T>::Take()
 {
-	SetMotors(1);
+	MotorSubsystemBase<T>::SetMotors(1);
 }
 
 template <class T>
 void IntakeBase<T>::Spit()
 {
-	SetMotors(-1);
+	MotorSubsystemBase<T>::SetMotors(-1);
 }
 
 template <class T>

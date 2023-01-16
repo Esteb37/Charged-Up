@@ -30,13 +30,6 @@ namespace TD
 {
 	using namespace MotorTypes;
 
-	template <class T>
-	MotorSubsystemBase<T> &MotorSubsystemBase<T>::GetInstance()
-	{
-		static MotorSubsystemBase instance;
-		return instance;
-	}
-
 	template <>
 	MotorSubsystemBase<SPARK>::MotorSubsystemBase(unsigned int motorPort, bool isBrushless)
 	{
@@ -46,6 +39,16 @@ namespace TD
 
 		m_motor = new CANSparkMax(motorPort,
 								  isBrushless ? CANSparkMaxLowLevel::MotorType::kBrushless : CANSparkMaxLowLevel::MotorType::kBrushed);
+	}
+
+	template <class T>
+	MotorSubsystemBase<T>::MotorSubsystemBase(unsigned int motorPort, bool _)
+	{
+		SetName("MotorSubsystem");
+
+		m_motorCount = 1;
+
+		m_motor = new T(motorPort);
 	}
 
 	template <>
@@ -67,23 +70,13 @@ namespace TD
 	}
 
 	template <class T>
-	MotorSubsystemBase<T>::MotorSubsystemBase(unsigned int motorPort)
-	{
-		SetName("MotorSubsystem");
-
-		m_motorCount = 1;
-
-		m_motor = new T(motorPort);
-	}
-
-	template <class T>
-	MotorSubsystemBase<T>::MotorSubsystemBase(vector<unsigned int> motorPorts)
+	MotorSubsystemBase<T>::MotorSubsystemBase(vector<unsigned int> motorPorts, bool _)
 	{
 		SetName("MotorSubsystemBase");
 
 		m_motorCount = motorPorts.size();
 
-		m_motorList = vector<MotorType *>(m_motorCount);
+		m_motorList = vector<T *>(m_motorCount);
 
 		for (unsigned int i = 0; i < m_motorCount; i++)
 		{
@@ -94,6 +87,31 @@ namespace TD
 	template <class T>
 	void MotorSubsystemBase<T>::Periodic()
 	{
+	}
+
+	template <>
+	void MotorSubsystemBase<VICTOR_CAN>::SetMotor(double speed)
+	{
+		assert(m_motorCount != 0 && "MotorSubsystemBase: No motor has been configured");
+
+		if (m_motorCount > 1)
+		{
+			return SetMotors(speed);
+		}
+
+		if (m_limitSafetyActive)
+		{
+			if (GetUpperLimit())
+			{
+				speed = fmin(speed, 0);
+			}
+			else
+			{
+				speed = fmax(speed, 0);
+			}
+		}
+
+		m_motor->Set(VictorSPXControlMode::PercentOutput, std::clamp(speed, -m_maxSpeed, m_maxSpeed));
 	}
 
 	template <class T>
@@ -118,13 +136,33 @@ namespace TD
 			}
 		}
 
-		if (std::is_same(T, VICTOR_CAN))
+		m_motor->Set(std::clamp(speed, -m_maxSpeed, m_maxSpeed));
+	}
+
+	template <>
+	void MotorSubsystemBase<VICTOR_CAN>::SetMotors(double speed)
+	{
+		if (m_motorCount <= 1)
 		{
-			m_motor->Set(VictorSPXControlMode::PercentOutput, std::clamp(speed, -m_maxSpeed, m_maxSpeed));
+			return SetMotor(speed);
 		}
-		else
+
+		for (unsigned int i = 0; i < m_motorCount; i++)
 		{
-			m_motor->Set(std::clamp(speed, -m_maxSpeed, m_maxSpeed));
+
+			if (m_limitSafetyActive)
+			{
+				if (GetUpperLimit())
+				{
+					speed = fmin(speed, 0);
+				}
+				else if (GetLowerLimit())
+				{
+					speed = fmax(speed, 0);
+				}
+			}
+
+			m_motorList[i]->Set(VictorSPXControlMode::PercentOutput, std::clamp(speed, -m_maxSpeed, m_maxSpeed));
 		}
 	}
 
@@ -151,14 +189,35 @@ namespace TD
 				}
 			}
 
-			if (std::is_same(T, VICTOR_CAN))
+			m_motorList[i]->Set(std::clamp(speed, -m_maxSpeed, m_maxSpeed));
+		}
+	}
+
+	template <>
+	void MotorSubsystemBase<VICTOR_CAN>::SetMotors(vector<double> speeds)
+	{
+		assert(speeds.size() > 1 && "MotorSubsystemBase: Speed vector must have more than 1 motor, use single motor constructor instead.");
+
+		assert(speeds.size() == m_motorCount && "MotorSubsystemBase: Speed vector must have the same number of motors as the port list.");
+
+		for (unsigned int i = 0; i < m_motorCount; i++)
+		{
+
+			double speed = speeds[i];
+
+			if (m_limitSafetyActive)
 			{
-				m_motorList[i]->Set(VictorSPXControlMode::PercentOutput, std::clamp(speed, -m_maxSpeed, m_maxSpeed));
+				if (GetUpperLimit())
+				{
+					speed = fmin(speeds[i], 0);
+				}
+				else if (GetLowerLimit())
+				{
+					speed = fmax(speeds[i], 0);
+				}
 			}
-			else
-			{
-				m_motorList[i]->Set(std::clamp(speed, -m_maxSpeed, m_maxSpeed));
-			}
+
+			m_motor->Set(VictorSPXControlMode::PercentOutput, std::clamp(speed, -m_maxSpeed, m_maxSpeed));
 		}
 	}
 
@@ -186,25 +245,33 @@ namespace TD
 				}
 			}
 
-			if (std::is_same(T, VICTOR_CAN))
-			{
-				m_motor->Set(VictorSPXControlMode::PercentOutput, std::clamp(speed, -m_maxSpeed, m_maxSpeed));
-			}
-			else
-			{
-				m_motor->Set(std::clamp(speed, -m_maxSpeed, m_maxSpeed));
-			}
+			m_motor->Set(std::clamp(speed, -m_maxSpeed, m_maxSpeed));
 		}
+	}
+
+	template <>
+	void MotorSubsystemBase<VICTOR_CAN>::SetVoltage(units::voltage::volt_t volts)
+	{
+		assert(false && "MotorSubsystemBase: SetVoltage() is not supported for VictorSPX");
 	}
 
 	template <class T>
 	void MotorSubsystemBase<T>::SetVoltage(units::voltage::volt_t volts)
 	{
-		static_assert(!std::is_same(T, VICTOR_CAN), "MotorSubsystemBase: SetVoltage() is not supported for VictorSPX");
 
 		assert(m_motorCount != 0 && "MotorSubsystemBase: No motor has been configured");
 
 		m_motor->SetVoltage(volts);
+	}
+
+	template <>
+	double MotorSubsystemBase<VICTOR_CAN>::GetMotor()
+	{
+		assert(m_motorCount != 0 && "MotorSubsystemBase: No motor has been configured");
+
+		assert(m_motorCount == 1 && "MotorSubsystemBase: GetMotor() is not supported for multiple motors.");
+
+		return m_motor->GetMotorOutputPercent();
 	}
 
 	template <class T>
@@ -214,12 +281,26 @@ namespace TD
 
 		assert(m_motorCount == 1 && "MotorSubsystemBase: GetMotor() is not supported for multiple motors.");
 
-		if (std::is_same(T, VICTOR_CAN))
+		return m_motor->Get();
+	}
+
+	template <>
+	vector<double> MotorSubsystemBase<VICTOR_CAN>::GetMotors()
+	{
+
+		if (m_motorCount <= 1)
 		{
-			return m_motor->GetMotorOutputPercent();
+			return {GetMotor()};
 		}
 
-		return m_motor->Get();
+		vector<double> speeds;
+
+		for (unsigned int i = 0; i < m_motorCount; i++)
+		{
+			speeds.push_back(m_motorList[i]->GetMotorOutputPercent());
+		}
+
+		return speeds;
 	}
 
 	template <class T>
@@ -235,14 +316,7 @@ namespace TD
 
 		for (unsigned int i = 0; i < m_motorCount; i++)
 		{
-			if (std::is_same(T, VICTOR_CAN))
-			{
-				speeds.push_back(m_motorList[i]->GetMotorOutputPercent());
-			}
-			else
-			{
-				speeds.push_back(m_motorList[i]->Get());
-			}
+			speeds.push_back(m_motorList[i]->Get());
 		}
 
 		return speeds;
@@ -267,7 +341,8 @@ namespace TD
 
 		if (m_motorCount > 1)
 		{
-			return InvertMotors(inverted);
+			vector<bool> inverted_list(m_motorCount, inverted);
+			return InvertMotors(inverted_list);
 		}
 
 		m_motor->SetInverted(inverted);
@@ -372,8 +447,4 @@ namespace TD
 	{
 		m_maxSpeed = maxSpeed;
 	}
-
-	template class MotorSubsystemBase<SPARK>;
-	template class MotorSubsystemBase<VICTOR_PWM>;
-	template class MotorSubsystemBase<VICTOR_CAN>;
 }

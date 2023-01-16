@@ -54,15 +54,9 @@ namespace TD
 	{
 
 	public:
-		MotorSubsystemBase(unsigned int);
-
 		MotorSubsystemBase(unsigned int, bool = false);
 
-		MotorSubsystemBase(vector<unsigned int>);
-
 		MotorSubsystemBase(vector<unsigned int>, bool = false);
-
-		static MotorSubsystemBase &GetInstance();
 
 		void Periodic() override;
 
@@ -146,4 +140,8 @@ namespace TD
 
 		double m_pdpChannel = 0;
 	};
+
+	extern template class MotorSubsystemBase<MotorTypes::SPARK>;
+	extern template class MotorSubsystemBase<MotorTypes::VICTOR_PWM>;
+	extern template class MotorSubsystemBase<MotorTypes::VICTOR_CAN>;
 }

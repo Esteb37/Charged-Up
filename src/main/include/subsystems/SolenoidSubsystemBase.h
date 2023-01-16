@@ -45,7 +45,6 @@ namespace TD
 		 */
 		SolenoidSubsystemBase();
 
-		static SolenoidSubsystemBase &GetInstance();
 
 		/**
 		 * @brief Construct a new SolenoidSubsystemBase object with a single solenoid

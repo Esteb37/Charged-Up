@@ -30,12 +30,6 @@
 
 using namespace TD;
 
-template <typename T>
-Drivetrain<T> &Drivetrain<T>::GetInstance()
-{
-	static Drivetrain<T> instance;
-	return instance;
-}
 template <>
 Drivetrain<NEO>::Drivetrain(unsigned int frontRight, unsigned int frontLeft, unsigned int backRight, unsigned int backLeft)
 {
@@ -76,6 +70,12 @@ Drivetrain<CLASSIC>::Drivetrain(unsigned int frontRight, unsigned int frontLeft,
 
 	// initialize drivetrain
 	m_drive = new DifferentialDrive(*m_left, *m_right);
+}
+
+template <>
+Drivetrain<NEO>::Drivetrain(unsigned int frontRight, unsigned int frontLeft, unsigned int backRight, unsigned int backLeft, unsigned int encoderRightA, unsigned int encoderRightB, unsigned int encoderLeftA, unsigned int encoderLeftB)
+{
+	assert(false && "NEO drivetrains cannot have FRC encoders");
 }
 
 template <>
@@ -149,6 +149,11 @@ void Drivetrain<NEO>::ResetMotors()
 	m_frontLeft->RestoreFactoryDefaults();
 	m_backRight->RestoreFactoryDefaults();
 	m_backLeft->RestoreFactoryDefaults();
+}
+
+template <class T>
+void Drivetrain<T>::ResetMotors()
+{
 }
 
 template <typename T>
@@ -555,6 +560,15 @@ void Drivetrain<T>::ConfigurePosition(Pose2d startingPosition)
 }
 
 template <typename T>
+void Drivetrain<T>::ResetPosition()
+{
+	m_odometry.ResetPosition(GetRotation2d(),
+							 units::meter_t{GetLeftEncodersTotal()},
+							 units::meter_t{GetRightEncodersTotal()},
+							 m_odometry.GetPose());
+}
+
+template <typename T>
 void Drivetrain<T>::UpdatePosition()
 {
 	if (m_odometryConfigured)
@@ -643,9 +657,4 @@ void Drivetrain<T>::ConfigurePathPIDs(double rightP, double rightI, double right
 	m_pathLeftP = leftP;
 	m_pathLeftI = leftI;
 	m_pathLeftD = leftD;
-}
-namespace TD
-{
-	template class Drivetrain<NEO>;
-	template class Drivetrain<CLASSIC>;
 }

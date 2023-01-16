@@ -62,8 +62,6 @@ namespace TD
 		 */
 		ElevatorBase(vector<unsigned int>, unsigned int, unsigned int);
 
-		static ElevatorBase &GetInstance();
-
 		void Periodic() override;
 
 		// ---------- Actions -----------

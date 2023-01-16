@@ -95,8 +95,6 @@ namespace TD
 		 */
 		Drivetrain(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
 
-		static Drivetrain &GetInstance();
-
 		void Periodic() override;
 
 		// --------------------- Actions ----------------------

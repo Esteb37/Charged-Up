@@ -73,8 +73,6 @@ namespace TD
 		 */
 		EncoderSubsystemBase(vector<unsigned int>, unsigned int, unsigned int);
 
-		static EncoderSubsystemBase<MotorType, EncoderType> &GetInstance();
-
 		void Periodic() override;
 
 		/**
