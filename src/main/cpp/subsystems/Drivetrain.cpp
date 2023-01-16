@@ -31,6 +31,36 @@
 using namespace TD;
 
 template <>
+double Drivetrain<NEO>::GetRightEncoders()
+{
+	return m_rightEncodersDirection * (m_frontRightEncoder->GetPosition() + m_backRightEncoder->GetPosition()) / 2;
+}
+
+template <>
+double Drivetrain<CLASSIC>::GetRightEncoders()
+{
+	if (m_rightEncoder == nullptr)
+		return 0.0;
+
+	return m_rightEncodersDirection * m_rightEncoder->GetDistance();
+}
+
+template <>
+double Drivetrain<NEO>::GetLeftEncoders()
+{
+	return m_leftEncodersDirection * (m_frontLeftEncoder->GetPosition() + m_backLeftEncoder->GetPosition()) / 2;
+}
+
+template <>
+double Drivetrain<CLASSIC>::GetLeftEncoders()
+{
+	if (m_leftEncoder == nullptr)
+		return 0.0;
+
+	return m_leftEncodersDirection * m_leftEncoder->GetDistance();
+}
+
+template <>
 Drivetrain<NEO>::Drivetrain(unsigned int frontRight, unsigned int frontLeft, unsigned int backRight, unsigned int backLeft)
 {
 	SetName("Drivetrain");
@@ -179,40 +209,10 @@ void Drivetrain<T>::PrintMotors()
 
 // --------------------- Encoders ---------------------
 
-template <>
-double Drivetrain<NEO>::GetRightEncoders()
-{
-	return m_rightEncodersDirection * (m_frontRightEncoder->GetPosition() + m_backRightEncoder->GetPosition()) / 2;
-}
-
-template <>
-double Drivetrain<CLASSIC>::GetRightEncoders()
-{
-	if (m_rightEncoder == nullptr)
-		return 0.0;
-
-	return m_rightEncodersDirection * m_rightEncoder->GetDistance();
-}
-
 template <typename T>
 double Drivetrain<T>::GetRightEncodersTotal()
 {
 	return m_rightEncodersTotal + GetRightEncoders();
-}
-
-template <>
-double Drivetrain<NEO>::GetLeftEncoders()
-{
-	return m_leftEncodersDirection * (m_frontLeftEncoder->GetPosition() + m_backLeftEncoder->GetPosition()) / 2;
-}
-
-template <>
-double Drivetrain<CLASSIC>::GetLeftEncoders()
-{
-	if (m_leftEncoder == nullptr)
-		return 0.0;
-
-	return m_leftEncodersDirection * m_leftEncoder->GetDistance();
 }
 
 template <typename T>
