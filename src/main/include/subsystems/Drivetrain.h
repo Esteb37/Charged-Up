@@ -73,8 +73,6 @@ namespace TD
 	class Drivetrain : public SubsystemBase
 	{
 	public:
-		Drivetrain();
-
 		/**
 		 * @brief Construct a new Drivetrain object with only motors
 		 * @param frontRight The CAN ID or PWM port of the front right motor
