@@ -30,10 +30,37 @@
 
 namespace TD
 {
-	class ElevatorBase : public EncoderSubsystemBase
+	template <class MotorType, class EncoderType>
+	class ElevatorBase : public EncoderSubsystemBase<MotorType, EncoderType>
 	{
 	public:
-		ElevatorBase();
+		/**
+		 * @brief Construct a new ElevatorBase object without encoder and a single motor
+		 * @param motorPort The CAN ID of the motor
+		 */
+		ElevatorBase(unsigned int motorPort);
+
+		/**
+		 * @brief Construct a new ElevatorBase object without encoder and various motors
+		 * @param motorPorts The CAN IDs of the motors
+		 */
+		ElevatorBase(vector<unsigned int>);
+
+		/**
+		 * @brief Construct a new ElevatorBase object with an FRC encoder and a single motor
+		 * @param motorPort The CAN ID or PWM port of the motor
+		 * @param encoderA The A port of the encoder
+		 * @param encoderB The B port of the encoder
+		 */
+		ElevatorBase(unsigned int, unsigned int, unsigned int);
+
+		/**
+		 * @brief Construct a new ElevatorBase object with an FRC encoder and various motors
+		 * @param motorPorts The CAN IDs or PWM ports of the motors
+		 * @param encoderA The A port of the encoder
+		 * @param encoderB The B port of the encoder
+		 */
+		ElevatorBase(vector<unsigned int>, unsigned int, unsigned int);
 
 		static ElevatorBase &GetInstance();
 

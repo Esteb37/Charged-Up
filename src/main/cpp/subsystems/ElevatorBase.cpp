@@ -28,24 +28,46 @@
 
 using namespace TD;
 
-ElevatorBase::ElevatorBase()
+template <class MotorType, class EncoderType>
+ElevatorBase<MotorType, EncoderType>::ElevatorBase(unsigned int motorPort) : EncoderSubsystemBase(motorPort)
 {
 	SetName("Elevator");
 }
 
-ElevatorBase &ElevatorBase::GetInstance()
+template <class MotorType, class EncoderType>
+ElevatorBase<MotorType, EncoderType>::ElevatorBase(unsigned int motorPort, unsigned int encoderA, unsigned int encoderB) : EncoderSubsystemBase(motorPort, encoderA, encoderB)
+{
+	SetName("Elevator");
+}
+
+template <class MotorType, class EncoderType>
+ElevatorBase<MotorType, EncoderType>::ElevatorBase(vector<unsigned int> motorPorts) : EncoderSubsystemBase(motorPorts)
+{
+	SetName("Elevator");
+}
+
+template <class MotorType, class EncoderType>
+ElevatorBase<MotorType, EncoderType>::ElevatorBase(vector<unsigned int> motorPorts, unsigned int encoderA, unsigned int encoderB) : EncoderSubsystemBase(motorPorts, encoderA, encoderB)
+{
+	SetName("Elevator");
+}
+
+template <class MotorType, class EncoderType>
+ElevatorBase<MotorType, EncoderType> &ElevatorBase<MotorType, EncoderType>::GetInstance()
 {
 	static ElevatorBase instance;
 	return instance;
 }
 
-void ElevatorBase::Periodic()
+template <class MotorType, class EncoderType>
+void ElevatorBase<MotorType, EncoderType>::Periodic()
 {
 }
 
 // ---------- Actions -----------
 
-void ElevatorBase::Move(double speed)
+template <class MotorType, class EncoderType>
+void ElevatorBase<MotorType, EncoderType>::Move(double speed)
 {
 	if (m_motorCount > 1)
 	{
@@ -57,32 +79,38 @@ void ElevatorBase::Move(double speed)
 		SetMotor(speed);
 }
 
-void ElevatorBase::SetHeightToFloor(double height)
+template <class MotorType, class EncoderType>
+void ElevatorBase<MotorType, EncoderType>::SetHeightToFloor(double height)
 {
 	m_heightToFloor = height;
 }
 
-double ElevatorBase::GetRelativeHeight()
+template <class MotorType, class EncoderType>
+double ElevatorBase<MotorType, EncoderType>::GetRelativeHeight()
 {
 	return GetPosition();
 }
 
-double ElevatorBase::GetAbsoluteHeight()
+template <class MotorType, class EncoderType>
+double ElevatorBase<MotorType, EncoderType>::GetAbsoluteHeight()
 {
 	return GetPosition() + m_heightToFloor;
 }
 
-bool ElevatorBase::SetRelativeHeight(double height, double speed)
+template <class MotorType, class EncoderType>
+bool ElevatorBase<MotorType, EncoderType>::SetRelativeHeight(double height, double speed)
 {
 	return SetPosition(height, speed);
 }
 
-bool ElevatorBase::SetAbsoluteHeight(double height, double speed)
+template <class MotorType, class EncoderType>
+bool ElevatorBase<MotorType, EncoderType>::SetAbsoluteHeight(double height, double speed)
 {
 	return SetPosition(height - m_heightToFloor, speed);
 }
 
-void ElevatorBase::SetMinMaxHeight(double min, double max)
+template <class MotorType, class EncoderType>
+void ElevatorBase<MotorType, EncoderType>::SetMinMaxHeight(double min, double max)
 {
 	return SetMinMaxPosition(min, max);
 }

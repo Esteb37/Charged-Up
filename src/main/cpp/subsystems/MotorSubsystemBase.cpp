@@ -200,7 +200,9 @@ namespace TD
 	template <class T>
 	void MotorSubsystemBase<T>::SetVoltage(units::voltage::volt_t volts)
 	{
-		static_assert(!std::is_same(T, VICTOR_CAN), "MotorSubsystemBase: SetVoltage() is not supported for CAN VictorSPX.");
+		static_assert(!std::is_same(T, VICTOR_CAN), "MotorSubsystemBase: SetVoltage() is not supported for VictorSPX");
+
+		assert(m_motorCount != 0 && "MotorSubsystemBase: No motor has been configured");
 
 		m_motor->SetVoltage(volts);
 	}
