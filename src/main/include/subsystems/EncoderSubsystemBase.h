@@ -34,68 +34,46 @@
 
 namespace TD
 {
-	enum class EncoderConfig
-	{
-		FRC,
-		REV
-	};
 
-	class EncoderSubsystemBase : virtual public MotorSubsystemBase
+	namespace EncoderTypes
+	{
+		typedef Encoder CLASSIC;
+		typedef SparkMaxRelativeEncoder NEO;
+	}
+
+	template <class MotorType, class EncoderType>
+	class EncoderSubsystemBase : virtual public MotorSubsystemBase<MotorType>
 	{
 	public:
-		EncoderSubsystemBase();
-
-		static EncoderSubsystemBase &GetInstance();
-
 		/**
 		 * @brief Construct a new EncoderSubsystemBase object without encoder and a single motor
-		 * @param motorConfig The motor configuration
 		 * @param motorPort The CAN ID of the motor
 		 */
-		void Initialize(MotorConfig, unsigned int);
+		EncoderSubsystemBase(unsigned int motorPort);
 
 		/**
 		 * @brief Construct a new EncoderSubsystemBase object without encoder and various motors
-		 * @param motorConfig The motor configuration
 		 * @param motorPorts The CAN IDs of the motors
 		 */
-		void Initialize(MotorConfig, vector<unsigned int>);
-
-		/**
-		 * @brief Construct a new EncoderSubsystemBase object with a single NEO motor
-		 * @param motorConfig The motor configuration
-		 * @param encoderConfig The encoder configuration
-		 * @param motorPort The CAN ID of the motor
-		 */
-		void Initialize(MotorConfig, EncoderConfig, unsigned int);
-
-		/**
-		 * @brief Construct a new EncoderSubsystemBase object with various NEO motors
-		 * @param motorConfig The motor configuration
-		 * @param encoderConfig The encoder configuration
-		 * @param motorPorts The CAN IDs of the motors
-		 */
-		void Initialize(MotorConfig, EncoderConfig, vector<unsigned int>);
+		EncoderSubsystemBase(vector<unsigned int>);
 
 		/**
 		 * @brief Construct a new EncoderSubsystemBase object with an FRC encoder and a single motor
-		 * @param motorConfig The motor configuration
-		 * @param encoderConfig The encoder configuration
-		 * @param motorPort The CAN ID of the motor
+		 * @param motorPort The CAN ID or PWM port of the motor
 		 * @param encoderA The A port of the encoder
 		 * @param encoderB The B port of the encoder
 		 */
-		void Initialize(MotorConfig, EncoderConfig, unsigned int, unsigned int, unsigned int);
+		EncoderSubsystemBase(unsigned int, unsigned int, unsigned int);
 
 		/**
 		 * @brief Construct a new EncoderSubsystemBase object with an FRC encoder and various motors
-		 * @param motorConfig The motor configuration
-		 * @param encoderConfig The encoder configuration
-		 * @param motorPorts The CAN IDs of the motors
+		 * @param motorPorts The CAN IDs or PWM ports of the motors
 		 * @param encoderA The A port of the encoder
 		 * @param encoderB The B port of the encoder
 		 */
-		void Initialize(MotorConfig, EncoderConfig, vector<unsigned int>, unsigned int, unsigned int);
+		EncoderSubsystemBase(vector<unsigned int>, unsigned int, unsigned int);
+
+		static EncoderSubsystemBase<MotorType, EncoderType> &GetInstance();
 
 		void Periodic() override;
 
@@ -136,14 +114,6 @@ namespace TD
 		 * @param invert True to invert, false to not
 		 */
 		void InvertEncoder(bool);
-
-		/**
-		 * @brief Set the Encoders ports
-		 * @param encoderA The A port of the encoder
-		 * @param encoderB The B port of the encoder
-		 * @warning This will create a new encoder object, be sure to reconfigure after
-		 */
-		void SetEncoderPorts(unsigned int, unsigned int);
 
 		// ---------- Position PID -----------
 
@@ -252,24 +222,16 @@ namespace TD
 
 		// ---------- Elements ----------
 
-		SparkMaxRelativeEncoder *m_encoderSpark;
-
-		Encoder *m_encoder;
-
-		EncoderConfig m_encoderConfig;
+		EncoderType *m_encoder;
 
 		PIDController m_positionPID{0.1, 0, 0};
 
 		PIDController m_RPMPID{0.1, 0, 0};
 
 	protected:
-		int m_encoderDirection = 1;
-
 		int m_positionPIDDirection = 1;
 
 		int m_RPMPIDDirection = 1;
-
-		double m_RPMConversionFactor = 1;
 
 		double m_maxPosition = 100;
 
