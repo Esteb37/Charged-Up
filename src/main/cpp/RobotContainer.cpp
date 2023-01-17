@@ -22,11 +22,13 @@ RobotContainer::RobotContainer()
 
 void RobotContainer::InitializeSubsystems()
 {
+	m_test.Initialize(MotorConfig::NEO, EncoderConfig::REV, 0);
 }
 
 void RobotContainer::ConfigureSubsystems()
 {
 	m_drivetrain.SetPositionConversionFactor(DPR::DRIVETRAIN);
+	m_drivetrain.ConfigureTurnPID(PID::Move::P, PID::Move::I, PID::Move::D, PID::Move::TOLERANCE);
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
@@ -44,7 +46,11 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 					   {}));
 }
 
-void RobotContainer::TeleopInit() {}
+void RobotContainer::TeleopInit()
+{
+	m_drivetrain.ResetGyro();
+	m_drivetrain.ResetEncoders();
+}
 void RobotContainer::TeleopPeriodic()
 {
 
@@ -55,4 +61,15 @@ void RobotContainer::TeleopPeriodic()
 	m_drivetrain.PrintEncoders();
 	m_drivetrain.PrintGyro();
 }
+
+void RobotContainer::AutonomousInit()
+{
+	m_drivetrain.ResetGyro();
+}
+
+void RobotContainer::AutonomousPeriodic()
+{
+	m_test.SetPosition(90, 1);
+}
+
 void RobotContainer::ConfigureControllerBindings() {}

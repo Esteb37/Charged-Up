@@ -73,8 +73,6 @@ namespace TD
 	class Drivetrain : public SubsystemBase
 	{
 	public:
-		Drivetrain();
-
 		/**
 		 * @brief Construct a new Drivetrain object with only motors
 		 * @param frontRight The CAN ID or PWM port of the front right motor
@@ -96,8 +94,6 @@ namespace TD
 		 * @param frontLeftEncoderB The DIO port of the front left encoder B
 		 */
 		Drivetrain(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
-
-		static Drivetrain &GetInstance();
 
 		void Periodic() override;
 

@@ -7,6 +7,7 @@
 #include "Constants.h"
 #include "subsystems/Drivetrain.h"
 #include "subsystems/ElevatorBase.h"
+#include "subsystems/EncoderSubsystemBase.h"
 #include "subsystems/Limelight.h"
 #include "subsystems/MotorSubsystemBase.h"
 #include <frc/XboxController.h>
@@ -68,6 +69,10 @@ private:
 		DIO::Encoder::DRIVETRAIN_LA,
 		DIO::Encoder::DRIVETRAIN_LB};
 
+	EncoderSubsystemBase m_test;
+
 	XboxController m_controller = XboxController(0);
 	CommandXboxController m_commandController = CommandXboxController(0);
+
+	bool auto_done = false;
 };
