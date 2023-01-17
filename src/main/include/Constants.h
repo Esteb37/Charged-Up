@@ -13,6 +13,7 @@
  * command-specific namespaces within this header, which can then be used where
  * they are needed.
  */
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <units/length.h>
 
@@ -23,10 +24,6 @@ namespace M
 {
 	namespace CAN
 	{
-		constexpr port FRONT_RIGHT = 0;
-		constexpr port FRONT_LEFT = 1;
-		constexpr port BACK_RIGHT = 2;
-		constexpr port BACK_LEFT = 3;
 		constexpr port SHOOTER = 4;
 		constexpr port ELEVATOR_RIGHT = 5;
 		constexpr port ELEVATOR_LEFT = 6;
@@ -35,8 +32,12 @@ namespace M
 
 	namespace PWM
 	{
-		constexpr port FEEDER = 0;
-		constexpr port TURRET = 1;
+		constexpr port FRONT_RIGHT = 0;
+		constexpr port FRONT_LEFT = 1;
+		constexpr port BACK_RIGHT = 2;
+		constexpr port BACK_LEFT = 3;
+		constexpr port FEEDER = 4;
+		constexpr port TURRET = 5;
 	}
 
 	namespace Servo
@@ -96,8 +97,8 @@ namespace PID
 
 	namespace Turn
 	{
-		constexpr double P = 0.01;
-		constexpr double I = 0.0;
+		constexpr double P = 0.1;
+		constexpr double I = 1;
 		constexpr double D = 0.0;
 		constexpr double TOLERANCE = 0.5;
 	}
@@ -150,7 +151,8 @@ namespace PID
 		constexpr double TOLERANCE = 0.5;
 	}
 
-	namespace PlanarElevator {
+	namespace PlanarElevator
+	{
 		constexpr double P_X = 0.01;
 		constexpr double I_X = 0.0;
 		constexpr double D_X = 0.0;
@@ -180,12 +182,13 @@ namespace Wheel
 	constexpr double CIRCUMFERENCE = DIAMETER * M_PI;
 	constexpr double RADIUS = DIAMETER / 2;
 	constexpr double GEAR_RATIO = 10.71;
-	constexpr auto   TRACK_WIDTH = 0.55_m;
+	constexpr auto TRACK_WIDTH = 0.55_m;
 }
 
 namespace DPR
 {
-	constexpr double DRIVETRAIN = Wheel::CIRCUMFERENCE / Wheel::GEAR_RATIO;
+	constexpr double ENCODER_PULSE = 2048;
+	constexpr double DRIVETRAIN = Wheel::CIRCUMFERENCE / (Wheel::GEAR_RATIO * ENCODER_PULSE);
 	constexpr double TURRET = 360;	 // TODO Define turret encoder to angle ratio
 	constexpr double ELEVATOR = 180; // TODO Define elevator distance per revolution
 	constexpr double SHOOTER = 180;	 // TODO Define shooter conversion factor

@@ -22,47 +22,54 @@ RobotContainer::RobotContainer()
 
 void RobotContainer::InitializeSubsystems()
 {
-	m_drivetrain = new DrivetrainClassic();
-
-	/*m_drivetrain->Initialize(
-		M::CAN::FRONT_RIGHT,
-		M::CAN::FRONT_LEFT,
-		M::CAN::BACK_RIGHT,
-		M::CAN::BACK_LEFT,
-		DIO::Encoder::DRIVETRAIN_RA,
-		DIO::Encoder::DRIVETRAIN_RB,
-		DIO::Encoder::DRIVETRAIN_LA,
-		DIO::Encoder::DRIVETRAIN_LB);*/
+	m_test.Initialize(MotorConfig::NEO, EncoderConfig::REV, 0);
 }
 
 void RobotContainer::ConfigureSubsystems()
 {
-	/*m_drivetrain->SetPositionConversionFactor(DPR::DRIVETRAIN);*/
+	m_drivetrain.SetPositionConversionFactor(DPR::DRIVETRAIN);
+	m_drivetrain.ConfigureTurnPID(PID::Move::P, PID::Move::I, PID::Move::D, PID::Move::TOLERANCE);
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
-	/*auto [command, trajectory] = m_drivetrain->OpenPath("path.json");
+	auto [command, trajectory] = m_drivetrain.OpenPath("path.json");
 
 	// Reset odometry to the starting pose of the trajectory.
-	m_drivetrain->ConfigurePosition(trajectory.InitialPose());
+	m_drivetrain.ConfigurePosition(trajectory.InitialPose());
 
 	// no auto
 	return new SequentialCommandGroup(
 		move(command),
 		InstantCommand([this]
-					   { m_drivetrain->TankDriveVolts(0_V, 0_V); },
-					   {}));*/
+					   { m_drivetrain.TankDriveVolts(0_V, 0_V); },
+					   {}));
 }
 
-void RobotContainer::TeleopInit() {}
+void RobotContainer::TeleopInit()
+{
+	m_drivetrain.ResetGyro();
+	m_drivetrain.ResetEncoders();
+}
 void RobotContainer::TeleopPeriodic()
 {
 
-	/*m_drivetrain->Drive(m_controller.GetLeftY(), m_controller.GetLeftX());
+	m_drivetrain.Drive(m_controller.GetLeftY(), m_controller.GetLeftX());
 
-	m_drivetrain->PrintPosition();
-	m_drivetrain->PrintEncoders();
-	m_drivetrain->PrintGyro();*/
+	m_drivetrain.PrintPosition();
+	m_drivetrain.PrintMotors();
+	m_drivetrain.PrintEncoders();
+	m_drivetrain.PrintGyro();
 }
+
+void RobotContainer::AutonomousInit()
+{
+	m_drivetrain.ResetGyro();
+}
+
+void RobotContainer::AutonomousPeriodic()
+{
+	m_test.SetPosition(90, 1);
+}
+
 void RobotContainer::ConfigureControllerBindings() {}
