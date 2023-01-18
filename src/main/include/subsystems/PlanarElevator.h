@@ -46,7 +46,7 @@ namespace TD
     typedef ElevatorBase<MotorTypes::SPARK, EncoderTypes::NEO> Elevator;
 
     Elevator xAxis{0};
-    Elevator yAxis{0};
+    Elevator yAxis{1};
 
     utility::BoundPlane<1>
         plane = utility::BoundPlane<1>();

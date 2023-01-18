@@ -31,14 +31,14 @@ namespace TD
 	using namespace EncoderTypes;
 
 	template <>
-	EncoderSubsystemBase<MotorTypes::SPARK, NEO>::EncoderSubsystemBase(unsigned int motorPort) : MotorSubsystemBase<MotorTypes::SPARK>(motorPort)
+	EncoderSubsystemBase<MotorTypes::SPARK, NEO>::EncoderSubsystemBase(unsigned int motorPort, bool isBrushless) : MotorSubsystemBase<MotorTypes::SPARK>(motorPort, isBrushless)
 	{
 		m_encoder = new SparkMaxRelativeEncoder(m_motor->GetEncoder());
 		SubsystemBase::SetName("EncoderSubsystem");
 	}
 
 	template <class MotorType, class EncoderType>
-	EncoderSubsystemBase<MotorType, EncoderType>::EncoderSubsystemBase(unsigned int motorPort) : MotorSubsystemBase<MotorType>(motorPort)
+	EncoderSubsystemBase<MotorType, EncoderType>::EncoderSubsystemBase(unsigned int motorPort, bool isBrushless) : MotorSubsystemBase<MotorType>(motorPort)
 	{
 		throw invalid_argument("This constructor is reserved for NEO encoders.");
 	}
@@ -60,14 +60,14 @@ namespace TD
 	}
 
 	template <>
-	EncoderSubsystemBase<MotorTypes::SPARK, NEO>::EncoderSubsystemBase(vector<unsigned int> motorPorts) : MotorSubsystemBase<MotorTypes::SPARK>(motorPorts)
+	EncoderSubsystemBase<MotorTypes::SPARK, NEO>::EncoderSubsystemBase(vector<unsigned int> motorPorts, bool isBrushless) : MotorSubsystemBase<MotorTypes::SPARK>(motorPorts, isBrushless)
 	{
 		m_encoder = new SparkMaxRelativeEncoder(m_motorList[0]->GetEncoder());
 		SubsystemBase::SetName("EncoderSubsystem");
 	}
 
 	template <class MotorType, class EncoderType>
-	EncoderSubsystemBase<MotorType, EncoderType>::EncoderSubsystemBase(vector<unsigned int> motorPorts) : MotorSubsystemBase<MotorType>(motorPorts)
+	EncoderSubsystemBase<MotorType, EncoderType>::EncoderSubsystemBase(vector<unsigned int> motorPorts, bool isBrushless) : MotorSubsystemBase<MotorType>(motorPorts)
 	{
 		throw invalid_argument("This constructor is reserved for NEO encoders.");
 	}
@@ -80,7 +80,7 @@ namespace TD
 	}
 
 	template <class MotorType, class EncoderType>
-	EncoderSubsystemBase<MotorType, EncoderType>::EncoderSubsystemBase(vector<unsigned int> motorPorts, unsigned int encoderA, unsigned int encoderB) : MotorSubsystemBase<MotorType>(motorPorts)
+	EncoderSubsystemBase<MotorType, EncoderType>::EncoderSubsystemBase(vector<unsigned int> motorPorts, unsigned int encoderA, unsigned int encoderB) : MotorSubsystemBase<MotorType>(motorPorts, false)
 	{
 
 		static_assert(!std::is_same<EncoderType, NEO>::value, "NEO encoder has to be used with SPARK MAX motor");

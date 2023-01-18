@@ -48,14 +48,15 @@ namespace TD
 		/**
 		 * @brief Construct a new EncoderSubsystemBase object without encoder and a single motor
 		 * @param motorPort The CAN ID of the motor
+		 * @param isBrushless
 		 */
-		EncoderSubsystemBase(unsigned int motorPort);
+		EncoderSubsystemBase(unsigned int motorPort, bool isBrushless = true);
 
 		/**
 		 * @brief Construct a new EncoderSubsystemBase object without encoder and various motors
 		 * @param motorPorts The CAN IDs of the motors
 		 */
-		EncoderSubsystemBase(vector<unsigned int>);
+		EncoderSubsystemBase(vector<unsigned int>, bool isBrushless = true);
 
 		/**
 		 * @brief Construct a new EncoderSubsystemBase object with an FRC encoder and a single motor
@@ -231,11 +232,11 @@ namespace TD
 
 		int m_RPMPIDDirection = 1;
 
-		double m_maxPosition = 100;
+		double m_maxPosition = 100000;
 
-		double m_minPosition = 0;
+		double m_minPosition = -100000;
 
-		double m_maxRPM = 100;
+		double m_maxRPM = 100000;
 
 		bool m_keepingStill = false;
 

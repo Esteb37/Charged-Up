@@ -28,6 +28,18 @@
 
 namespace TD
 {
+	template <>
+	ElevatorBase<MotorTypes::SPARK, EncoderTypes::NEO>::ElevatorBase(unsigned int motorPort) : EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>(motorPort), MotorSubsystemBase<MotorTypes::SPARK>(motorPort, true)
+	{
+		SubsystemBase::SetName("Elevator");
+	}
+
+	template <>
+	ElevatorBase<MotorTypes::SPARK, EncoderTypes::NEO>::ElevatorBase(vector<unsigned int> motorPorts) : EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>(motorPorts),
+																										MotorSubsystemBase<MotorTypes::SPARK>(motorPorts, true)
+	{
+		SubsystemBase::SetName("Elevator");
+	}
 
 	template <class MotorType, class EncoderType>
 	ElevatorBase<MotorType, EncoderType>::ElevatorBase(unsigned int motorPort) : EncoderSubsystemBase<MotorType, EncoderType>(motorPort), MotorSubsystemBase<MotorType>(motorPort)

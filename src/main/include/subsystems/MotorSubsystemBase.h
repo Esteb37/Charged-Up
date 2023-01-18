@@ -54,13 +54,9 @@ namespace TD
 	{
 
 	public:
-		MotorSubsystemBase(unsigned int);
+		MotorSubsystemBase(unsigned int, bool = false);
 
-		MotorSubsystemBase(vector<unsigned int>);
-
-		MotorSubsystemBase(unsigned int, bool);
-
-		MotorSubsystemBase(vector<unsigned int>, bool);
+		MotorSubsystemBase(vector<unsigned int>, bool = false);
 
 		void Periodic() override;
 
@@ -132,7 +128,7 @@ namespace TD
 		DigitalInput *m_lowerLimit;
 
 	protected:
-		double m_maxSpeed;
+		double m_maxSpeed = 1;
 
 		bool m_limitSafetyActive = false;
 

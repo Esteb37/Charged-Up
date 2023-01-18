@@ -31,34 +31,6 @@ namespace TD
 	using namespace MotorTypes;
 
 	template <>
-	MotorSubsystemBase<SPARK>::MotorSubsystemBase(unsigned int motorPort)
-	{
-		SetName("MotorSubsystem");
-
-		m_motorCount = 1;
-
-		m_motor = new CANSparkMax(motorPort, CANSparkMaxLowLevel::MotorType::kBrushless);
-	}
-
-	template <>
-	MotorSubsystemBase<SPARK>::MotorSubsystemBase(vector<unsigned int> motorPorts)
-	{
-		assert(motorPorts.size() > 1 && "MotorSubsystemBase: Port list must have more than 1 motor, use single motor constructor instead.");
-
-		SetName("MotorSubsystem");
-
-		m_motorCount = motorPorts.size();
-
-		m_motorList = vector<CANSparkMax *>(m_motorCount);
-
-		for (unsigned int i = 0; i < m_motorCount; i++)
-		{
-			m_motorList.at(i) = new CANSparkMax(motorPorts[i],
-												CANSparkMaxLowLevel::MotorType::kBrushless);
-		}
-	}
-
-	template <>
 	MotorSubsystemBase<SPARK>::MotorSubsystemBase(unsigned int motorPort, bool isBrushless)
 	{
 		SetName("MotorSubsystem");
@@ -216,31 +188,6 @@ namespace TD
 
 	template <class T>
 	MotorSubsystemBase<T>::MotorSubsystemBase(vector<unsigned int> motorPorts, bool _)
-	{
-		SetName("MotorSubsystemBase");
-
-		m_motorCount = motorPorts.size();
-
-		m_motorList = vector<T *>(m_motorCount);
-
-		for (unsigned int i = 0; i < m_motorCount; i++)
-		{
-			m_motorList.at(i) = new T(motorPorts.at(i));
-		}
-	}
-
-	template <class T>
-	MotorSubsystemBase<T>::MotorSubsystemBase(unsigned int motorPort)
-	{
-		SetName("MotorSubsystem");
-
-		m_motorCount = 1;
-
-		m_motor = new T(motorPort);
-	}
-
-	template <class T>
-	MotorSubsystemBase<T>::MotorSubsystemBase(vector<unsigned int> motorPorts)
 	{
 		SetName("MotorSubsystemBase");
 
