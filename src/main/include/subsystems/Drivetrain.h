@@ -66,8 +66,11 @@ using namespace std;
 namespace TD
 {
 
-	typedef CANSparkMax NEO;
-	typedef VictorSP CLASSIC;
+	namespace DrivetrainTypes
+	{
+		typedef CANSparkMax NEO;
+		typedef VictorSP CLASSIC;
+	}
 
 	template <typename T>
 	class Drivetrain : public SubsystemBase
@@ -581,4 +584,5 @@ namespace TD
 		double m_pathLeftI = 0;
 		double m_pathLeftD = 0;
 	};
+
 }

@@ -28,77 +28,57 @@
 
 using namespace TD;
 
-IntakeBase::IntakeBase()
+template <class T>
+IntakeBase<T>::IntakeBase(unsigned int port, unsigned int solenoidForward, unsigned int solenoidReverse) : MotorSubsystemBase<T>(port),
+																										   SolenoidSubsystemBase(solenoidForward, solenoidReverse)
 {
-	SetName("Intake");
+	SubsystemBase::SetName("Intake");
 }
 
-IntakeBase &IntakeBase::GetInstance()
+template <class T>
+IntakeBase<T>::IntakeBase(vector<unsigned int> ports, unsigned int solenoidForward, unsigned int solenoidReverse) : MotorSubsystemBase<T>(ports), SolenoidSubsystemBase(solenoidForward, solenoidReverse)
 {
-	static IntakeBase instance;
-	return instance;
+	SubsystemBase::SetName("Intake");
 }
 
-void IntakeBase::Initialize(MotorConfig config, unsigned int port, unsigned int solenoidForward, unsigned int solenoidReverse)
+template <class T>
+IntakeBase<T>::IntakeBase(unsigned int port, unsigned int rightForward, unsigned int rightReverse, unsigned int leftForward, unsigned int leftReverse)
+	: MotorSubsystemBase<T>(port), SolenoidSubsystemBase(rightForward, rightReverse, leftForward, leftReverse)
 {
-	MotorSubsystemBase::Initialize(config, port);
-	SolenoidSubsystemBase::Initialize(solenoidForward, solenoidReverse);
+	SubsystemBase::SetName("Intake");
 }
 
-void IntakeBase::Initialize(MotorConfig config, vector<unsigned int> ports, unsigned int solenoidForward, unsigned int solenoidReverse)
+template <class T>
+IntakeBase<T>::IntakeBase(vector<unsigned int> ports, unsigned int rightForward, unsigned int rightReverse, unsigned int leftForward, unsigned int leftReverse) : MotorSubsystemBase<T>(ports), SolenoidSubsystemBase(rightForward, rightReverse, leftForward, leftReverse)
 {
-	MotorSubsystemBase::Initialize(config, ports);
-	SolenoidSubsystemBase::Initialize(solenoidForward, solenoidReverse);
+	SubsystemBase::SetName("Intake");
 }
 
-void IntakeBase::Initialize(MotorConfig config, unsigned int port, unsigned int rightForward, unsigned int rightReverse, unsigned int leftForward, unsigned int leftReverse)
-{
-	MotorSubsystemBase::Initialize(config, port);
-	SolenoidSubsystemBase::Initialize(rightForward, rightReverse, leftForward, leftReverse);
-}
-
-void IntakeBase::Initialize(MotorConfig config, vector<unsigned int> ports, unsigned int rightForward, unsigned int rightReverse, unsigned int leftForward, unsigned int leftReverse)
-{
-	MotorSubsystemBase::Initialize(config, ports);
-	SolenoidSubsystemBase::Initialize(rightForward, rightReverse, leftForward, leftReverse);
-}
-
-void IntakeBase::Periodic()
+template <class T>
+void IntakeBase<T>::Periodic()
 {
 }
 
-void IntakeBase::Take()
+template <class T>
+void IntakeBase<T>::Take()
 {
-	if (m_motorCount > 1)
-	{
-		vector<double> speeds(m_motorCount, 1.0);
-		SetMotors(speeds);
-	}
-	else
-	{
-		SetMotor(1);
-	}
+	MotorSubsystemBase<T>::SetMotors(1);
 }
 
-void IntakeBase::Spit()
+template <class T>
+void IntakeBase<T>::Spit()
 {
-	if (m_motorCount > 1)
-	{
-		vector<double> speeds(m_motorCount, -1.0);
-		SetMotors(speeds);
-	}
-	else
-	{
-		SetMotor(-1);
-	}
+	MotorSubsystemBase<T>::SetMotors(-1);
 }
 
-void IntakeBase::Lower()
+template <class T>
+void IntakeBase<T>::Lower()
 {
 	OpenSolenoids();
 }
 
-void IntakeBase::Raise()
+template <class T>
+void IntakeBase<T>::Raise()
 {
 	CloseSolenoids();
 }

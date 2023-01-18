@@ -60,6 +60,9 @@ void RobotContainer::TeleopPeriodic()
 	m_drivetrain.PrintMotors();
 	m_drivetrain.PrintEncoders();
 	m_drivetrain.PrintGyro();
+
+	elevator.MoveHorizontally(1);
+	elevator.MoveVertically(1);
 }
 
 void RobotContainer::AutonomousInit()

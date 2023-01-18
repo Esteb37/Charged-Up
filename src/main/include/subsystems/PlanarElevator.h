@@ -1,19 +1,18 @@
 #pragma once
 
-#include <frc2/command/SubsystemBase.h>
 #include <frc2/command/CommandPtr.h>
+#include <frc2/command/SubsystemBase.h>
 
-#include "subsystems/ElevatorBase.h"
 #include "../utility/Plane.h"
 #include "../utility/Vector.h"
+#include "subsystems/ElevatorBase.h"
 
-namespace TD {
-  class PlanarElevator : frc2::SubsystemBase {
-    public:
-
-    PlanarElevator() = default;
-
-    void Initialize();
+namespace TD
+{
+  class PlanarElevator : frc2::SubsystemBase
+  {
+  public:
+    PlanarElevator();
 
     void Periodic() override;
 
@@ -43,12 +42,13 @@ namespace TD {
 
     frc2::CommandPtr GotoOrigin(double speed);
 
-    private:
+  private:
+    typedef ElevatorBase<MotorTypes::SPARK, EncoderTypes::NEO> Elevator;
 
-    ElevatorBase *xAxis;
-    ElevatorBase *yAxis;
+    Elevator xAxis{0};
+    Elevator yAxis{1};
 
-    utility::BoundPlane<1> plane = utility::BoundPlane<1>();
-    
+    utility::BoundPlane<1>
+        plane = utility::BoundPlane<1>();
   };
 }

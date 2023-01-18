@@ -42,32 +42,21 @@ using namespace std;
 namespace TD
 {
 
-	enum class MotorConfig
+	namespace MotorTypes
 	{
-		NEO,
-		SPARK,
-		VICTOR_PWM,
-		VICTOR_CAN,
-	};
+		typedef CANSparkMax SPARK;
+		typedef VictorSP VICTOR_PWM;
+		typedef VictorSPX VICTOR_CAN;
+	}
 
-	enum class GyroConfig
-	{
-		ADXRS450,
-		ADIS16470,
-		ADIS16448
-	};
-
+	template <typename T>
 	class MotorSubsystemBase : virtual public SubsystemBase
 	{
 
 	public:
-		MotorSubsystemBase();
+		MotorSubsystemBase(unsigned int, bool = false);
 
-		static MotorSubsystemBase &GetInstance();
-
-		void Initialize(MotorConfig, unsigned int);
-
-		void Initialize(MotorConfig, vector<unsigned int>);
+		MotorSubsystemBase(vector<unsigned int>, bool = false);
 
 		void Periodic() override;
 
@@ -119,39 +108,31 @@ namespace TD
 
 		void ConfigureLimitSwitches(unsigned int, unsigned int);
 
+		void ConfigureUpperLimitSwitch(unsigned int);
+
+		void ConfigureLowerLimitSwitch(unsigned int);
+
 		void SetLimitSafety(bool);
 
 		void PrintLimits();
 
 		// ---------- Components -----------
 
-		CANSparkMax *m_motorSpark;
+		T *m_motor;
 
-		VictorSPX *m_motorVictorCAN;
-
-		VictorSP *m_motorVictorPWM;
-
-		vector<CANSparkMax *>
-			m_motorSparkList;
-
-		vector<VictorSPX *>
-			m_motorVictorCANList;
-
-		vector<VictorSP *>
-			m_motorVictorPWMList;
+		vector<T *>
+			m_motorList;
 
 		DigitalInput *m_upperLimit;
 
 		DigitalInput *m_lowerLimit;
 
 	protected:
-		MotorConfig m_motorConfig;
-
-		double m_maxSpeed;
+		double m_maxSpeed = 1;
 
 		bool m_limitSafetyActive = false;
 
-		unsigned int m_motorCount = 1;
+		unsigned int m_motorCount = 0;
 
 		PowerDistribution m_pdp{0, PowerDistribution::ModuleType::kCTRE};
 
@@ -159,4 +140,5 @@ namespace TD
 
 		double m_pdpChannel = 0;
 	};
+
 }
