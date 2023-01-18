@@ -26,7 +26,9 @@
 
 #pragma once
 
-#include <frc/ADIS16448_IMU.h>
+#include "Constants.h"
+#include "subsystems/CustomGyro.h"
+#include "subsystems/Limelight.h"
 #include <frc/Encoder.h>
 #include <frc/Filesystem.h>
 #include <frc/controller/PIDController.h>
@@ -52,9 +54,6 @@
 #include <rev/CANSparkMax.h>
 #include <wpi/fs.h>
 
-#include "Constants.h"
-#include "subsystems/Limelight.h"
-
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -65,14 +64,13 @@ using namespace std;
 
 namespace TD
 {
-
 	namespace DrivetrainTypes
 	{
 		typedef CANSparkMax NEO;
 		typedef VictorSP CLASSIC;
 	}
 
-	template <typename T>
+	template <class T>
 	class Drivetrain : public SubsystemBase
 	{
 	public:
@@ -219,8 +217,6 @@ namespace TD
 		 */
 		void SetPositionConversionFactor(double);
 
-		// ----------------------- Gyro -----------------------
-
 		/**
 		 * @brief Gets the current angle of the gyro in degrees
 		 * @return double angle
@@ -232,14 +228,6 @@ namespace TD
 		 * @return double the absolute angle
 		 */
 		double GetGyroHeading();
-
-		/**
-		 * @brief Get the gyro angle in radians
-		 * @return double angle radians
-		 */
-		double GetGyroRad();
-
-		double GetGyroHeadingRad();
 
 		/**
 		 * @brief Resets the angle to 0
@@ -256,13 +244,6 @@ namespace TD
 		 * @brief Publish the value of the gyro to the dashboard
 		 */
 		void PrintGyro();
-
-		/**
-		 * @brief Publish the angle in radians to the dashboard
-		 */
-		void PrintGyroRad();
-
-		Rotation2d GetRotation2d();
 
 		// ----------------------- Auto -----------------------
 
@@ -498,8 +479,6 @@ namespace TD
 
 		Encoder *m_leftEncoder;
 
-		ADIS16448_IMU m_gyro;
-
 		// ----- Auto -----
 
 		PIDController m_movePIDController{0.1, 0, 0};
@@ -510,6 +489,8 @@ namespace TD
 
 		PIDController m_distancePIDController{0.1, 0, 0};
 
+		CustomGyro<GyroTypes::NAVX> m_gyro;
+
 	protected:
 		// Limelight::GetInstance();
 
@@ -518,8 +499,6 @@ namespace TD
 		int m_rightEncodersDirection = 1;
 
 		int m_leftEncodersDirection = 1;
-
-		int m_gyroDirection = 1;
 
 		int m_moveDirection = 1;
 
@@ -549,8 +528,6 @@ namespace TD
 
 		double m_leftEncodersTotal = 0;
 
-		double m_gyroHeading = 0;
-
 		// ---- Kinematics ----
 
 		double m_odometryConfigured = false;
@@ -564,7 +541,7 @@ namespace TD
 		Trajectory m_path;
 
 		DifferentialDriveOdometry m_odometry{
-			GetRotation2d(),
+			m_gyro.GetRotation2d(),
 			units::meter_t{GetLeftEncoders()},
 			units::meter_t{GetRightEncoders()},
 			frc::Pose2d{0_m, 0_m, 0_rad}};

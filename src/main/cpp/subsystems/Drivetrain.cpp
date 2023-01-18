@@ -142,42 +142,41 @@ namespace TD
 		InvertRotation(true);
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::Periodic()
 	{
 		UpdatePosition();
 	}
 
 	// --------------------- Control ----------------------
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::Drive(double speed, double rotation)
 	{
 		m_drive->ArcadeDrive(speed * m_moveDirection * m_maxMoveSpeed, rotation * m_rotationDirection * m_maxTurnSpeed);
 	}
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ResetSensors()
 	{
-
-		ResetGyro();
+		m_gyro.Reset();
 		ResetEncoders();
 	}
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::SetMaxSpeeds(double speed, double rotation)
 	{
 		m_maxMoveSpeed = speed;
 		m_maxTurnSpeed = rotation;
 	}
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::InvertMove(bool invert)
 	{
 		m_moveDirection = invert ? -1 : 1;
 	}
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::InvertRotation(bool invert)
 	{
 		m_rotationDirection = invert ? -1 : 1;
 	}
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::SetSafetyEnabled(bool enabled)
 	{
 		m_drive->SetSafetyEnabled(enabled);
@@ -198,19 +197,19 @@ namespace TD
 	{
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::InvertRight(bool invert)
 	{
 		m_right->SetInverted(invert);
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::InvertLeft(bool invert)
 	{
 		m_left->SetInverted(invert);
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::PrintMotors()
 	{
 		SmartDashboard::PutNumber(GetName() + " FR Motor", m_frontRight->Get());
@@ -221,19 +220,19 @@ namespace TD
 
 	// --------------------- Encoders ---------------------
 
-	template <typename T>
+	template <class T>
 	double Drivetrain<T>::GetRightEncodersTotal()
 	{
 		return m_rightEncodersTotal + GetRightEncoders();
 	}
 
-	template <typename T>
+	template <class T>
 	double Drivetrain<T>::GetLeftEncodersTotal()
 	{
 		return m_leftEncodersTotal + GetLeftEncoders();
 	}
 
-	template <typename T>
+	template <class T>
 	double Drivetrain<T>::GetEncoderAverage()
 	{
 		return (GetRightEncoders() + GetLeftEncoders()) / 2;
@@ -263,13 +262,13 @@ namespace TD
 		m_leftEncoder->Reset();
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::InvertRightEncoders(bool invert)
 	{
 		m_rightEncodersDirection = invert ? -1 : 1;
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::InvertLeftEncoders(bool invert)
 	{
 		m_leftEncodersDirection = invert ? -1 : 1;
@@ -312,60 +311,36 @@ namespace TD
 	template <typename T>
 	double Drivetrain<T>::GetGyro()
 	{
-		return m_gyro.GetAngle().value() * m_gyroDirection;
+		return m_gyro.GetAngle().value();
 	}
 
 	template <typename T>
 	double Drivetrain<T>::GetGyroHeading()
 	{
-		return m_gyroHeading + GetGyro();
-	}
-
-	template <typename T>
-	double Drivetrain<T>::GetGyroRad()
-	{
-		return GetGyro() * (M_PI / 180);
-	}
-
-	template <typename T>
-	double Drivetrain<T>::GetGyroHeadingRad()
-	{
-		return GetGyroHeading() * (M_PI / 180);
+		return m_gyro.GetAngle().value();
 	}
 
 	template <typename T>
 	void Drivetrain<T>::ResetGyro()
 	{
-		m_gyroHeading = GetGyroHeading();
 		m_gyro.Reset();
 	}
 
 	template <typename T>
 	void Drivetrain<T>::InvertGyro(bool invert)
 	{
-		m_gyroDirection = invert ? -1 : 1;
+		m_gyro.Invert(invert);
 	}
 
 	template <typename T>
 	void Drivetrain<T>::PrintGyro()
 	{
-		SmartDashboard::PutNumber(GetName() + " Gyro", GetGyro());
-	}
-
-	template <typename T>
-	void Drivetrain<T>::PrintGyroRad()
-	{
-		SmartDashboard::PutNumber(GetName() + "Gyro Rad", GetGyroRad());
-	}
-	template <typename T>
-	Rotation2d Drivetrain<T>::GetRotation2d()
-	{
-		return Rotation2d{units::degree_t{GetGyroHeading()}};
+		m_gyro.Print();
 	}
 
 	// ----------------------- Auto -----------------------
 
-	template <typename T>
+	template <class T>
 	bool Drivetrain<T>::Move(double distance, double speed)
 	{
 		m_movePIDController.SetSetpoint(distance);
@@ -375,55 +350,55 @@ namespace TD
 		return m_movePIDController.AtSetpoint();
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ResetMovePIDController()
 	{
 		m_movePIDController.Reset();
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ConfigureMovePID(double p, double i, double d, double tolerance, bool inverted)
 	{
 		m_movePIDController.SetPID(p, i, d);
 		m_movePIDController.SetTolerance(tolerance);
 		m_movePIDDirection = inverted ? -1 : 1;
 	}
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::PrintMoveError()
 	{
 		SmartDashboard::PutNumber(GetName() + " Move Error", m_movePIDController.GetPositionError());
 	}
 
-	template <typename T>
+	template <class T>
 	bool Drivetrain<T>::Turn(double angle, double speed)
 	{
 		m_turnPIDController.SetSetpoint(angle);
-		double output = m_turnPIDController.Calculate(GetGyro() * m_turnPIDDirection);
+		double output = m_turnPIDController.Calculate(m_gyro.GetAngle().value() * m_turnPIDDirection);
 		output = clamp(output, -1.0, 1.0);
 		Drive(0, output * speed);
 		return m_turnPIDController.AtSetpoint();
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ResetTurnPIDController()
 	{
 		m_turnPIDController.Reset();
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ConfigureTurnPID(double p, double i, double d, double tolerance, bool inverted)
 	{
 		m_turnPIDController.SetPID(p, i, d);
 		m_turnPIDController.SetTolerance(tolerance);
 		m_turnPIDDirection = inverted ? -1 : 1;
 	}
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::PrintTurnError()
 	{
 		SmartDashboard::PutNumber(GetName() + " Turn Error", m_turnPIDController.GetPositionError());
 	}
 
-	template <typename T>
+	template <class T>
 	bool Drivetrain<T>::MoveTo(double x, double y, double speed, double turnSpeed)
 	{
 		double targetX = x - m_currentX;
@@ -458,21 +433,21 @@ namespace TD
 		return finished;
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::PrintMoveToError()
 	{
 		PrintMoveError();
 		PrintTurnError();
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::PrintCurrentPosition()
 	{
 		SmartDashboard::PutNumber(GetName() + " Current X", m_currentX);
 		SmartDashboard::PutNumber(GetName() + " Current Y", m_currentY);
 	}
 
-	template <typename T>
+	template <class T>
 	bool Drivetrain<T>::SetAngleWithTarget(double angle, double speed)
 	{
 		m_alignPIDController.SetSetpoint(angle);
@@ -482,19 +457,19 @@ namespace TD
 		return m_alignPIDController.AtSetpoint();
 	}
 
-	template <typename T>
+	template <class T>
 	bool Drivetrain<T>::AlignWithTarget(double speed)
 	{
 		return SetAngleWithTarget(0, speed);
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ResetAlignPIDController()
 	{
 		m_alignPIDController.Reset();
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ConfigureAlignPID(double p, double i, double d, double tolerance, bool inverted)
 	{
 		m_alignPIDController.SetPID(p, i, d);
@@ -502,13 +477,13 @@ namespace TD
 		m_alignPIDDirection = inverted ? -1 : 1;
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::PrintAlignError()
 	{
 		SmartDashboard::PutNumber(GetName() + " Align Error", m_alignPIDController.GetPositionError());
 	}
 
-	template <typename T>
+	template <class T>
 	bool Drivetrain<T>::SetDistanceWithTarget(double objectiveHeight, double distance, double speed)
 	{
 		m_distancePIDController.SetSetpoint(distance);
@@ -518,13 +493,13 @@ namespace TD
 		return m_distancePIDController.AtSetpoint();
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ResetDistancePIDController()
 	{
 		m_distancePIDController.Reset();
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ConfigureDistancePID(double p, double i, double d, double tolerance, bool inverted)
 	{
 		m_distancePIDController.SetPID(p, i, d);
@@ -532,13 +507,13 @@ namespace TD
 		m_distancePIDDirection = inverted ? -1 : 1;
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::PrintSetDistanceError()
 	{
 		SmartDashboard::PutNumber(GetName() + " Set Distance Error", m_distancePIDController.GetPositionError());
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ResetPIDControllers()
 	{
 		ResetMovePIDController();
@@ -547,7 +522,7 @@ namespace TD
 		ResetDistancePIDController();
 	}
 
-	template <typename T>
+	template <class T>
 	double Drivetrain<T>::GetAbsoluteAngle(double x, double y)
 	{
 		double relAngle = atan(y / (x == 0 ? 0.01 : x));
@@ -561,43 +536,43 @@ namespace TD
 		return (relAngle)*180 / M_PI;
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ConfigurePosition(Pose2d startingPosition)
 	{
-		m_odometry.ResetPosition(GetRotation2d(),
+		m_odometry.ResetPosition(m_gyro.GetRotation2d(),
 								 units::meter_t{GetLeftEncodersTotal()},
 								 units::meter_t{GetRightEncodersTotal()},
 								 startingPosition);
 		m_odometryConfigured = true;
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ResetPosition()
 	{
-		m_odometry.ResetPosition(GetRotation2d(),
+		m_odometry.ResetPosition(m_gyro.GetRotation2d(),
 								 units::meter_t{GetLeftEncodersTotal()},
 								 units::meter_t{GetRightEncodersTotal()},
 								 m_odometry.GetPose());
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::UpdatePosition()
 	{
 		if (m_odometryConfigured)
 		{
-			m_odometry.Update(GetRotation2d(),
+			m_odometry.Update(m_gyro.GetRotation2d(),
 							  units::meter_t(GetLeftEncodersTotal()),
 							  units::meter_t(GetRightEncodersTotal()));
 			m_field.SetRobotPose(m_odometry.GetPose());
 		}
 	}
-	template <typename T>
+	template <class T>
 	Pose2d Drivetrain<T>::GetPosition()
 	{
 		return m_odometry.GetPose();
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::PrintPosition()
 	{
 		SmartDashboard::PutData("Field", &m_field);
@@ -605,21 +580,21 @@ namespace TD
 		SmartDashboard::PutNumber(GetName() + " Y", m_odometry.GetPose().Y().value());
 		SmartDashboard::PutNumber(GetName() + " Theta", m_odometry.GetPose().Rotation().Degrees().value());
 	}
-	template <typename T>
+	template <class T>
 	DifferentialDriveWheelSpeeds Drivetrain<T>::GetWheelSpeeds()
 	{
 		return {units::meters_per_second_t(m_frontLeftEncoder->GetVelocity()),
 				units::meters_per_second_t(m_frontRightEncoder->GetVelocity())};
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::TankDriveVolts(units::volt_t left, units::volt_t right)
 	{
 		m_right->SetVoltage(right);
 		m_left->SetVoltage(left);
 		m_drive->Feed();
 	}
-	template <typename T>
+	template <class T>
 	pair<RamseteCommand, Trajectory> Drivetrain<T>::OpenPath(string path)
 	{
 
@@ -646,7 +621,7 @@ namespace TD
 			trajectory};
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ConfigurePathFollower(units::unit_t<b_unit> b,
 											  units::unit_t<zeta_unit> z,
 											  units::volt_t ks,
@@ -660,7 +635,7 @@ namespace TD
 		m_pathKa = ka;
 	}
 
-	template <typename T>
+	template <class T>
 	void Drivetrain<T>::ConfigurePathPIDs(double rightP, double rightI, double rightD, double leftP, double leftI, double leftD)
 	{
 		m_pathRightP = rightP;
