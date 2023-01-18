@@ -85,6 +85,9 @@ namespace TD
 
 		// initialize drivetrain
 		m_drive = new DifferentialDrive(*m_left, *m_right);
+
+		InvertRight(true);
+		InvertRotation(true);
 	}
 
 	template <>
@@ -103,6 +106,9 @@ namespace TD
 
 		// initialize drivetrain
 		m_drive = new DifferentialDrive(*m_left, *m_right);
+
+		InvertRight(true);
+		InvertRotation(true);
 	}
 
 	template <>
@@ -131,6 +137,9 @@ namespace TD
 
 		// initialize drivetrain
 		m_drive = new DifferentialDrive(*m_left, *m_right);
+
+		InvertRight(true);
+		InvertRotation(true);
 	}
 
 	template <typename T>
@@ -664,4 +673,5 @@ namespace TD
 
 	template class Drivetrain<NEO>;
 	template class Drivetrain<CLASSIC>;
+
 }

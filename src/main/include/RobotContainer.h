@@ -6,6 +6,8 @@
 
 #include "Constants.h"
 #include "subsystems/Drivetrain.h"
+#include "subsystems/ElevatorBase.h"
+#include "subsystems/EncoderSubsystemBase.h"
 #include "subsystems/Limelight.h"
 #include "subsystems/MotorSubsystemBase.h"
 #include "subsystems/PlanarElevator.h"
@@ -73,4 +75,6 @@ private:
 
 	XboxController m_controller = XboxController(0);
 	CommandXboxController m_commandController = CommandXboxController(0);
+
+	bool auto_done = false;
 };
