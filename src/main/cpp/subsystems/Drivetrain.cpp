@@ -307,56 +307,26 @@ namespace TD
 		m_leftEncoder->SetDistancePerPulse(pcf_meters);
 	}
 
-	// ----------------------- Gyro -----------------------
+	// ----------------------- NavX -----------------------
 
 	template <typename T>
-	double Drivetrain<T>::GetGyro()
+	units::angle::degree Drivetrain<T>::GetYaw()
 	{
-		return m_gyro.GetAngle().value() * m_gyroDirection;
+		return units::angle::degree{m_navx.GetYaw()};
 	}
 
 	template <typename T>
-	double Drivetrain<T>::GetGyroHeading()
+	units::angle::degree Drivetrain<T>::GetPitch()
 	{
-		return m_gyroHeading + GetGyro();
+		return units::angle::degree{m_navx.GetPitch()};
 	}
 
 	template <typename T>
-	double Drivetrain<T>::GetGyroRad()
+	units::angle::degree Drivetrain<T>::GetRoll()
 	{
-		return GetGyro() * (M_PI / 180);
+		return units::angle::degree{m_navx.GetRoll()};
 	}
 
-	template <typename T>
-	double Drivetrain<T>::GetGyroHeadingRad()
-	{
-		return GetGyroHeading() * (M_PI / 180);
-	}
-
-	template <typename T>
-	void Drivetrain<T>::ResetGyro()
-	{
-		m_gyroHeading = GetGyroHeading();
-		m_gyro.Reset();
-	}
-
-	template <typename T>
-	void Drivetrain<T>::InvertGyro(bool invert)
-	{
-		m_gyroDirection = invert ? -1 : 1;
-	}
-
-	template <typename T>
-	void Drivetrain<T>::PrintGyro()
-	{
-		SmartDashboard::PutNumber(GetName() + " Gyro", GetGyro());
-	}
-
-	template <typename T>
-	void Drivetrain<T>::PrintGyroRad()
-	{
-		SmartDashboard::PutNumber(GetName() + "Gyro Rad", GetGyroRad());
-	}
 	template <typename T>
 	Rotation2d Drivetrain<T>::GetRotation2d()
 	{
@@ -583,6 +553,9 @@ namespace TD
 	template <typename T>
 	void Drivetrain<T>::UpdatePosition()
 	{
+
+		m_navx.GetWorldLinearAccelZ();
+
 		if (m_odometryConfigured)
 		{
 			m_odometry.Update(GetRotation2d(),
