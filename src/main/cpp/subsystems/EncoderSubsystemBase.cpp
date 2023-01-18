@@ -26,6 +26,8 @@
 
 #include "subsystems/EncoderSubsystemBase.h"
 
+#include <units/velocity.h>
+
 using namespace TD;
 
 EncoderSubsystemBase::EncoderSubsystemBase()
@@ -187,6 +189,14 @@ void EncoderSubsystemBase::SetMotors(vector<double> speeds)
 	}
 
 	MotorSubsystemBase::SetMotors(speeds);
+}
+
+void EncoderSubsystemBase::SetAngle(units::degree_t degrees) {
+	m_positionPID.SetSetpoint(degrees.convert<units::meter>().value());
+}
+
+units::degree_t EncoderSubsystemBase::GetAngle() {
+
 }
 
 void EncoderSubsystemBase::ResetEncoder()

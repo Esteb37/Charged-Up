@@ -124,6 +124,10 @@ namespace TD
 		 */
 		void SetMotors(vector<double>);
 
+		bool SetAngle(units::degree_t);
+
+		units::degree_t GetAngle();
+
 		// ---------- Encoder ----------
 
 		/**
