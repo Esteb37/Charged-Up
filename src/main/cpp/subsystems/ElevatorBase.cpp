@@ -26,84 +26,94 @@
 
 #include "subsystems/ElevatorBase.h"
 
-using namespace TD;
-
-template <class MotorType, class EncoderType>
-ElevatorBase<MotorType, EncoderType>::ElevatorBase(unsigned int motorPort) : EncoderSubsystemBase<MotorType, EncoderType>(motorPort)
+namespace TD
 {
-	SubsystemBase::SetName("Elevator");
-}
 
-template <class MotorType, class EncoderType>
-ElevatorBase<MotorType, EncoderType>::ElevatorBase(unsigned int motorPort, unsigned int encoderA, unsigned int encoderB) : EncoderSubsystemBase<MotorType, EncoderType>(motorPort, encoderA, encoderB)
-{
-	SubsystemBase::SetName("Elevator");
-}
-
-template <class MotorType, class EncoderType>
-ElevatorBase<MotorType, EncoderType>::ElevatorBase(vector<unsigned int> motorPorts) : EncoderSubsystemBase<MotorType, EncoderType>(motorPorts)
-{
-	SubsystemBase::SetName("Elevator");
-}
-
-template <class MotorType, class EncoderType>
-ElevatorBase<MotorType, EncoderType>::ElevatorBase(vector<unsigned int> motorPorts, unsigned int encoderA, unsigned int encoderB) : EncoderSubsystemBase<MotorType, EncoderType>(motorPorts, encoderA, encoderB)
-{
-	SubsystemBase::SetName("Elevator");
-}
-
-template <class MotorType, class EncoderType>
-void ElevatorBase<MotorType, EncoderType>::Periodic()
-{
-}
-
-// ---------- Actions -----------
-
-template <class MotorType, class EncoderType>
-void ElevatorBase<MotorType, EncoderType>::Move(double speed)
-{
-	if (MotorSubsystemBase<MotorType>::m_motorCount > 1)
+	template <class MotorType, class EncoderType>
+	ElevatorBase<MotorType, EncoderType>::ElevatorBase(unsigned int motorPort) : EncoderSubsystemBase<MotorType, EncoderType>(motorPort), MotorSubsystemBase<MotorType>(motorPort)
 	{
-		vector<double> speeds(MotorSubsystemBase<MotorType>::m_motorCount, speed);
-		MotorSubsystemBase<MotorType>::SetMotors(speeds);
+		SubsystemBase::SetName("Elevator");
 	}
 
-	else
-		MotorSubsystemBase<MotorType>::SetMotor(speed);
-}
+	template <class MotorType, class EncoderType>
+	ElevatorBase<MotorType, EncoderType>::ElevatorBase(unsigned int motorPort, unsigned int encoderA, unsigned int encoderB) : EncoderSubsystemBase<MotorType, EncoderType>(motorPort, encoderA, encoderB),
+																															   MotorSubsystemBase<MotorType>(motorPort)
+	{
+		SubsystemBase::SetName("Elevator");
+	}
 
-template <class MotorType, class EncoderType>
-void ElevatorBase<MotorType, EncoderType>::SetHeightToFloor(double height)
-{
-	m_heightToFloor = height;
-}
+	template <class MotorType, class EncoderType>
+	ElevatorBase<MotorType, EncoderType>::ElevatorBase(vector<unsigned int> motorPorts) : EncoderSubsystemBase<MotorType, EncoderType>(motorPorts),
+																						  MotorSubsystemBase<MotorType>(motorPorts)
+	{
+		SubsystemBase::SetName("Elevator");
+	}
 
-template <class MotorType, class EncoderType>
-double ElevatorBase<MotorType, EncoderType>::GetRelativeHeight()
-{
-	return EncoderSubsystemBase<MotorType, EncoderType>::GetPosition();
-}
+	template <class MotorType, class EncoderType>
+	ElevatorBase<MotorType, EncoderType>::ElevatorBase(vector<unsigned int> motorPorts, unsigned int encoderA, unsigned int encoderB) : EncoderSubsystemBase<MotorType, EncoderType>(motorPorts, encoderA, encoderB),
+																																		MotorSubsystemBase<MotorType>(motorPorts)
+	{
+		SubsystemBase::SetName("Elevator");
+	}
 
-template <class MotorType, class EncoderType>
-double ElevatorBase<MotorType, EncoderType>::GetAbsoluteHeight()
-{
-	return EncoderSubsystemBase<MotorType, EncoderType>::GetPosition() + m_heightToFloor;
-}
+	template <class MotorType, class EncoderType>
+	void ElevatorBase<MotorType, EncoderType>::Periodic()
+	{
+	}
 
-template <class MotorType, class EncoderType>
-bool ElevatorBase<MotorType, EncoderType>::SetRelativeHeight(double height, double speed)
-{
-	return EncoderSubsystemBase<MotorType, EncoderType>::SetPosition(height, speed);
-}
+	// ---------- Actions -----------
 
-template <class MotorType, class EncoderType>
-bool ElevatorBase<MotorType, EncoderType>::SetAbsoluteHeight(double height, double speed)
-{
-	return EncoderSubsystemBase<MotorType, EncoderType>::SetPosition(height - m_heightToFloor, speed);
-}
+	template <class MotorType, class EncoderType>
+	void ElevatorBase<MotorType, EncoderType>::Move(double speed)
+	{
+		if (MotorSubsystemBase<MotorType>::m_motorCount > 1)
+		{
+			vector<double> speeds(MotorSubsystemBase<MotorType>::m_motorCount, speed);
+			MotorSubsystemBase<MotorType>::SetMotors(speeds);
+		}
 
-template <class MotorType, class EncoderType>
-void ElevatorBase<MotorType, EncoderType>::SetMinMaxHeight(double min, double max)
-{
-	return EncoderSubsystemBase<MotorType, EncoderType>::SetMinMaxPosition(min, max);
+		else
+			MotorSubsystemBase<MotorType>::SetMotor(speed);
+	}
+
+	template <class MotorType, class EncoderType>
+	void ElevatorBase<MotorType, EncoderType>::SetHeightToFloor(double height)
+	{
+		m_heightToFloor = height;
+	}
+
+	template <class MotorType, class EncoderType>
+	double ElevatorBase<MotorType, EncoderType>::GetRelativeHeight()
+	{
+		return EncoderSubsystemBase<MotorType, EncoderType>::GetPosition();
+	}
+
+	template <class MotorType, class EncoderType>
+	double ElevatorBase<MotorType, EncoderType>::GetAbsoluteHeight()
+	{
+		return EncoderSubsystemBase<MotorType, EncoderType>::GetPosition() + m_heightToFloor;
+	}
+
+	template <class MotorType, class EncoderType>
+	bool ElevatorBase<MotorType, EncoderType>::SetRelativeHeight(double height, double speed)
+	{
+		return EncoderSubsystemBase<MotorType, EncoderType>::SetPosition(height, speed);
+	}
+
+	template <class MotorType, class EncoderType>
+	bool ElevatorBase<MotorType, EncoderType>::SetAbsoluteHeight(double height, double speed)
+	{
+		return EncoderSubsystemBase<MotorType, EncoderType>::SetPosition(height - m_heightToFloor, speed);
+	}
+
+	template <class MotorType, class EncoderType>
+	void ElevatorBase<MotorType, EncoderType>::SetMinMaxHeight(double min, double max)
+	{
+		return EncoderSubsystemBase<MotorType, EncoderType>::SetMinMaxPosition(min, max);
+	}
+
+	template class ElevatorBase<MotorTypes::SPARK, EncoderTypes::NEO>;
+	template class ElevatorBase<MotorTypes::SPARK, EncoderTypes::CLASSIC>;
+	template class ElevatorBase<MotorTypes::VICTOR_CAN, EncoderTypes::CLASSIC>;
+	template class ElevatorBase<MotorTypes::VICTOR_PWM, EncoderTypes::CLASSIC>;
 }

@@ -31,7 +31,7 @@
 namespace TD
 {
 	template <class MotorType, class EncoderType>
-	class ElevatorBase : public EncoderSubsystemBase<MotorType, EncoderType>
+	class ElevatorBase : virtual public EncoderSubsystemBase<MotorType, EncoderType>
 	{
 	public:
 		/**

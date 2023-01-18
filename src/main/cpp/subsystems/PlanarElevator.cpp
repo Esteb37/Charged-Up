@@ -45,12 +45,12 @@ namespace TD
 
     void PlanarElevator::MoveHorizontally(float amount)
     {
-        return xAxis.Move(amount);
+        xAxis.Move(amount);
     }
 
     void PlanarElevator::MoveVertically(float amount)
     {
-        return yAxis.Move(amount);
+        yAxis.Move(amount);
     }
 
     frc2::CommandPtr PlanarElevator::GotoPositiveX(double speed)

@@ -43,9 +43,12 @@ namespace TD
     frc2::CommandPtr GotoOrigin(double speed);
 
   private:
-    ElevatorBase<MotorTypes::SPARK, EncoderTypes::NEO> xAxis{0};
-    ElevatorBase<MotorTypes::SPARK, EncoderTypes::NEO> yAxis{1};
+    typedef ElevatorBase<MotorTypes::SPARK, EncoderTypes::NEO> Elevator;
 
-    utility::BoundPlane<1> plane = utility::BoundPlane<1>();
+    Elevator xAxis{0};
+    Elevator yAxis{0};
+
+    utility::BoundPlane<1>
+        plane = utility::BoundPlane<1>();
   };
 }

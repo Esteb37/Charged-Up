@@ -6,9 +6,10 @@
 
 #include "Constants.h"
 #include "subsystems/Drivetrain.h"
-#include "subsystems/ElevatorBase.h"
 #include "subsystems/Limelight.h"
 #include "subsystems/MotorSubsystemBase.h"
+#include "subsystems/PlanarElevator.h"
+
 #include <frc/XboxController.h>
 #include <frc/controller/PIDController.h>
 #include <frc/smartdashboard/SendableChooser.h>
@@ -58,7 +59,7 @@ public:
 	void TeleopPeriodic();
 
 private:
-	Drivetrain<CLASSIC> m_drivetrain{
+	Drivetrain<DrivetrainTypes::CLASSIC> m_drivetrain{
 		M::PWM::FRONT_RIGHT,
 		M::PWM::FRONT_LEFT,
 		M::PWM::BACK_RIGHT,
@@ -67,6 +68,8 @@ private:
 		DIO::Encoder::DRIVETRAIN_RB,
 		DIO::Encoder::DRIVETRAIN_LA,
 		DIO::Encoder::DRIVETRAIN_LB};
+
+	PlanarElevator elevator;
 
 	XboxController m_controller = XboxController(0);
 	CommandXboxController m_commandController = CommandXboxController(0);

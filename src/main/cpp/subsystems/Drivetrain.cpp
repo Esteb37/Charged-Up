@@ -658,3 +658,9 @@ void Drivetrain<T>::ConfigurePathPIDs(double rightP, double rightI, double right
 	m_pathLeftI = leftI;
 	m_pathLeftD = leftD;
 }
+
+namespace TD
+{
+	template class Drivetrain<NEO>;
+	template class Drivetrain<CLASSIC>;
+}
