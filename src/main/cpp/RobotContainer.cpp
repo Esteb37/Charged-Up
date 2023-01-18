@@ -22,7 +22,6 @@ RobotContainer::RobotContainer()
 
 void RobotContainer::InitializeSubsystems()
 {
-	m_test.Initialize(MotorConfig::NEO, EncoderConfig::REV, 0);
 }
 
 void RobotContainer::ConfigureSubsystems()
@@ -72,7 +71,6 @@ void RobotContainer::AutonomousInit()
 
 void RobotContainer::AutonomousPeriodic()
 {
-	m_test.SetPosition(90, 1);
 }
 
 void RobotContainer::ConfigureControllerBindings() {}
