@@ -154,6 +154,13 @@ namespace TD
 	{
 		m_drive->ArcadeDrive(speed * m_moveDirection * m_maxMoveSpeed, rotation * m_rotationDirection * m_maxTurnSpeed);
 	}
+
+	template <typename T>
+	void Drivetrain<T>::AutoDrive()
+	{
+		m_drive->ArcadeDrive(m_autoMoveOutput, m_autoTurnOutput);
+	}
+
 	template <typename T>
 	void Drivetrain<T>::ResetSensors()
 	{
@@ -369,9 +376,11 @@ namespace TD
 	bool Drivetrain<T>::Move(double distance, double speed)
 	{
 		m_movePIDController.SetSetpoint(distance);
-		double output = m_movePIDController.Calculate(GetEncoderAverage() * m_movePIDDirection);
+		double output = m_movePIDController.Calculate(GetEncoderAverage());
 		output = clamp(output, -1.0, 1.0);
-		Drive(output * speed, 0);
+		SmartDashboard::PutNumber("Output", output * speed * m_movePIDDirection);
+		m_autoMoveOutput = output * speed * m_movePIDDirection;
+		AutoDrive();
 		return m_movePIDController.AtSetpoint();
 	}
 
@@ -398,9 +407,10 @@ namespace TD
 	bool Drivetrain<T>::Turn(double angle, double speed)
 	{
 		m_turnPIDController.SetSetpoint(angle);
-		double output = m_turnPIDController.Calculate(GetGyro() * m_turnPIDDirection);
+		double output = m_turnPIDController.Calculate(GetGyro());
 		output = clamp(output, -1.0, 1.0);
-		Drive(0, output * speed);
+		m_autoTurnOutput = output * speed * m_turnPIDDirection;
+		AutoDrive();
 		return m_turnPIDController.AtSetpoint();
 	}
 
