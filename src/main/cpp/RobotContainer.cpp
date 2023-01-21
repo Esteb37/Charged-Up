@@ -30,6 +30,7 @@ void RobotContainer::ConfigureSubsystems()
 	m_drivetrain.ConfigureMovePID(PID::Move::P, PID::Move::I, PID::Move::D, PID::Move::TOLERANCE, true);
 	m_drivetrain.ConfigureTurnPID(PID::Turn::P, PID::Turn::I, PID::Turn::D, PID::Move::TOLERANCE);
 	m_drivetrain.InvertRightEncoders(true);
+	m_drivetrain.m_gyro.Calibrate();
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
@@ -55,8 +56,9 @@ void RobotContainer::TeleopInit()
 void RobotContainer::TeleopPeriodic()
 {
 
-	m_drivetrain.Drive(m_controller.GetLeftY(), m_controller.GetLeftX());
+	m_drivetrain.Drive(m_controller.GetRightTriggerAxis() - m_controller.GetLeftTriggerAxis(), 0);
 	m_drivetrain.PrintEncoders();
+	m_drivetrain.PrintGyro();
 }
 
 void RobotContainer::AutonomousInit()

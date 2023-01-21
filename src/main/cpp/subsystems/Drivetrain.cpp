@@ -27,6 +27,7 @@
 #include "subsystems/Drivetrain.h"
 #include <cmath>
 #include <typeinfo>
+#define ALPHA 0.95
 
 namespace TD
 {
@@ -145,7 +146,13 @@ namespace TD
 	template <typename T>
 	void Drivetrain<T>::Periodic()
 	{
+
+		float filtered_reading = ALPHA * prev_reading + (1 - ALPHA) * m_gyro.GetAccelX().value();
+		prev_reading = filtered_reading;
+
 		UpdatePosition();
+
+		SmartDashboard::PutNumber("Accel X", filtered_reading + 275);
 	}
 
 	// --------------------- Control ----------------------
@@ -165,6 +172,7 @@ namespace TD
 	void Drivetrain<T>::ResetSensors()
 	{
 
+		prev_reading = 0;
 		ResetGyro();
 		ResetEncoders();
 	}
