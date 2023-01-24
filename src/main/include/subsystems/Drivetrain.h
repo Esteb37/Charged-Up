@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include <AHRS.h>
 #include <frc/ADIS16448_IMU.h>
 #include <frc/Encoder.h>
 #include <frc/Filesystem.h>
@@ -220,27 +219,48 @@ namespace TD
 		 */
 		void SetPositionConversionFactor(double);
 
-		// ----------------------- NavX -----------------------
+		// ----------------------- Gyro -----------------------
 
 		/**
 		 * @brief Gets the current angle of the gyro in degrees
 		 * @return double angle
 		 */
-		units::angle::degree GetYaw();
-		units::angle::degree GetPitch();
-		units::angle::degree GetRoll();
-		units::angle::degree GetHeading();
-		void InvertYaw(bool);
-		void InvertPitch(bool);
-		void InvertRoll(bool);
-		void ResetYaw();
-		void ResetPitch();
-		void ResetRoll();
-		void ResetNavX();
-		void PrintYaw();
-		void PrintPitch();
-		void PrintRoll();
-		void PrintAngles();
+		double GetGyro();
+
+		/**
+		 * @brief Get the absolute angle to which the robot is heading
+		 * @return double the absolute angle
+		 */
+		double GetGyroHeading();
+
+		/**
+		 * @brief Get the gyro angle in radians
+		 * @return double angle radians
+		 */
+		double GetGyroRad();
+
+		double GetGyroHeadingRad();
+
+		/**
+		 * @brief Resets the angle to 0
+		 */
+		void ResetGyro();
+
+		/**
+		 * @brief Invert the direction of the gyro
+		 * @param invert True to invert, false to not
+		 */
+		void InvertGyro(bool);
+
+		/**
+		 * @brief Publish the value of the gyro to the dashboard
+		 */
+		void PrintGyro();
+
+		/**
+		 * @brief Publish the angle in radians to the dashboard
+		 */
+		void PrintGyroRad();
 
 		Rotation2d GetRotation2d();
 
@@ -563,8 +583,6 @@ namespace TD
 		double m_pathLeftP = 8.5;
 		double m_pathLeftI = 0;
 		double m_pathLeftD = 0;
-
-		AHRS m_navx{SPI.Port.kMXP};
 	};
 
 }
