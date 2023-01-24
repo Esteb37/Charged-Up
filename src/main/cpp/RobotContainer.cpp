@@ -27,7 +27,10 @@ void RobotContainer::InitializeSubsystems()
 void RobotContainer::ConfigureSubsystems()
 {
 	m_drivetrain.SetPositionConversionFactor(DPR::DRIVETRAIN);
-	m_drivetrain.ConfigureTurnPID(PID::Move::P, PID::Move::I, PID::Move::D, PID::Move::TOLERANCE);
+	m_drivetrain.ConfigureMovePID(PID::Move::P, PID::Move::I, PID::Move::D, PID::Move::TOLERANCE, true);
+	m_drivetrain.ConfigureTurnPID(PID::Turn::P, PID::Turn::I, PID::Turn::D, PID::Turn::TOLERANCE);
+	m_drivetrain.InvertMove(true);
+	m_drivetrain.InvertRightEncoders(true);
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
@@ -55,22 +58,22 @@ void RobotContainer::TeleopPeriodic()
 
 	m_drivetrain.Drive(m_controller.GetLeftY(), m_controller.GetLeftX());
 
-	m_drivetrain.PrintPosition();
-	m_drivetrain.PrintMotors();
 	m_drivetrain.PrintEncoders();
 	m_drivetrain.PrintGyro();
-
-	elevator.MoveHorizontally(1);
-	elevator.MoveVertically(1);
 }
 
 void RobotContainer::AutonomousInit()
 {
 	m_drivetrain.ResetGyro();
+	m_drivetrain.ResetEncoders();
 }
 
 void RobotContainer::AutonomousPeriodic()
 {
+	m_drivetrain.Turn(180, 0.7);
+
+	m_drivetrain.PrintEncoders();
+	m_drivetrain.PrintGyro();
 }
 
 void RobotContainer::ConfigureControllerBindings() {}

@@ -281,6 +281,7 @@ namespace TD
 		SmartDashboard::PutNumber(GetName() + " FL Encoder", m_frontLeftEncoder->GetPosition() * m_leftEncodersDirection);
 		SmartDashboard::PutNumber(GetName() + " BR Encoder", m_backRightEncoder->GetPosition() * m_rightEncodersDirection);
 		SmartDashboard::PutNumber(GetName() + " BL Encoder", m_backLeftEncoder->GetPosition() * m_leftEncodersDirection);
+		SmartDashboard::PutNumber(GetName() + " Encoder Average", GetEncoderAverage());
 	}
 
 	template <>
@@ -288,6 +289,7 @@ namespace TD
 	{
 		SmartDashboard::PutNumber(GetName() + " Right Encoder", m_rightEncoder->GetDistance() * m_rightEncodersDirection);
 		SmartDashboard::PutNumber(GetName() + " Left Encoder", m_leftEncoder->GetDistance() * m_leftEncodersDirection);
+		SmartDashboard::PutNumber(GetName() + " Encoder Average", GetEncoderAverage());
 	}
 
 	template <>
@@ -344,15 +346,18 @@ namespace TD
 	bool Drivetrain<T>::Move(double distance, double speed)
 	{
 		m_movePIDController.SetSetpoint(distance);
-		double output = m_movePIDController.Calculate(GetEncoderAverage() * m_movePIDDirection);
+		double output = m_movePIDController.Calculate(GetEncoderAverage());
 		output = clamp(output, -1.0, 1.0);
-		Drive(output * speed, 0);
+		output *= m_movePIDDirection * speed;
+		m_moveOutput = output;
+		Drive(output, m_turnOutput);
 		return m_movePIDController.AtSetpoint();
 	}
 
 	template <class T>
 	void Drivetrain<T>::ResetMovePIDController()
 	{
+		m_moveOutput = 0;
 		m_movePIDController.Reset();
 	}
 
@@ -373,15 +378,18 @@ namespace TD
 	bool Drivetrain<T>::Turn(double angle, double speed)
 	{
 		m_turnPIDController.SetSetpoint(angle);
-		double output = m_turnPIDController.Calculate(m_gyro.GetAngle().value() * m_turnPIDDirection);
+		double output = m_turnPIDController.Calculate(m_gyro.GetAngle().value());
 		output = clamp(output, -1.0, 1.0);
-		Drive(0, output * speed);
+		output *= m_turnPIDDirection * speed;
+		m_turnOutput = output;
+		Drive(m_moveOutput, output);
 		return m_turnPIDController.AtSetpoint();
 	}
 
 	template <class T>
 	void Drivetrain<T>::ResetTurnPIDController()
 	{
+		m_turnOutput = 0;
 		m_turnPIDController.Reset();
 	}
 

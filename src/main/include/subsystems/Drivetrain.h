@@ -124,13 +124,13 @@ namespace TD
 		 *
 		 * @param invert True to invert, false to not
 		 */
-		void InvertMove(bool);
+		void InvertMove(bool invert = true);
 
 		/**
 		 * @brief Invert the direction of rotation
 		 * @param invert True to invert, false to not
 		 */
-		void InvertRotation(bool);
+		void InvertRotation(bool invert = true);
 
 		/**
 		 *
@@ -151,13 +151,13 @@ namespace TD
 		 * @brief Invert direction of the right motor group
 		 * @param invert True to invert, false to not
 		 */
-		void InvertRight(bool);
+		void InvertRight(bool invert = true);
 
 		/**
 		 * @brief Invert direction of the left motor group
 		 * @param invert True to invert, false to not
 		 */
-		void InvertLeft(bool);
+		void InvertLeft(bool invert = true);
 
 		/**
 		 * @brief Publishes all motors to the dashboard
@@ -198,13 +198,13 @@ namespace TD
 		 * @brief Invert the direction of the right encoders
 		 * @param invert True to invert, false to not
 		 */
-		void InvertRightEncoders(bool);
+		void InvertRightEncoders(bool invert = true);
 
 		/**
 		 * @brief Invert the direction of the left encoders
 		 * @param invert True to invert, false to not
 		 */
-		void InvertLeftEncoders(bool);
+		void InvertLeftEncoders(bool invert = true);
 
 		/**
 		 * @brief Publish the value of the encoders to the dashboard
@@ -238,7 +238,7 @@ namespace TD
 		 * @brief Invert the direction of the gyro
 		 * @param invert True to invert, false to not
 		 */
-		void InvertGyro(bool);
+		void InvertGyro(bool invert = true);
 
 		/**
 		 * @brief Publish the value of the gyro to the dashboard
@@ -560,6 +560,11 @@ namespace TD
 		double m_pathLeftP = 8.5;
 		double m_pathLeftI = 0;
 		double m_pathLeftD = 0;
+
+		int m_count = 0;
+
+		double m_moveOutput = 0;
+		double m_turnOutput = 0;
 	};
 
 }
