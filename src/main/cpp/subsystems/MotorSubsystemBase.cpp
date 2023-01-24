@@ -340,18 +340,6 @@ namespace TD
 	}
 
 	template <class T>
-	void MotorSubsystemBase<T>::SetPDPChannel(unsigned int channel)
-	{
-		m_pdpChannel = channel;
-	}
-
-	template <class T>
-	double MotorSubsystemBase<T>::GetCurrent()
-	{
-		return m_pdp.GetCurrent(m_pdpChannel);
-	}
-
-	template <class T>
 	void MotorSubsystemBase<T>::InvertMotor(bool inverted)
 	{
 		assert(m_motorCount != 0 && "MotorSubsystemBase: No motor has been configured");
