@@ -7,7 +7,10 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
 
-void Robot::RobotInit() {}
+void Robot::RobotInit()
+{
+	m_container.RobotInit();
+}
 
 /**
  * This function is called every 20 ms, no matter the mode. Use
@@ -20,6 +23,7 @@ void Robot::RobotInit() {}
 void Robot::RobotPeriodic()
 {
 	frc2::CommandScheduler::GetInstance().Run();
+	m_container.RobotPeriodic();
 }
 
 /**

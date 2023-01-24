@@ -89,18 +89,18 @@ namespace PID
 {
 	namespace Move
 	{
-		constexpr double P = 30;
-		constexpr double I = 10;
-		constexpr double D = 0;
+		constexpr double P = 10;
+		constexpr double I = 0;
+		constexpr double D = 0.0;
 		constexpr double TOLERANCE = 0.01;
 	}
 
 	namespace Turn
 	{
-		constexpr double P = 0.1;
-		constexpr double I = 1;
-		constexpr double D = 0.0;
-		constexpr double TOLERANCE = 0.5;
+		constexpr double P = 100;
+		constexpr double I = 0;
+		constexpr double D = 100;
+		constexpr double TOLERANCE = 0.01;
 	}
 
 	namespace Align
@@ -188,7 +188,8 @@ namespace Wheel
 
 namespace DPR
 {
-	constexpr double DRIVETRAIN = Wheel::CIRCUMFERENCE / Wheel::ENCODER_PULSE;
+	constexpr double ENCODER_PULSE = 2048;
+	constexpr double DRIVETRAIN = Wheel::CIRCUMFERENCE / ENCODER_PULSE;
 	constexpr double TURRET = 360;	 // TODO Define turret encoder to angle ratio
 	constexpr double ELEVATOR = 180; // TODO Define elevator distance per revolution
 	constexpr double SHOOTER = 180;	 // TODO Define shooter conversion factor
