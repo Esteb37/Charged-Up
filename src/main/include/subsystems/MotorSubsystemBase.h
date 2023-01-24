@@ -83,10 +83,6 @@ namespace TD
 
 		vector<double> GetMotors();
 
-		void SetPDPChannel(unsigned int);
-
-		double GetCurrent();
-
 		/**
 		 * @brief Invert motor direction
 		 * @param invert True to invert, false to not
@@ -134,11 +130,7 @@ namespace TD
 
 		unsigned int m_motorCount = 0;
 
-		PowerDistribution m_pdp{0, PowerDistribution::ModuleType::kCTRE};
-
 		const double kMotorStallThreshold = 10;
-
-		double m_pdpChannel = 0;
 	};
 
 }
