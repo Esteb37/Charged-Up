@@ -588,8 +588,6 @@ namespace TD
 
 		double m_autoMoveOutput = 0;
 		double m_autoTurnOutput = 0;
-
-		float prev_reading = 0;
 	};
 
 }

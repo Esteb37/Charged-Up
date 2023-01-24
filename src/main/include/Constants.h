@@ -33,8 +33,8 @@ namespace M
 	namespace PWM
 	{
 		constexpr port FRONT_RIGHT = 0;
-		constexpr port FRONT_LEFT = 2;
-		constexpr port BACK_RIGHT = 1;
+		constexpr port FRONT_LEFT = 1;
+		constexpr port BACK_RIGHT = 2;
 		constexpr port BACK_LEFT = 3;
 		constexpr port FEEDER = 4;
 		constexpr port TURRET = 5;
