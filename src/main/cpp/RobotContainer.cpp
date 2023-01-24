@@ -20,8 +20,17 @@ RobotContainer::RobotContainer()
 	ConfigureSubsystems();
 }
 
-void RobotContainer::InitializeSubsystems()
+void RobotContainer::RobotInit()
 {
+	m_drivetrain.ResetGyro();
+	m_drivetrain.ResetEncoders();
+}
+
+void RobotContainer::RobotPeriodic()
+{
+
+	m_drivetrain.PrintEncoders();
+	m_drivetrain.PrintGyro();
 }
 
 void RobotContainer::ConfigureSubsystems()
@@ -55,11 +64,7 @@ void RobotContainer::TeleopInit()
 }
 void RobotContainer::TeleopPeriodic()
 {
-
 	m_drivetrain.Drive(m_controller.GetLeftY(), m_controller.GetLeftX());
-
-	m_drivetrain.PrintEncoders();
-	m_drivetrain.PrintGyro();
 }
 
 void RobotContainer::AutonomousInit()
@@ -71,9 +76,6 @@ void RobotContainer::AutonomousInit()
 void RobotContainer::AutonomousPeriodic()
 {
 	m_drivetrain.Turn(180, 0.7);
-
-	m_drivetrain.PrintEncoders();
-	m_drivetrain.PrintGyro();
 }
 
 void RobotContainer::ConfigureControllerBindings() {}

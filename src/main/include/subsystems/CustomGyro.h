@@ -112,18 +112,6 @@ namespace TD
          */
         units::angle::degree_t GetRoll();
 
-        double GetDisplacementX();
-
-        double GetDisplacementY();
-
-        double GetDisplacementZ();
-
-        void ResetDisplacement();
-
-        void UpdateDisplacement();
-
-        void PrintDisplacement();
-
     private:
         T *m_gyro;
 

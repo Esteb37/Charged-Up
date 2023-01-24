@@ -42,8 +42,6 @@ public:
 
 	frc2::Command *GetAutonomousCommand();
 
-	void InitializeSubsystems();
-
 	void ConfigureSubsystems();
 
 	void ConfigureControllerBindings();

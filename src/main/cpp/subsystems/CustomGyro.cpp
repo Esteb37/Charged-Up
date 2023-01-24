@@ -52,16 +52,10 @@ namespace TD
         return units::angle::degree_t{m_gyro->GetAngle()} * m_direction;
     }
 
-    template <>
-    units::angle::degree_t CustomGyro<CLASSIC>::GetHeading()
+    template <class T>
+    units::angle::degree_t CustomGyro<T>::GetHeading()
     {
-        return units::angle::degree_t{m_gyro->GetAngle()} + m_heading;
-    }
-
-    template <>
-    units::angle::degree_t CustomGyro<NAVX>::GetHeading()
-    {
-        return units::angle::degree_t{m_gyro->GetCompassHeading()};
+        return GetAngle() + m_heading;
     }
 
     template <>
@@ -103,6 +97,7 @@ namespace TD
     template <class T>
     void CustomGyro<T>::Reset()
     {
+        m_heading = GetAngle();
         m_gyro->Reset();
     }
 
@@ -148,73 +143,6 @@ namespace TD
     frc::Rotation2d CustomGyro<T>::GetRotation2d()
     {
         return Rotation2d{GetHeading()};
-    }
-
-    template <class T>
-    double CustomGyro<T>::GetDisplacementX()
-    {
-
-        UpdateDisplacement();
-
-        return ((NAVX *)m_gyro)->GetDisplacementX();
-    }
-
-    template <class T>
-    double CustomGyro<T>::GetDisplacementY()
-    {
-
-        UpdateDisplacement();
-
-        return ((NAVX *)m_gyro)->GetDisplacementY();
-    }
-
-    template <class T>
-    double CustomGyro<T>::GetDisplacementZ()
-    {
-
-        UpdateDisplacement();
-
-        return ((NAVX *)m_gyro)->GetDisplacementZ();
-    }
-
-    template <class T>
-    void CustomGyro<T>::ResetDisplacement()
-    {
-        if (!std::is_same<T, NAVX>::value)
-        {
-            throw "This method is only available for NavX";
-        };
-
-        ((NAVX *)m_gyro)->ResetDisplacement();
-    }
-
-    template <class T>
-    void CustomGyro<T>::UpdateDisplacement()
-    {
-        if (!std::is_same<T, NAVX>::value)
-        {
-            throw "This method is only available for NavX";
-        };
-
-        float accel_x = ((NAVX *)m_gyro)->GetWorldLinearAccelX();
-        float accel_y = ((NAVX *)m_gyro)->GetWorldLinearAccelY();
-        float rate = ((NAVX *)m_gyro)->GetActualUpdateRate();
-        bool isMoving = ((NAVX *)m_gyro)->IsMoving();
-
-        ((NAVX *)m_gyro)->UpdateDisplacement(accel_x, accel_y, rate, isMoving);
-    }
-
-    template <class T>
-    void CustomGyro<T>::PrintDisplacement()
-    {
-        if (!std::is_same<T, NAVX>::value)
-        {
-            throw "This method is only available for NavX";
-        };
-
-        SmartDashboard::PutNumber("Displacement X", GetDisplacementX());
-        SmartDashboard::PutNumber("Displacement Y", GetDisplacementY());
-        SmartDashboard::PutNumber("Displacement Z", GetDisplacementZ());
     }
 
     template class CustomGyro<CLASSIC>;
