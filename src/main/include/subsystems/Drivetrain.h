@@ -107,6 +107,8 @@ namespace TD
 		 */
 		void Drive(double, double);
 
+		void AutoDrive();
+
 		/**
 		 * @brief Reset all systems
 		 */
@@ -561,10 +563,8 @@ namespace TD
 		double m_pathLeftI = 0;
 		double m_pathLeftD = 0;
 
-		int m_count = 0;
-
-		double m_moveOutput = 0;
-		double m_turnOutput = 0;
+		double m_autoMoveOutput = 0;
+		double m_autoTurnOutput = 0;
 	};
 
 }

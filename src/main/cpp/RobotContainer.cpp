@@ -75,7 +75,6 @@ void RobotContainer::AutonomousInit()
 
 void RobotContainer::AutonomousPeriodic()
 {
-	m_drivetrain.Turn(180, 0.7);
 }
 
 void RobotContainer::ConfigureControllerBindings() {}

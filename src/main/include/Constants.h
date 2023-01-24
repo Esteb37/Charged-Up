@@ -183,6 +183,7 @@ namespace Wheel
 	constexpr double RADIUS = DIAMETER / 2;
 	constexpr double GEAR_RATIO = 10.71;
 	constexpr auto TRACK_WIDTH = 0.55_m;
+	constexpr double ENCODER_PULSE = 48;
 }
 
 namespace DPR
