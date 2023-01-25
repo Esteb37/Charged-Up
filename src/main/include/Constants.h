@@ -14,8 +14,13 @@
  * they are needed.
  */
 #define _USE_MATH_DEFINES
+#include <frc/kinematics/DifferentialDriveKinematics.h>
 #include <math.h>
+#include <units/acceleration.h>
+#include <units/angle.h>
 #include <units/length.h>
+#include <units/velocity.h>
+#include <units/voltage.h>
 
 using port = unsigned int;
 
@@ -218,6 +223,34 @@ namespace Minmax
 	constexpr double TURRET_MAX = 360;
 	constexpr double ELEVATOR_MIN = 250;
 	constexpr double ELEVATOR_MAX = 30;
+}
+
+using Velocity =
+	units::compound_unit<units::meters, units::inverse<units::seconds>>;
+using Acceleration =
+	units::compound_unit<Velocity, units::inverse<units::seconds>>;
+using kv_unit = units::compound_unit<units::volts, units::inverse<Velocity>>;
+using ka_unit =
+	units::compound_unit<units::volts, units::inverse<Acceleration>>;
+using b_unit =
+	units::compound_unit<units::squared<units::radians>,
+						 units::inverse<units::squared<units::meters>>>;
+using zeta_unit = units::inverse<units::radians>;
+
+namespace Path
+{
+	constexpr units::unit_t<Velocity> MAX_SPEED = 1.0_mps;
+	constexpr units::unit_t<Acceleration> MAX_ACCELERATION = 1.0_mps_sq;
+
+	constexpr units::unit_t<b_unit> RAMSETE_B = 2 * 0 * 1_rad * 1_rad / (1_m * 1_m);
+	constexpr units::unit_t<zeta_unit> RAMSETE_ZETA = 0.7 / 1_rad;
+
+	constexpr auto KS = 0.22_V;
+	constexpr units::unit_t<kv_unit> KV = 1.98 * 1_V * 1_s / 1_m;
+	constexpr units::unit_t<ka_unit> KA = 0.2 * 1_V * 1_s * 1_s / 1_m;
+
+	constexpr double RIGHT_P = 8.5;
+	constexpr double LEFT_P = 8.5;
 }
 
 constexpr double shooterRPMFromDistance(double distance)

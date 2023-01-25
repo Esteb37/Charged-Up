@@ -35,13 +35,13 @@
 #include <frc/controller/RamseteController.h>
 #include <frc/drive/DifferentialDrive.h>
 #include <frc/kinematics/ChassisSpeeds.h>
-#include <frc/kinematics/DifferentialDriveKinematics.h>
 #include <frc/kinematics/DifferentialDriveOdometry.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/motorcontrol/VictorSP.h>
 #include <frc/simulation/DifferentialDrivetrainSim.h>
 #include <frc/simulation/EncoderSim.h>
 #include <frc/smartdashboard/Field2d.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/trajectory/TrajectoryUtil.h>
 #include <frc2/command/Command.h>
 #include <frc2/command/InstantCommand.h>
@@ -51,6 +51,7 @@
 #include <frc2/command/RunCommand.h>
 #include <frc2/command/SequentialCommandGroup.h>
 #include <frc2/command/SubsystemBase.h>
+
 #include <rev/CANSparkMax.h>
 #include <wpi/fs.h>
 
@@ -219,33 +220,9 @@ namespace TD
 		 */
 		void SetPositionConversionFactor(double);
 
-		/**
-		 * @brief Gets the current angle of the gyro in degrees
-		 * @return double angle
-		 */
-		double GetGyro();
+		void SetGyro(CustomGyro<GyroTypes::NAVX> *gyro);
 
-		/**
-		 * @brief Get the absolute angle to which the robot is heading
-		 * @return double the absolute angle
-		 */
-		double GetGyroHeading();
-
-		/**
-		 * @brief Resets the angle to 0
-		 */
-		void ResetGyro();
-
-		/**
-		 * @brief Invert the direction of the gyro
-		 * @param invert True to invert, false to not
-		 */
-		void InvertGyro(bool invert = true);
-
-		/**
-		 * @brief Publish the value of the gyro to the dashboard
-		 */
-		void PrintGyro();
+		void SetGyro(CustomGyro<ADIS16448_IMU> *gyro);
 
 		// ----------------------- Auto -----------------------
 
@@ -255,8 +232,7 @@ namespace TD
 		 * @param speed The speed at which to drive.
 		 * @return Wether or not the drivetrain is at the desired heading.
 		 */
-		bool
-		Move(double, double);
+		bool Move(double, double);
 
 		/**
 		 * @brief Prints the move PID error to the dashboard
@@ -409,15 +385,15 @@ namespace TD
 		 * @brief Configures the odometry object for position estimation
 		 * @param startingPose the starting position of the robot
 		 */
-		void ConfigurePosition(Pose2d);
+		void SetPose(Pose2d);
 
-		void UpdatePosition();
+		void UpdatePose();
 
-		void ResetPosition();
+		void ResetPose();
 
-		Pose2d GetPosition();
+		Pose2d GetPose();
 
-		void PrintPosition();
+		void PrintPose();
 
 		using Velocity =
 			units::compound_unit<units::meters, units::inverse<units::seconds>>;
@@ -437,15 +413,11 @@ namespace TD
 
 		void TankDriveVolts(units::volt_t left, units::volt_t right);
 
-		pair<RamseteCommand, Trajectory> OpenPath(string);
-
 		void ConfigurePathFollower(units::unit_t<b_unit>,
 								   units::unit_t<zeta_unit>,
 								   units::volt_t,
 								   units::unit_t<kv_unit>,
-								   units::unit_t<ka_unit>);
-
-		void ConfigurePathPIDs(double, double, double, double, double, double);
+								   units::unit_t<ka_unit>, double, double);
 
 		// ----- Motors -----
 
@@ -491,7 +463,7 @@ namespace TD
 
 		PIDController m_distancePIDController{0.1, 0, 0};
 
-		CustomGyro<GyroTypes::NAVX> m_gyro;
+		CustomGyroBase *m_gyro;
 
 	protected:
 		// Limelight::GetInstance();
@@ -524,44 +496,28 @@ namespace TD
 
 		bool m_reachedAngle = false;
 
-		double m_trackWidth = 60;
-
 		double m_rightEncodersTotal = 0;
 
 		double m_leftEncodersTotal = 0;
 
 		// ---- Kinematics ----
 
-		double m_odometryConfigured = false;
-
-		Pose2d m_position;
+		Pose2d m_pose;
 
 		Field2d m_field;
 
-		DifferentialDriveKinematics m_kinematics{Wheel::TRACK_WIDTH};
-
 		Trajectory m_path;
 
-		DifferentialDriveOdometry m_odometry{
-			m_gyro.GetRotation2d(),
-			units::meter_t{GetLeftEncoders()},
-			units::meter_t{GetRightEncoders()},
-			frc::Pose2d{0_m, 0_m, 0_rad}};
+		DifferentialDriveOdometry m_odometry{Rotation2d{}, 0_m, 0_m};
 
 		// ----- Path follower -----
-
-		units::unit_t<b_unit> m_pathB;
-		units::unit_t<zeta_unit> m_pathZeta;
-		units::volt_t m_pathKs;
-		units::unit_t<kv_unit> m_pathKv;
-		units::unit_t<ka_unit> m_pathKa;
-
+		units::unit_t<b_unit> m_pathB = 0_rad * 0_rad / (1_m * 1_m);
+		units::unit_t<zeta_unit> m_pathZeta = 0 / 1_rad;
+		units::volt_t m_pathKs = 0_V;
+		units::unit_t<kv_unit> m_pathKv = 0_V * 0_s / 1_m;
+		units::unit_t<ka_unit> m_pathKa = 0_V * 0_s * 0_s / 1_m;
 		double m_pathRightP = 8.5;
-		double m_pathRightI = 0;
-		double m_pathRightD = 0;
 		double m_pathLeftP = 8.5;
-		double m_pathLeftI = 0;
-		double m_pathLeftD = 0;
 
 		double m_autoMoveOutput = 0;
 		double m_autoTurnOutput = 0;

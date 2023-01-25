@@ -5,16 +5,17 @@
 #pragma once
 
 #include "Constants.h"
+#include "subsystems/CustomGyro.h"
 #include "subsystems/Drivetrain.h"
 #include "subsystems/ElevatorBase.h"
 #include "subsystems/EncoderSubsystemBase.h"
 #include "subsystems/Limelight.h"
 #include "subsystems/MotorSubsystemBase.h"
 #include "subsystems/PlanarElevator.h"
-
 #include <frc/XboxController.h>
 #include <frc/controller/PIDController.h>
 #include <frc/smartdashboard/SendableChooser.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/Command.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/PIDCommand.h>
@@ -22,6 +23,10 @@
 #include <frc2/command/RunCommand.h>
 #include <frc2/command/SequentialCommandGroup.h>
 #include <frc2/command/button/CommandXboxController.h>
+#include <pathplanner/lib/PathPlanner.h>
+#include <pathplanner/lib/auto/RamseteAutoBuilder.h>
+using namespace pathplanner;
+
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -40,7 +45,7 @@ class RobotContainer
 public:
 	RobotContainer();
 
-	frc2::Command *GetAutonomousCommand();
+	frc2::CommandPtr GetAutonomousCommand();
 
 	void ConfigureSubsystems();
 
@@ -71,6 +76,8 @@ private:
 
 	XboxController m_controller = XboxController(0);
 	CommandXboxController m_commandController = CommandXboxController(0);
+
+	CustomGyro<GyroTypes::NAVX> m_gyro;
 
 	bool auto_done = false;
 };

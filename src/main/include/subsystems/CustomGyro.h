@@ -48,8 +48,31 @@ namespace TD
         typedef AHRS NAVX;
     }
 
+    class CustomGyroBase
+    {
+    public:
+        CustomGyroBase() = default;
+        virtual ~CustomGyroBase() = default;
+        virtual units::angle::degree_t GetAngle() = 0;
+        virtual units::angle::degree_t GetHeading() = 0;
+        virtual void ResetAngle() = 0;
+        virtual void ResetDisplacement() = 0;
+        virtual void Reset() = 0;
+        virtual void Invert(bool) = 0;
+        virtual void Print() = 0;
+        virtual void PrintAngles() = 0;
+        virtual void PrintYaw() = 0;
+        virtual void PrintPitch() = 0;
+        virtual void PrintRoll() = 0;
+        virtual frc::Rotation2d GetRotation2d() = 0;
+        virtual units::angle::degree_t GetYaw() = 0;
+        virtual units::angle::degree_t GetPitch() = 0;
+        virtual units::angle::degree_t GetRoll() = 0;
+        virtual void Calibrate() = 0;
+    };
+
     template <class T>
-    class CustomGyro
+    class CustomGyro : public CustomGyroBase
     {
     public:
         CustomGyro();
@@ -60,57 +83,63 @@ namespace TD
          * @brief Gets the current angle of the gyro in degrees
          * @return double angle
          */
-        units::angle::degree_t GetAngle();
+        units::angle::degree_t GetAngle() override;
 
         /**
          * @brief Get the absolute angle to which the robot is heading
          * @return double the absolute angle
          */
-        units::angle::degree_t GetHeading();
+        units::angle::degree_t GetHeading() override;
 
         /**
          * @brief Resets the angle to 0
          */
-        void Reset();
+        void ResetAngle() override;
+
+        void ResetDisplacement() override;
+
+        void Reset() override;
 
         /**
          * @brief Invert the direction of the gyro
          * @param invert True to invert, false to not
          */
-        void Invert(bool);
+        void Invert(bool) override;
 
         /**
          * @brief Publish the value of the gyro to the dashboard
          */
-        void Print();
+        void Print() override;
 
-        void PrintAngles();
+        void PrintAngles() override;
 
-        void PrintYaw();
+        void PrintYaw() override;
 
-        void PrintPitch();
+        void PrintPitch() override;
 
-        void PrintRoll();
+        void PrintRoll() override;
 
-        frc::Rotation2d GetRotation2d();
-
-        /**
-         * @brief Gets the current angle of the gyro in degrees
-         * @return double angle
-         */
-        units::angle::degree_t GetYaw();
+        frc::Rotation2d GetRotation2d() override;
 
         /**
          * @brief Gets the current angle of the gyro in degrees
          * @return double angle
          */
-        units::angle::degree_t GetPitch();
+        units::angle::degree_t GetYaw() override;
 
         /**
          * @brief Gets the current angle of the gyro in degrees
          * @return double angle
          */
-        units::angle::degree_t GetRoll();
+        units::angle::degree_t GetPitch() override;
+
+        /**
+         * @brief Gets the current angle of the gyro in degrees
+         * @return double angle
+         */
+        units::angle::degree_t GetRoll() override;
+
+        void Calibrate() override;
 
     private:
         T *m_gyro;
@@ -119,4 +148,5 @@ namespace TD
 
         char m_direction = 1;
     };
+
 }
