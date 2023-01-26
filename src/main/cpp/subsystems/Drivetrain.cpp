@@ -86,8 +86,9 @@ namespace TD
 		// initialize drivetrain
 		m_drive = new DifferentialDrive(*m_left, *m_right);
 
-		InvertRight(true);
-		InvertRotation(true);
+		InvertLeft();
+		InvertRotation();
+		InvertRightEncoders();
 	}
 
 	template <>
@@ -107,8 +108,9 @@ namespace TD
 		// initialize drivetrain
 		m_drive = new DifferentialDrive(*m_left, *m_right);
 
-		InvertRight(true);
-		InvertRotation(true);
+		InvertLeft();
+		InvertRotation();
+		InvertRightEncoders();
 	}
 
 	template <>
@@ -138,8 +140,9 @@ namespace TD
 		// initialize drivetrain
 		m_drive = new DifferentialDrive(*m_left, *m_right);
 
-		InvertRight(true);
-		InvertRotation(true);
+		InvertLeft();
+		InvertRotation();
+		InvertRightEncoders();
 	}
 
 	template <class T>

@@ -30,39 +30,47 @@ void RobotContainer::ConfigureSubsystems()
 
 	m_drivetrain.ConfigureTurnPID(PID::Turn::P, PID::Turn::I, PID::Turn::D, PID::Turn::TOLERANCE);
 
-	m_drivetrain.ConfigurePathFollower(Path::RAMSETE_B, Path::RAMSETE_ZETA, Path::KS, Path::KV, Path::KA, Path::RIGHT_P, Path::LEFT_P);
+	m_drivetrain.ConfigurePathFollower(Path::RAMSETE_B, Path::RAMSETE_ZETA, Path::KS, Path::KV, Path::KA, Path::KP, Path::KP);
 
 	m_drivetrain.ResetPose();
-
-	m_drivetrain.InvertMove(true);
-	m_drivetrain.InvertRightEncoders(true);
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
+	DifferentialDriveKinematics kinematics{Wheel::TRACK_WIDTH};
 
-	frc::DifferentialDriveKinematics kinematics{Wheel::TRACK_WIDTH};
+	fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
+	deployDirectory = deployDirectory / "output" / "Path.wpilib.json";
+	auto trajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory.string());
 
-	PathPlannerTrajectory trajectory = PathPlanner::loadPath("path", PathConstraints(Path::MAX_SPEED, Path::MAX_ACCELERATION));
-
-	RamseteAutoBuilder autoBuilder(
+	RamseteCommand ramseteCommand{
+		trajectory,
 		[this]()
 		{ return m_drivetrain.GetPose(); },
-		[this](auto initPose)
-		{ return m_drivetrain.SetPose(initPose); },
-		RamseteController(Path::RAMSETE_B, Path::RAMSETE_ZETA),
+		RamseteController{Path::RAMSETE_B,
+						  Path::RAMSETE_ZETA},
+		SimpleMotorFeedforward<units::meters>{
+			Path::KS,
+			Path::KV,
+			Path::KA},
 		kinematics,
-		SimpleMotorFeedforward<units::meters>(Path::KS, Path::KV, Path::KA),
 		[this]
 		{ return m_drivetrain.GetWheelSpeeds(); },
-		PIDConstants(Path::LEFT_P, 0, 0),
+		frc2::PIDController{Path::KP, 0, 0},
+		frc2::PIDController{Path::KP, 0, 0},
 		[this](auto left, auto right)
 		{ m_drivetrain.TankDriveVolts(left, right); },
-		{},
-		{&m_drivetrain});
+		{&m_drivetrain}};
 
-	frc2::CommandPtr command = autoBuilder.followPath(trajectory);
-	return command.get();
+	// Reset odometry to the starting pose of the trajectory.
+	m_drivetrain.SetPose(trajectory.InitialPose());
+
+	// no auto
+	return new frc2::SequentialCommandGroup(
+		std::move(ramseteCommand),
+		frc2::InstantCommand([this]
+							 { m_drivetrain.TankDriveVolts(0_V, 0_V); },
+							 {}));
 }
 
 void RobotContainer::TeleopInit()

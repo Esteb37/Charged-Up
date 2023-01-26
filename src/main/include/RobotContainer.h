@@ -12,10 +12,12 @@
 #include "subsystems/Limelight.h"
 #include "subsystems/MotorSubsystemBase.h"
 #include "subsystems/PlanarElevator.h"
+#include <frc/Filesystem.h>
 #include <frc/XboxController.h>
 #include <frc/controller/PIDController.h>
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/trajectory/TrajectoryUtil.h>
 #include <frc2/command/Command.h>
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/PIDCommand.h>
@@ -25,6 +27,7 @@
 #include <frc2/command/button/CommandXboxController.h>
 #include <pathplanner/lib/PathPlanner.h>
 #include <pathplanner/lib/auto/RamseteAutoBuilder.h>
+#include <wpi/fs.h>
 using namespace pathplanner;
 
 /**
