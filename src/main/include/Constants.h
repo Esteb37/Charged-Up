@@ -94,10 +94,10 @@ namespace PID
 {
 	namespace Move
 	{
-		constexpr double P = 10;
+		constexpr double P = 8.6846;
 		constexpr double I = 0;
-		constexpr double D = 0.0;
-		constexpr double TOLERANCE = 0.01;
+		constexpr double D = 1.3567;
+		constexpr double TOLERANCE = 0.06;
 	}
 
 	namespace Turn
@@ -188,7 +188,6 @@ namespace Wheel
 	constexpr double RADIUS = DIAMETER / 2;
 	constexpr double GEAR_RATIO = 10.71;
 	constexpr auto TRACK_WIDTH = 0.55_m;
-	constexpr double ENCODER_PULSE = 48;
 }
 
 namespace DPR
@@ -239,18 +238,18 @@ using zeta_unit = units::inverse<units::radians>;
 
 namespace Path
 {
-	constexpr units::unit_t<Velocity> MAX_SPEED = 1.0_mps;
+	constexpr units::unit_t<Velocity> MAX_SPEED = 3.0_mps;
 	constexpr units::unit_t<Acceleration> MAX_ACCELERATION = 1.0_mps_sq;
 
 	constexpr units::unit_t<b_unit> RAMSETE_B = 2 * 0 * 1_rad * 1_rad / (1_m * 1_m);
 	constexpr units::unit_t<zeta_unit> RAMSETE_ZETA = 0.7 / 1_rad;
 
-	constexpr auto KS = 0.22_V;
-	constexpr units::unit_t<kv_unit> KV = 1.98 * 1_V * 1_s / 1_m;
-	constexpr units::unit_t<ka_unit> KA = 0.2 * 1_V * 1_s * 1_s / 1_m;
+	constexpr auto KS = 0.70674_V;
+	constexpr units::unit_t<kv_unit> KV = 2.9818 * 1_V * 1_s / 1_m;
+	constexpr units::unit_t<ka_unit> KA = 1.5094 * 1_V * 1_s * 1_s / 1_m;
 
-	constexpr double RIGHT_P = 8.5;
-	constexpr double LEFT_P = 8.5;
+	constexpr double RIGHT_P = 4.7307;
+	constexpr double LEFT_P = 4.7307;
 }
 
 constexpr double shooterRPMFromDistance(double distance)

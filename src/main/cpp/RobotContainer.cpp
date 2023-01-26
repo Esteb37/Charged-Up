@@ -18,6 +18,7 @@ void RobotContainer::RobotPeriodic()
 {
 	m_gyro.Print();
 	m_drivetrain.PrintEncoders();
+	m_drivetrain.PrintPose();
 }
 
 void RobotContainer::ConfigureSubsystems()
@@ -37,7 +38,7 @@ void RobotContainer::ConfigureSubsystems()
 	m_drivetrain.InvertRightEncoders(true);
 }
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand()
+frc2::Command *RobotContainer::GetAutonomousCommand()
 {
 
 	frc::DifferentialDriveKinematics kinematics{Wheel::TRACK_WIDTH};
@@ -61,13 +62,14 @@ frc2::CommandPtr RobotContainer::GetAutonomousCommand()
 		{&m_drivetrain});
 
 	frc2::CommandPtr command = autoBuilder.followPath(trajectory);
-	return command;
+	return command.get();
 }
 
 void RobotContainer::TeleopInit()
 {
 	m_gyro.Reset();
 	m_drivetrain.ResetEncoders();
+	m_drivetrain.ResetPose();
 }
 void RobotContainer::TeleopPeriodic()
 {
@@ -76,8 +78,6 @@ void RobotContainer::TeleopPeriodic()
 
 void RobotContainer::AutonomousInit()
 {
-	m_gyro.Reset();
-	m_drivetrain.ResetEncoders();
 }
 
 void RobotContainer::AutonomousPeriodic()

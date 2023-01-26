@@ -542,8 +542,8 @@ namespace TD
 	template <class T>
 	void Drivetrain<T>::ResetPose()
 	{
-		m_odometry.ResetPosition(Rotation2d{}, 0_m, 0_m, Pose2d{});
 		ResetEncoders();
+		m_odometry.ResetPosition(Rotation2d{}, 0_m, 0_m, Pose2d{});
 	}
 
 	template <class T>
@@ -567,6 +567,7 @@ namespace TD
 		SmartDashboard::PutNumber(GetName() + " X", m_odometry.GetPose().Translation().X().value());
 		SmartDashboard::PutNumber(GetName() + " Y", m_odometry.GetPose().Translation().Y().value());
 		SmartDashboard::PutNumber(GetName() + " Angle", m_odometry.GetPose().Rotation().Degrees().value());
+		SmartDashboard::PutData("Field", &m_field);
 	}
 
 	template <>
