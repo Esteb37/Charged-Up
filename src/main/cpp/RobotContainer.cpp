@@ -40,7 +40,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 	DifferentialDriveKinematics kinematics{Wheel::TRACK_WIDTH};
 
 	fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
-	deployDirectory = deployDirectory / "output" / "Path.wpilib.json";
+	deployDirectory = deployDirectory / "output" / "circle.wpilib.json";
 	auto trajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory.string());
 
 	RamseteCommand ramseteCommand{
