@@ -11,12 +11,11 @@ RobotContainer::RobotContainer()
 
 void RobotContainer::RobotInit()
 {
-	m_drivetrain.ResetEncoders();
+	m_gyro.Calibrate();
 }
 
 void RobotContainer::RobotPeriodic()
 {
-	m_gyro.Print();
 	m_drivetrain.PrintEncoders();
 	m_drivetrain.PrintPose();
 }
@@ -37,11 +36,32 @@ void RobotContainer::ConfigureSubsystems()
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
+
 	DifferentialDriveKinematics kinematics{Wheel::TRACK_WIDTH};
 
-	fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
-	deployDirectory = deployDirectory / "output" / "circle.wpilib.json";
-	auto trajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory.string());
+	DifferentialDriveVoltageConstraint autoVoltageConstraint{
+		SimpleMotorFeedforward<units::meters>{
+			Path::KS, Path::KV, Path::KA},
+		kinematics, 12_V};
+
+	// Set up config for trajectory
+	frc::TrajectoryConfig config{Path::MAX_SPEED,
+								 Path::MAX_ACCELERATION};
+	// Add kinematics to ensure max speed is actually obeyed
+	config.SetKinematics(kinematics);
+	// Apply the voltage constraint
+	config.AddConstraint(autoVoltageConstraint);
+
+	// An example trajectory to follow.  All units in meters.
+	auto trajectory = frc::TrajectoryGenerator::GenerateTrajectory(
+		// Start at the origin facing the +X direction
+		frc::Pose2d{0_m, 0_m, 0_deg},
+		// Pass through these two interior waypoints, making an 's' curve path
+		{frc::Translation2d{1_m, 1_m}, frc::Translation2d{2_m, -1_m}, frc::Translation2d{2_m, -1_m}},
+		// End 3 meters straight ahead of where we started, facing forward
+		frc::Pose2d{3_m, 0_m, 0_deg},
+		// Pass the config
+		config);
 
 	RamseteCommand ramseteCommand{
 		trajectory,
@@ -76,16 +96,17 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 void RobotContainer::TeleopInit()
 {
 	m_gyro.Reset();
-	m_drivetrain.ResetEncoders();
 	m_drivetrain.ResetPose();
 }
 void RobotContainer::TeleopPeriodic()
 {
-	m_drivetrain.Drive(m_controller.GetLeftY(), m_controller.GetLeftX());
+	m_drivetrain.TankDriveVolts(5_V, 5_V);
 }
 
 void RobotContainer::AutonomousInit()
 {
+	m_gyro.Reset();
+	m_drivetrain.ResetEncoders();
 }
 
 void RobotContainer::AutonomousPeriodic()
