@@ -104,7 +104,7 @@ namespace TD
          * @brief Invert the direction of the gyro
          * @param invert True to invert, false to not
          */
-        void Invert(bool) override;
+        void Invert(bool = true) override;
 
         /**
          * @brief Publish the value of the gyro to the dashboard
@@ -144,7 +144,7 @@ namespace TD
     private:
         T *m_gyro;
 
-        units::angle::degree_t m_heading;
+        units::angle::degree_t m_heading = 0_deg;
 
         char m_direction = 1;
     };

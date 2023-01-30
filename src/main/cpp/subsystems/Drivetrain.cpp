@@ -87,7 +87,6 @@ namespace TD
 		m_drive = new DifferentialDrive(*m_left, *m_right);
 
 		InvertLeft();
-		InvertRotation();
 		InvertRightEncoders();
 	}
 
@@ -109,7 +108,6 @@ namespace TD
 		m_drive = new DifferentialDrive(*m_left, *m_right);
 
 		InvertLeft();
-		InvertRotation();
 		InvertRightEncoders();
 	}
 
@@ -141,7 +139,6 @@ namespace TD
 		m_drive = new DifferentialDrive(*m_left, *m_right);
 
 		InvertLeft();
-		InvertRotation();
 		InvertRightEncoders();
 	}
 
@@ -300,6 +297,7 @@ namespace TD
 		{
 			SmartDashboard::PutNumber(GetName() + " Right Encoder", m_rightEncoder->GetDistance() * m_rightEncodersDirection);
 			SmartDashboard::PutNumber(GetName() + " Left Encoder", m_leftEncoder->GetDistance() * m_leftEncodersDirection);
+			SmartDashboard::PutNumber(GetName() + " Encoder Average", GetEncoderAverage());
 			SmartDashboard::PutNumber(GetName() + " Encoder Average", GetEncoderAverage());
 		}
 	}
@@ -538,15 +536,17 @@ namespace TD
 	template <class T>
 	void Drivetrain<T>::SetPose(Pose2d startingPosition)
 	{
-		m_odometry.ResetPosition(Rotation2d{}, 0_m, 0_m, startingPosition);
 		ResetEncoders();
+		m_odometry.ResetPosition(m_gyro->GetRotation2d(), units::meter_t(GetLeftEncodersTotal()), units::meter_t(GetRightEncodersTotal()), startingPosition);
+		m_field.SetRobotPose(startingPosition);
 	}
 
 	template <class T>
 	void Drivetrain<T>::ResetPose()
 	{
 		ResetEncoders();
-		m_odometry.ResetPosition(Rotation2d{}, 0_m, 0_m, Pose2d{});
+		m_odometry.ResetPosition(m_gyro->GetRotation2d(), 0_m, 0_m, Pose2d{});
+		m_field.SetRobotPose(Pose2d{});
 	}
 
 	template <class T>
@@ -577,23 +577,23 @@ namespace TD
 	DifferentialDriveWheelSpeeds Drivetrain<NEO>::GetWheelSpeeds()
 	{
 		return {units::meters_per_second_t(m_frontLeftEncoder->GetVelocity()),
-				units::meters_per_second_t(m_frontRightEncoder->GetVelocity())};
+				-units::meters_per_second_t(m_frontRightEncoder->GetVelocity())};
 	}
 
 	template <>
 	DifferentialDriveWheelSpeeds Drivetrain<CLASSIC>::GetWheelSpeeds()
 	{
 		return {units::meters_per_second_t(m_leftEncoder->GetRate()),
-				units::meters_per_second_t(m_rightEncoder->GetRate())};
+				-units::meters_per_second_t(m_rightEncoder->GetRate())};
 	}
 
 	template <class T>
 	void Drivetrain<T>::TankDriveVolts(units::volt_t left, units::volt_t right)
 	{
-		SmartDashboard::PutNumber(GetName() + " Left Voltage", left.value());
-		SmartDashboard::PutNumber(GetName() + " Right Voltage", right.value());
-		m_right->SetVoltage(right);
-		m_left->SetVoltage(left);
+		SmartDashboard::PutNumber("Right Speed", m_rightEncoder->GetRate());
+		SmartDashboard::PutNumber("Left Speed", m_leftEncoder->GetRate());
+		m_right->SetVoltage(-right);
+		m_left->SetVoltage(-left);
 		m_drive->Feed();
 	}
 

@@ -187,7 +187,7 @@ namespace Wheel
 	constexpr double CIRCUMFERENCE = DIAMETER * M_PI;
 	constexpr double RADIUS = DIAMETER / 2;
 	constexpr double GEAR_RATIO = 10.71;
-	constexpr auto TRACK_WIDTH = 0.55_m;
+	constexpr auto TRACK_WIDTH = 0.60775_m;
 }
 
 namespace DPR
@@ -238,17 +238,17 @@ using zeta_unit = units::inverse<units::radians>;
 
 namespace Path
 {
-	constexpr units::unit_t<Velocity> MAX_SPEED = 3.0_mps;
-	constexpr units::unit_t<Acceleration> MAX_ACCELERATION = 1.0_mps_sq;
+	constexpr units::unit_t<Velocity> MAX_SPEED = 2_mps;
+	constexpr units::unit_t<Acceleration> MAX_ACCELERATION = 3.0_mps_sq;
 
 	constexpr units::unit_t<b_unit> RAMSETE_B = 2 * 0 * 1_rad * 1_rad / (1_m * 1_m);
 	constexpr units::unit_t<zeta_unit> RAMSETE_ZETA = 0.7 / 1_rad;
 
-	constexpr auto KS = 0.70674_V;
-	constexpr units::unit_t<kv_unit> KV = 2.9818 * 1_V * 1_s / 1_m;
-	constexpr units::unit_t<ka_unit> KA = 1.5094 * 1_V * 1_s * 1_s / 1_m;
+	constexpr auto KS = 0.88469_V;
+	constexpr units::unit_t<kv_unit> KV = 3.0056 * 1_V * 1_s / 1_m;
+	constexpr units::unit_t<ka_unit> KA = 0.59519 * 1_V * 1_s * 1_s / 1_m;
 
-	constexpr double KP = 4.7307;
+	constexpr double KP = 4.7841;
 }
 
 constexpr double shooterRPMFromDistance(double distance)

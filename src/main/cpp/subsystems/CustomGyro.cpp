@@ -157,7 +157,7 @@ namespace TD
     template <class T>
     frc::Rotation2d CustomGyro<T>::GetRotation2d()
     {
-        return Rotation2d{GetHeading()};
+        return Rotation2d{-GetHeading()};
     }
 
     template <class T>

@@ -41,6 +41,9 @@ void Robot::DisabledPeriodic() {}
  */
 void Robot::AutonomousInit()
 {
+
+	m_container.AutonomousInit();
+
 	auto command = m_container.GetAutonomousCommand();
 	if (command != nullptr)
 	{
