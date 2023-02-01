@@ -26,6 +26,8 @@
 
 #include "subsystems/EncoderSubsystemBase.h"
 
+#include <units/velocity.h>
+
 namespace TD
 {
 	using namespace EncoderTypes;
@@ -163,16 +165,30 @@ namespace TD
 	}
 
 	template <class MotorType, class EncoderType>
-	void EncoderSubsystemBase<MotorType, EncoderType>::ResetEncoder()
-	{
-		if (std::is_same<EncoderType, NEO>::value)
-		{
-			((NEO *)m_encoder)->SetPosition(0);
-		}
-		else
-		{
-			((CLASSIC *)m_encoder)->Reset();
-		}
+	void EncoderSubsystemBase<MotorType, EncoderType>::SetAngleSetpoint(units::angle::degree_t _degrees) {
+		double degrees = std::fmod(_degrees.value(), 360);
+
+		double target = degrees / 360.0;
+
+		m_positionPID.SetSetpoint(target);
+	}
+
+	template <class MotorType, class EncoderType>
+	bool EncoderSubsystemBase<MotorType, EncoderType>::ReachAngle(double speed) {
+		double output = m_positionPID.Calculate(GetPosition());
+
+		SetMotor(output * speed);
+
+		return m_positionPID.AtSetpoint();
+
+	}
+
+	template <class MotorType, class EncoderType>
+	units::degree_t EncoderSubsystemBase<MotorType, EncoderType>::GetAngle() {
+		// Turns to degrees
+		double degrees = std::fmod(GetPosition() * 360, 360);
+
+		return units::angle::degree_t{degrees};
 	}
 
 	template <class MotorType, class EncoderType>
@@ -328,6 +344,29 @@ namespace TD
 		m_minPosition = min;
 		m_maxPosition = max;
 	}
+
+	template <class MotorType, class EncoderType>
+	frc2::CommandPtr EncoderSubsystemBase<MotorType, EncoderType>::MatchDegrees(units::angle::degree_t degrees, double speed) {
+		return frc2::cmd::
+
+		RunOnce([this, &degrees] {
+			this -> SetAngleSetpoint(degrees);
+		})
+		
+		.AndThen([this, &speed] {
+			this -> ReachAngle(speed);
+		})
+		
+		.Until([this] {
+			return this -> m_positionPID.AtSetpoint();
+		});
+	}
+
+	template<class MotorType, class EncoderType>
+	frc2::CommandPtr EncoderSubsystemBase<MotorType, EncoderType>::GotoZeroDegrees(double speed) {
+		return MatchDegrees(0_deg, speed);
+	}
+
 
 	template class EncoderSubsystemBase<MotorTypes::SPARK, NEO>;
 	template class EncoderSubsystemBase<MotorTypes::SPARK, CLASSIC>;

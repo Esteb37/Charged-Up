@@ -36,8 +36,10 @@ void RobotContainer::RobotPeriodic()
 void RobotContainer::ConfigureSubsystems()
 {
 	m_drivetrain.SetPositionConversionFactor(DPR::DRIVETRAIN);
+
 	m_drivetrain.ConfigureMovePID(PID::Move::P, PID::Move::I, PID::Move::D, PID::Move::TOLERANCE, true);
 	m_drivetrain.ConfigureTurnPID(PID::Turn::P, PID::Turn::I, PID::Turn::D, PID::Turn::TOLERANCE);
+
 	m_drivetrain.InvertMove(true);
 	m_drivetrain.InvertRightEncoders(true);
 }
@@ -64,17 +66,18 @@ void RobotContainer::TeleopInit()
 }
 void RobotContainer::TeleopPeriodic()
 {
-	m_drivetrain.Drive(m_controller.GetLeftY(), m_controller.GetLeftX());
+	m_drivetrain.TeleopDrive(*Common::Peripherals::controller);
 }
 
-void RobotContainer::AutonomousInit()
-{
-	m_drivetrain.ResetGyro();
-	m_drivetrain.ResetEncoders();
+	m_drivetrain.PrintPosition();
+	m_drivetrain.PrintEncoders();
+	m_drivetrain.PrintGyro();
 }
 
-void RobotContainer::AutonomousPeriodic()
-{
-}
+void RobotContainer::ConfigureControllerBindings() {
+	m_commandController.POVUp().OnTrue(std::move(m_elevator.GotoPositiveY()););
+	m_commandController.POVDown().OnTrue(std::move(m_elevator.GotoNegativeY()););
 
-void RobotContainer::ConfigureControllerBindings() {}
+	m_commandController.POVRight().OnTrue(std::move(m_elevator.GotoPositiveX()););
+	m_commandController.POVLeft().OnTrue(std::move(m_elevator.GotoNegativeX()););
+}

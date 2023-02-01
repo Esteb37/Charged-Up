@@ -155,11 +155,18 @@ namespace TD
 		m_drive->ArcadeDrive(speed * m_moveDirection * m_maxMoveSpeed, rotation * m_rotationDirection * m_maxTurnSpeed);
 	}
 
-	template <typename T>
-	void Drivetrain<T>::AutoDrive()
-	{
-		m_drive->ArcadeDrive(m_autoMoveOutput, m_autoTurnOutput);
+	template <class T>
+	void Drivetrain<T>::TeleopDrive(frc::&controller) {
+		double speed = controller.GetLeftY(); 
+		double rotation = controller.GetRightX();
+
+		if (speed > 0 || rotation > 0) {
+			Drive(speed, rotation);
+		}
 	}
+
+void Drivetrain::ResetSensors()
+{
 
 	template <typename T>
 	void Drivetrain<T>::ResetSensors()

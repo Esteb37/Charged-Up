@@ -21,7 +21,11 @@
 #include <frc2/command/ParallelRaceGroup.h>
 #include <frc2/command/RunCommand.h>
 #include <frc2/command/SequentialCommandGroup.h>
-#include <frc2/command/button/CommandXboxController.h>
+
+#include "Constants.h"
+#include "subsystems/ElevatorBase.h"
+#include "subsystems/Limelight.h"
+
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -67,7 +71,17 @@ private:
 		DIO::Encoder::DRIVETRAIN_RA,
 		DIO::Encoder::DRIVETRAIN_RB,
 		DIO::Encoder::DRIVETRAIN_LA,
-		DIO::Encoder::DRIVETRAIN_LB};
+		DIO::Encoder::DRIVETRAIN_LB
+	};
+
+	ElevatorBase<MotorTypes::SPARK, EncoderTypes::NEO> m_planarXAxis{M::PWM::ELEVATOR_X};
+	ElevatorBase<MotorTypes::SPARK, EncoderTypes::NEO> m_planarYAxis{M::PWM::ELEVATOR_Y};
+
+	PlanarElevator m_elevator{m_planarXAxis, m_planarYAxis};
+
+	EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> m_elevatorArm{M::PWM::ELEVATOR_ARM};
+
+	EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> m_turret{M::PWM::TURRET},
 
 	XboxController m_controller = XboxController(0);
 	CommandXboxController m_commandController = CommandXboxController(0);

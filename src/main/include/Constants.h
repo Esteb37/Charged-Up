@@ -36,8 +36,9 @@ namespace M
 		constexpr port FRONT_LEFT = 1;
 		constexpr port BACK_RIGHT = 2;
 		constexpr port BACK_LEFT = 3;
-		constexpr port FEEDER = 4;
-		constexpr port TURRET = 5;
+		constexpr port ELEVATOR_X = 4;
+		constexpr port ELEVATOR_Y = 5;
+		constexpr port ELEVATOR_ARM = 6;
 	}
 
 	namespace Servo
@@ -182,8 +183,8 @@ namespace Wheel
 	constexpr double CIRCUMFERENCE = DIAMETER * M_PI;
 	constexpr double RADIUS = DIAMETER / 2;
 	constexpr double GEAR_RATIO = 10.71;
-	constexpr auto TRACK_WIDTH = 0.55_m;
 	constexpr double ENCODER_PULSE = 48;
+	constexpr auto TRACK_WIDTH = 0.55_m;
 }
 
 namespace DPR

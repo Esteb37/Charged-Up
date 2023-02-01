@@ -9,10 +9,12 @@
 
 namespace TD
 {
+  typedef ElevatorBase<MotorTypes::SPARK, EncoderTypes::NEO> Elevator;
+
   class PlanarElevator : frc2::SubsystemBase
   {
   public:
-    PlanarElevator();
+    PlanarElevator(Elevator *, Elevator*);
 
     void Periodic() override;
 
@@ -43,10 +45,9 @@ namespace TD
     frc2::CommandPtr GotoOrigin(double speed);
 
   private:
-    typedef ElevatorBase<MotorTypes::SPARK, EncoderTypes::NEO> Elevator;
 
-    Elevator xAxis{0};
-    Elevator yAxis{1};
+    Elevator *xAxis;
+    Elevator *yAxis;
 
     utility::BoundPlane<1>
         plane = utility::BoundPlane<1>();

@@ -51,6 +51,7 @@
 #include <frc2/command/RunCommand.h>
 #include <frc2/command/SequentialCommandGroup.h>
 #include <frc2/command/SubsystemBase.h>
+#include <frcUserProgram/XboxController.h>
 #include <rev/CANSparkMax.h>
 #include <wpi/fs.h>
 
@@ -106,6 +107,7 @@ namespace TD
 		 * @param rotation Rotation to turn
 		 */
 		void Drive(double, double);
+		void TeleopDrive(frc::XboxController &)
 
 		void AutoDrive();
 

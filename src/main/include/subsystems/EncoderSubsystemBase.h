@@ -29,6 +29,7 @@
 #include <frc/Encoder.h>
 #include <frc/controller/PIDController.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc2/command/Commands.h>
 
 #include "subsystems/MotorSubsystemBase.h"
 
@@ -100,6 +101,11 @@ namespace TD
 		 * @param speeds The speeds to set the motors to
 		 */
 		void SetMotors(vector<double>);
+
+		void SetAngleSetpoint(units::angle::degree_t);
+		bool ReachAngle(double);
+
+		units::degree_t GetAngle();
 
 		// ---------- Encoder ----------
 
@@ -218,6 +224,13 @@ namespace TD
 		 * @brief Prints RPM PID error
 		 */
 		void PrintRPMError();
+
+
+		// ---------- Commands ---------- 
+
+		frc2::CommandPtr MatchDegrees(units::angle::degree_t, double);
+		frc2::CommandPtr GotoZeroDegrees(double);
+
 
 		// ---------- Elements ----------
 
