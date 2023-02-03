@@ -28,7 +28,7 @@ private:
 	// Have it null by default so that if testing teleop it
 	// doesn't have undefined behavior and potentially crash.
 
-	frc2::Command *m_autonomousCommand = nullptr;
+	frc2::CommandPtr *m_autonomousCommand = nullptr;
 
 	RobotContainer m_container;
 };

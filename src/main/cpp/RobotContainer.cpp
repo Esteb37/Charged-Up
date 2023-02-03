@@ -4,72 +4,88 @@
 
 #include "RobotContainer.h"
 
-double GetNumber(string name, double alt)
-{
-	return SmartDashboard::GetNumber(name, alt);
-}
-
-double GetBool(string name, double alt)
-{
-	return SmartDashboard::GetBoolean(name, alt);
-}
-
 RobotContainer::RobotContainer()
 {
-	InitializeSubsystems();
 	ConfigureSubsystems();
 }
 
 void RobotContainer::RobotInit()
 {
-	m_drivetrain.ResetGyro();
-	m_drivetrain.ResetEncoders();
+	m_gyro.Calibrate();
 }
 
 void RobotContainer::RobotPeriodic()
 {
-
 	m_drivetrain.PrintEncoders();
-	m_drivetrain.PrintGyro();
+	m_drivetrain.PrintPose();
 }
 
 void RobotContainer::ConfigureSubsystems()
 {
+	m_drivetrain.SetGyro(&m_gyro);
 	m_drivetrain.SetPositionConversionFactor(DPR::DRIVETRAIN);
+
 	m_drivetrain.ConfigureMovePID(PID::Move::P, PID::Move::I, PID::Move::D, PID::Move::TOLERANCE, true);
+
 	m_drivetrain.ConfigureTurnPID(PID::Turn::P, PID::Turn::I, PID::Turn::D, PID::Turn::TOLERANCE);
-	m_drivetrain.InvertMove(true);
-	m_drivetrain.InvertRightEncoders(true);
+
+	m_drivetrain.ConfigurePathFollower(Path::RAMSETE_B, Path::RAMSETE_ZETA, Path::KS, Path::KV, Path::KA, Path::KP, Path::KP);
+
+	m_drivetrain.ResetPose();
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
 {
-	auto [command, trajectory] = m_drivetrain.OpenPath("path.json");
+
+	DifferentialDriveKinematics kinematics{Wheel::TRACK_WIDTH};
+
+	fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
+	deployDirectory = deployDirectory / "output" / "auto.wpilib.json";
+	auto trajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory.string());
+
+	RamseteCommand ramseteCommand{
+		trajectory,
+		[this]()
+		{ return m_drivetrain.GetPose(); },
+		RamseteController{Path::RAMSETE_B,
+						  Path::RAMSETE_ZETA},
+		SimpleMotorFeedforward<units::meters>{
+			Path::KS,
+			Path::KV,
+			Path::KA},
+		kinematics,
+		[this]
+		{ return m_drivetrain.GetWheelSpeeds(); },
+		frc2::PIDController{Path::KP, 0, 0},
+		frc2::PIDController{Path::KP, 0, 0},
+		[this](auto left, auto right)
+		{ m_drivetrain.TankDriveVolts(left, right); },
+		{&m_drivetrain}};
 
 	// Reset odometry to the starting pose of the trajectory.
-	m_drivetrain.ConfigurePosition(trajectory.InitialPose());
+	m_drivetrain.SetPose(trajectory.InitialPose());
 
 	// no auto
-	return new SequentialCommandGroup(
-		move(command),
-		InstantCommand([this]
-					   { m_drivetrain.TankDriveVolts(0_V, 0_V); },
-					   {}));
+	return new frc2::SequentialCommandGroup(
+		std::move(ramseteCommand),
+		frc2::InstantCommand([this]
+							 { m_drivetrain.TankDriveVolts(0_V, 0_V); },
+							 {}));
 }
 
 void RobotContainer::TeleopInit()
 {
-	m_drivetrain.ResetGyro();
-	m_drivetrain.ResetEncoders();
+	m_gyro.Reset();
+	m_drivetrain.ResetPose();
 }
 void RobotContainer::TeleopPeriodic()
 {
-	m_drivetrain.Drive(m_controller.GetLeftY(), m_controller.GetLeftX());
+	m_drivetrain.TankDriveVolts(5_V, 5_V);
 }
 
 void RobotContainer::AutonomousInit()
 {
-	m_drivetrain.ResetGyro();
+	m_gyro.Reset();
 	m_drivetrain.ResetEncoders();
 }
 

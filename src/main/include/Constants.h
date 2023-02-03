@@ -14,8 +14,13 @@
  * they are needed.
  */
 #define _USE_MATH_DEFINES
+#include <frc/kinematics/DifferentialDriveKinematics.h>
 #include <math.h>
+#include <units/acceleration.h>
+#include <units/angle.h>
 #include <units/length.h>
+#include <units/velocity.h>
+#include <units/voltage.h>
 
 using port = unsigned int;
 
@@ -89,10 +94,10 @@ namespace PID
 {
 	namespace Move
 	{
-		constexpr double P = 10;
+		constexpr double P = 8.6846;
 		constexpr double I = 0;
-		constexpr double D = 0.0;
-		constexpr double TOLERANCE = 0.01;
+		constexpr double D = 1.3567;
+		constexpr double TOLERANCE = 0.06;
 	}
 
 	namespace Turn
@@ -182,8 +187,7 @@ namespace Wheel
 	constexpr double CIRCUMFERENCE = DIAMETER * M_PI;
 	constexpr double RADIUS = DIAMETER / 2;
 	constexpr double GEAR_RATIO = 10.71;
-	constexpr auto TRACK_WIDTH = 0.55_m;
-	constexpr double ENCODER_PULSE = 48;
+	constexpr auto TRACK_WIDTH = 0.60775_m;
 }
 
 namespace DPR
@@ -218,6 +222,33 @@ namespace Minmax
 	constexpr double TURRET_MAX = 360;
 	constexpr double ELEVATOR_MIN = 250;
 	constexpr double ELEVATOR_MAX = 30;
+}
+
+using Velocity =
+	units::compound_unit<units::meters, units::inverse<units::seconds>>;
+using Acceleration =
+	units::compound_unit<Velocity, units::inverse<units::seconds>>;
+using kv_unit = units::compound_unit<units::volts, units::inverse<Velocity>>;
+using ka_unit =
+	units::compound_unit<units::volts, units::inverse<Acceleration>>;
+using b_unit =
+	units::compound_unit<units::squared<units::radians>,
+						 units::inverse<units::squared<units::meters>>>;
+using zeta_unit = units::inverse<units::radians>;
+
+namespace Path
+{
+	constexpr units::unit_t<Velocity> MAX_SPEED = 2_mps;
+	constexpr units::unit_t<Acceleration> MAX_ACCELERATION = 3.0_mps_sq;
+
+	constexpr units::unit_t<b_unit> RAMSETE_B = 2 * 0 * 1_rad * 1_rad / (1_m * 1_m);
+	constexpr units::unit_t<zeta_unit> RAMSETE_ZETA = 0.7 / 1_rad;
+
+	constexpr auto KS = 0.88469_V;
+	constexpr units::unit_t<kv_unit> KV = 3.0056 * 1_V * 1_s / 1_m;
+	constexpr units::unit_t<ka_unit> KA = 0.59519 * 1_V * 1_s * 1_s / 1_m;
+
+	constexpr double KP = 0.05;
 }
 
 constexpr double shooterRPMFromDistance(double distance)

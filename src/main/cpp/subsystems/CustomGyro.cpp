@@ -97,8 +97,23 @@ namespace TD
     template <class T>
     void CustomGyro<T>::Reset()
     {
-        m_heading = GetAngle();
+        ResetAngle();
+        ResetDisplacement();
+    }
+
+    template <class T>
+    void CustomGyro<T>::ResetAngle()
+    {
         m_gyro->Reset();
+    }
+
+    template <class T>
+    void CustomGyro<T>::ResetDisplacement()
+    {
+        if (typeid(T) == typeid(NAVX))
+        {
+            ((NAVX *)m_gyro)->ResetDisplacement();
+        }
     }
 
     template <class T>
@@ -142,7 +157,13 @@ namespace TD
     template <class T>
     frc::Rotation2d CustomGyro<T>::GetRotation2d()
     {
-        return Rotation2d{GetHeading()};
+        return Rotation2d{-GetHeading()};
+    }
+
+    template <class T>
+    void CustomGyro<T>::Calibrate()
+    {
+        m_gyro->Calibrate();
     }
 
     template class CustomGyro<CLASSIC>;

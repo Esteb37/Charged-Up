@@ -86,8 +86,8 @@ namespace TD
 		// initialize drivetrain
 		m_drive = new DifferentialDrive(*m_left, *m_right);
 
-		InvertRight(true);
-		InvertRotation(true);
+		InvertLeft();
+		InvertRightEncoders();
 	}
 
 	template <>
@@ -107,8 +107,8 @@ namespace TD
 		// initialize drivetrain
 		m_drive = new DifferentialDrive(*m_left, *m_right);
 
-		InvertRight(true);
-		InvertRotation(true);
+		InvertLeft();
+		InvertRightEncoders();
 	}
 
 	template <>
@@ -138,14 +138,14 @@ namespace TD
 		// initialize drivetrain
 		m_drive = new DifferentialDrive(*m_left, *m_right);
 
-		InvertRight(true);
-		InvertRotation(true);
+		InvertLeft();
+		InvertRightEncoders();
 	}
 
 	template <class T>
 	void Drivetrain<T>::Periodic()
 	{
-		UpdatePosition();
+		UpdatePose();
 	}
 
 	// --------------------- Control ----------------------
@@ -164,7 +164,7 @@ namespace TD
 	template <typename T>
 	void Drivetrain<T>::ResetSensors()
 	{
-		m_gyro.Reset();
+		m_gyro->Reset();
 		ResetEncoders();
 	}
 	template <class T>
@@ -281,22 +281,25 @@ namespace TD
 		m_leftEncodersDirection = invert ? -1 : 1;
 	}
 
-	template <>
-	void Drivetrain<NEO>::PrintEncoders()
+	template <class T>
+	void Drivetrain<T>::PrintEncoders()
 	{
-		SmartDashboard::PutNumber(GetName() + " FR Encoder", m_frontRightEncoder->GetPosition() * m_rightEncodersDirection);
-		SmartDashboard::PutNumber(GetName() + " FL Encoder", m_frontLeftEncoder->GetPosition() * m_leftEncodersDirection);
-		SmartDashboard::PutNumber(GetName() + " BR Encoder", m_backRightEncoder->GetPosition() * m_rightEncodersDirection);
-		SmartDashboard::PutNumber(GetName() + " BL Encoder", m_backLeftEncoder->GetPosition() * m_leftEncodersDirection);
-		SmartDashboard::PutNumber(GetName() + " Encoder Average", GetEncoderAverage());
-	}
-
-	template <>
-	void Drivetrain<CLASSIC>::PrintEncoders()
-	{
-		SmartDashboard::PutNumber(GetName() + " Right Encoder", m_rightEncoder->GetDistance() * m_rightEncodersDirection);
-		SmartDashboard::PutNumber(GetName() + " Left Encoder", m_leftEncoder->GetDistance() * m_leftEncodersDirection);
-		SmartDashboard::PutNumber(GetName() + " Encoder Average", GetEncoderAverage());
+		// Added this because SmartDashboard doesn't work with specified templates for some reason
+		if (is_same<T, NEO>::value)
+		{
+			SmartDashboard::PutNumber(GetName() + " FR Encoder", m_frontRightEncoder->GetPosition() * m_rightEncodersDirection);
+			SmartDashboard::PutNumber(GetName() + " FL Encoder", m_frontLeftEncoder->GetPosition() * m_leftEncodersDirection);
+			SmartDashboard::PutNumber(GetName() + " BR Encoder", m_backRightEncoder->GetPosition() * m_rightEncodersDirection);
+			SmartDashboard::PutNumber(GetName() + " BL Encoder", m_backLeftEncoder->GetPosition() * m_leftEncodersDirection);
+			SmartDashboard::PutNumber(GetName() + " Encoder Average", GetEncoderAverage());
+		}
+		else
+		{
+			SmartDashboard::PutNumber(GetName() + " Right Encoder", m_rightEncoder->GetDistance() * m_rightEncodersDirection);
+			SmartDashboard::PutNumber(GetName() + " Left Encoder", m_leftEncoder->GetDistance() * m_leftEncodersDirection);
+			SmartDashboard::PutNumber(GetName() + " Encoder Average", GetEncoderAverage());
+			SmartDashboard::PutNumber(GetName() + " Encoder Average", GetEncoderAverage());
+		}
 	}
 
 	template <>
@@ -316,35 +319,16 @@ namespace TD
 	}
 
 	// ----------------------- Gyro -----------------------
-
-	template <typename T>
-	double Drivetrain<T>::GetGyro()
+	template <class T>
+	void Drivetrain<T>::SetGyro(CustomGyro<GyroTypes::NAVX> *gyro)
 	{
-		return m_gyro.GetAngle().value();
+		m_gyro = gyro;
 	}
 
-	template <typename T>
-	double Drivetrain<T>::GetGyroHeading()
+	template <class T>
+	void Drivetrain<T>::SetGyro(CustomGyro<ADIS16448_IMU> *gyro)
 	{
-		return m_gyro.GetAngle().value();
-	}
-
-	template <typename T>
-	void Drivetrain<T>::ResetGyro()
-	{
-		m_gyro.Reset();
-	}
-
-	template <typename T>
-	void Drivetrain<T>::InvertGyro(bool invert)
-	{
-		m_gyro.Invert(invert);
-	}
-
-	template <typename T>
-	void Drivetrain<T>::PrintGyro()
-	{
-		m_gyro.Print();
+		m_gyro = gyro;
 	}
 
 	// ----------------------- Auto -----------------------
@@ -363,7 +347,7 @@ namespace TD
 	template <class T>
 	void Drivetrain<T>::ResetMovePIDController()
 	{
-		m_moveOutput = 0;
+		m_autoMoveOutput = 0;
 		m_movePIDController.Reset();
 	}
 
@@ -384,7 +368,7 @@ namespace TD
 	bool Drivetrain<T>::Turn(double angle, double speed)
 	{
 		m_turnPIDController.SetSetpoint(angle);
-		double output = m_turnPIDController.Calculate(GetGyro());
+		double output = m_turnPIDController.Calculate(m_gyro->GetAngle().value());
 		output = clamp(output, -1.0, 1.0) * speed * m_turnPIDDirection;
 		m_autoTurnOutput = output;
 		AutoDrive();
@@ -394,7 +378,7 @@ namespace TD
 	template <class T>
 	void Drivetrain<T>::ResetTurnPIDController()
 	{
-		m_turnOutput = 0;
+		m_autoTurnOutput = 0;
 		m_turnPIDController.Reset();
 	}
 
@@ -550,88 +534,67 @@ namespace TD
 	}
 
 	template <class T>
-	void Drivetrain<T>::ConfigurePosition(Pose2d startingPosition)
+	void Drivetrain<T>::SetPose(Pose2d startingPosition)
 	{
-		m_odometry.ResetPosition(m_gyro.GetRotation2d(),
-								 units::meter_t{GetLeftEncodersTotal()},
-								 units::meter_t{GetRightEncodersTotal()},
-								 startingPosition);
-		m_odometryConfigured = true;
+		ResetEncoders();
+		m_odometry.ResetPosition(m_gyro->GetRotation2d(), units::meter_t(GetLeftEncodersTotal()), units::meter_t(GetRightEncodersTotal()), startingPosition);
+		m_field.SetRobotPose(startingPosition);
 	}
 
 	template <class T>
-	void Drivetrain<T>::ResetPosition()
+	void Drivetrain<T>::ResetPose()
 	{
-		m_odometry.ResetPosition(m_gyro.GetRotation2d(),
-								 units::meter_t{GetLeftEncodersTotal()},
-								 units::meter_t{GetRightEncodersTotal()},
-								 m_odometry.GetPose());
+		ResetEncoders();
+		m_odometry.ResetPosition(m_gyro->GetRotation2d(), 0_m, 0_m, Pose2d{});
+		m_field.SetRobotPose(Pose2d{});
 	}
 
 	template <class T>
-	void Drivetrain<T>::UpdatePosition()
+	void Drivetrain<T>::UpdatePose()
 	{
-		if (m_odometryConfigured)
-		{
-			m_odometry.Update(m_gyro.GetRotation2d(),
-							  units::meter_t(GetLeftEncodersTotal()),
-							  units::meter_t(GetRightEncodersTotal()));
-			m_field.SetRobotPose(m_odometry.GetPose());
-		}
+		m_odometry.Update(m_gyro->GetRotation2d(),
+						  units::meter_t(GetLeftEncodersTotal()),
+						  units::meter_t(GetRightEncodersTotal()));
+
+		m_field.SetRobotPose(m_odometry.GetPose());
 	}
 	template <class T>
-	Pose2d Drivetrain<T>::GetPosition()
+	Pose2d Drivetrain<T>::GetPose()
 	{
 		return m_odometry.GetPose();
 	}
 
 	template <class T>
-	void Drivetrain<T>::PrintPosition()
+	void Drivetrain<T>::PrintPose()
 	{
+		SmartDashboard::PutNumber(GetName() + " X", m_odometry.GetPose().Translation().X().value());
+		SmartDashboard::PutNumber(GetName() + " Y", m_odometry.GetPose().Translation().Y().value());
+		SmartDashboard::PutNumber(GetName() + " Angle", m_odometry.GetPose().Rotation().Degrees().value());
 		SmartDashboard::PutData("Field", &m_field);
-		SmartDashboard::PutNumber(GetName() + " X", m_odometry.GetPose().X().value());
-		SmartDashboard::PutNumber(GetName() + " Y", m_odometry.GetPose().Y().value());
-		SmartDashboard::PutNumber(GetName() + " Theta", m_odometry.GetPose().Rotation().Degrees().value());
 	}
-	template <class T>
-	DifferentialDriveWheelSpeeds Drivetrain<T>::GetWheelSpeeds()
+
+	template <>
+	DifferentialDriveWheelSpeeds Drivetrain<NEO>::GetWheelSpeeds()
 	{
-		return {units::meters_per_second_t(m_frontLeftEncoder->GetVelocity()),
-				units::meters_per_second_t(m_frontRightEncoder->GetVelocity())};
+		return {m_leftEncodersDirection * units::meters_per_second_t(m_frontLeftEncoder->GetVelocity()),
+				m_rightEncodersDirection * units::meters_per_second_t(m_frontRightEncoder->GetVelocity())};
+	}
+
+	template <>
+	DifferentialDriveWheelSpeeds Drivetrain<CLASSIC>::GetWheelSpeeds()
+	{
+		return {m_leftEncodersDirection * units::meters_per_second_t(m_leftEncoder->GetRate()),
+				m_rightEncodersDirection * units::meters_per_second_t(m_rightEncoder->GetRate())};
 	}
 
 	template <class T>
 	void Drivetrain<T>::TankDriveVolts(units::volt_t left, units::volt_t right)
 	{
-		m_right->SetVoltage(right);
-		m_left->SetVoltage(left);
+		SmartDashboard::PutNumber("Right Speed", m_rightEncoder->GetRate());
+		SmartDashboard::PutNumber("Left Speed", m_leftEncoder->GetRate());
+		m_right->SetVoltage(-m_moveDirection * right);
+		m_left->SetVoltage(-m_moveDirection * left);
 		m_drive->Feed();
-	}
-	template <class T>
-	pair<RamseteCommand, Trajectory> Drivetrain<T>::OpenPath(string path)
-	{
-
-		fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
-		deployDirectory = deployDirectory / "path" / path;
-		Trajectory trajectory = TrajectoryUtil::FromPathweaverJson(deployDirectory.string());
-
-		return {
-			RamseteCommand(
-				trajectory,
-				[this]()
-				{ return GetPosition(); },
-				RamseteController(m_pathB,
-								  m_pathZeta),
-				SimpleMotorFeedforward<units::meters>(m_pathKs, m_pathKv, m_pathKa),
-				m_kinematics,
-				[this]
-				{ return GetWheelSpeeds(); },
-				PIDController(m_pathLeftP, m_pathLeftI, m_pathLeftD),
-				PIDController(m_pathRightP, m_pathRightI, m_pathRightD),
-				[this](auto left, auto right)
-				{ TankDriveVolts(left, right); },
-				{this}),
-			trajectory};
 	}
 
 	template <class T>
@@ -639,27 +602,17 @@ namespace TD
 											  units::unit_t<zeta_unit> z,
 											  units::volt_t ks,
 											  units::unit_t<kv_unit> kv,
-											  units::unit_t<ka_unit> ka)
+											  units::unit_t<ka_unit> ka, double leftP, double rightP)
 	{
 		m_pathB = b;
 		m_pathZeta = z;
 		m_pathKs = ks;
 		m_pathKv = kv;
 		m_pathKa = ka;
-	}
-
-	template <class T>
-	void Drivetrain<T>::ConfigurePathPIDs(double rightP, double rightI, double rightD, double leftP, double leftI, double leftD)
-	{
-		m_pathRightP = rightP;
-		m_pathRightI = rightI;
-		m_pathRightD = rightD;
 		m_pathLeftP = leftP;
-		m_pathLeftI = leftI;
-		m_pathLeftD = leftD;
+		m_pathRightP = rightP;
 	}
 
 	template class Drivetrain<NEO>;
 	template class Drivetrain<CLASSIC>;
-
 }
