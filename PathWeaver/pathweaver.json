@@ -1,9 +1,9 @@
 {
   "lengthUnit": "Meter",
   "exportUnit": "Always Meters",
-  "maxVelocity": 0.15,
-  "maxAcceleration": 0.15,
-  "trackWidth": 0.55,
+  "maxVelocity": 1.5,
+  "maxAcceleration": 2.0,
+  "trackWidth": 0.607,
   "gameName": "Charged Up",
   "outputDir": "../src/main/deploy"
 }

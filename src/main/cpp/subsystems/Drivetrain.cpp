@@ -576,15 +576,15 @@ namespace TD
 	template <>
 	DifferentialDriveWheelSpeeds Drivetrain<NEO>::GetWheelSpeeds()
 	{
-		return {units::meters_per_second_t(m_frontLeftEncoder->GetVelocity()),
-				-units::meters_per_second_t(m_frontRightEncoder->GetVelocity())};
+		return {m_leftEncodersDirection * units::meters_per_second_t(m_frontLeftEncoder->GetVelocity()),
+				m_rightEncodersDirection * units::meters_per_second_t(m_frontRightEncoder->GetVelocity())};
 	}
 
 	template <>
 	DifferentialDriveWheelSpeeds Drivetrain<CLASSIC>::GetWheelSpeeds()
 	{
-		return {units::meters_per_second_t(m_leftEncoder->GetRate()),
-				-units::meters_per_second_t(m_rightEncoder->GetRate())};
+		return {m_leftEncodersDirection * units::meters_per_second_t(m_leftEncoder->GetRate()),
+				m_rightEncodersDirection * units::meters_per_second_t(m_rightEncoder->GetRate())};
 	}
 
 	template <class T>
@@ -592,8 +592,8 @@ namespace TD
 	{
 		SmartDashboard::PutNumber("Right Speed", m_rightEncoder->GetRate());
 		SmartDashboard::PutNumber("Left Speed", m_leftEncoder->GetRate());
-		m_right->SetVoltage(-right);
-		m_left->SetVoltage(-left);
+		m_right->SetVoltage(-m_moveDirection * right);
+		m_left->SetVoltage(-m_moveDirection * left);
 		m_drive->Feed();
 	}
 

@@ -248,7 +248,7 @@ namespace Path
 	constexpr units::unit_t<kv_unit> KV = 3.0056 * 1_V * 1_s / 1_m;
 	constexpr units::unit_t<ka_unit> KA = 0.59519 * 1_V * 1_s * 1_s / 1_m;
 
-	constexpr double KP = 4.7841;
+	constexpr double KP = 0.05;
 }
 
 constexpr double shooterRPMFromDistance(double distance)
