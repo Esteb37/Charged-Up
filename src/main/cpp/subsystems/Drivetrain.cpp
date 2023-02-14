@@ -375,6 +375,165 @@ namespace TD
 	}
 
 	template <class T>
+	frc2::CommandPtr Drivetrain<T>::MoveCmd(double distance, double speed) {
+		return frc2::FunctionalCommand(
+			[this, &distance] { m_movePIDController.SetSetpoint(distance); },
+
+			[this, &speed] {
+				double output = m_movePIDController.Calculate(GetEncoderAverage());
+				double clampedOutput = std::clamp(output, -1.0, 1.0);
+
+				m_autoMoveOutput = clampedOutput * speed * m_movePIDDirection;
+				AutoDrive();
+			},
+
+			[this] (bool wasInterrupted) { /* noop */ },
+
+			[this] { return m_movePIDController.AtSetpoint(); }
+		).ToPtr();
+	}
+
+	template <class T>
+	frc2::CommandPtr Drivetrain<T>::TurnCmd(units::angle::degree_t angle, double speed) {
+		return frc2::FunctionalCommand(
+			[this, &angle] { m_turnPIDController.SetSetpoint(angle.value()); },
+
+			[this, &speed] {
+				double output = m_turnPIDController.Calculate(m_gyro->GetAngle().value());
+				double clampedOutput = std::clamp(output, -1.0, 1.0);
+
+				m_autoTurnOutput  = clampedOutput * speed * m_turnPIDDirection;
+				AutoDrive();
+			},
+
+			[this] (bool wasInterrupted) { /* noop */ },
+
+			[this] { return m_turnPIDController.AtSetpoint(); }
+		).ToPtr();
+	}
+
+	template <class T>
+	frc2::CommandPtr Drivetrain<T>::MoveToCmd(double x, double y, double movementSpeed, double turningSpeed) {
+		double targetX = x - m_currentX;
+		double targetY = y - m_currentY;
+
+		double angleToTargetPoint = GetAbsoluteAngle(targetX, targetY);
+		double squaredDistanceToTarget = (targetX * targetX) + (targetY * targetY);
+		double distance = std::sqrt(squaredDistanceToTarget);
+
+		return TurnCmd(units::angle::degree_t{angleToTargetPoint}, turningSpeed)
+			.AndThen(MoveCmd(distance, movementSpeed));
+	}
+
+	template <class T>
+	frc2::CommandPtr Drivetrain<T>::TurnToAngleCmd(units::angle::degree_t degrees, double speed) {
+		return frc2::FunctionalCommand(
+			[this, &degrees] { m_turnPIDController.SetSetpoint(degrees.value()); },
+
+			[this, &speed] {
+				double output = m_turnPIDController.Calculate(m_gyro->GetAngle().value());
+				double clampedOutput = std::clamp(output, -1.0, 1.0);
+				
+				m_autoTurnOutput = clampedOutput * speed * m_turnPIDDirection;
+				AutoDrive();
+			},
+
+			[this] (bool wasInterrupted) { /* noop */ },
+
+			[this] { return m_turnPIDController.AtSetpoint(); }
+		).ToPtr();
+	}
+
+	template <class T>
+	frc2::CommandPtr Drivetrain<T>::BalanceZAxisCmd(double speed) {
+		return frc2::FunctionalCommand(
+			[this] { m_balancePIDContoller.SetSetpoint(0.0); },
+
+			[this, &speed] {
+				double output = m_balancePIDContoller.Calculate(m_gyro->GetPitch().value());
+				double clampedOutput = std::clamp(output, -1.0, 1.0);
+
+				m_autoMoveOutput = clampedOutput * speed;
+				AutoDrive();
+			},
+
+			[this] (bool wasInterrupted) { /* noop */ },
+
+			[this] { return m_balancePIDContoller.AtSetpoint(); }
+		).ToPtr();
+	}
+
+	template <class T>
+	frc2::CommandPtr Drivetrain<T>::FollowPath(std::string filename, double speed) {
+		DifferentialDriveKinematics driveKinematics{Wheel::TRACK_WIDTH};
+
+		fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
+		fs::path pathInstructions = deployDirectory/"output"/filename;
+
+		frc::Trajectory trajectory = frc::TrajectoryUtil::FromPathweaverJson(pathInstructions.string());
+
+		RamseteCommand ramseteCommand{
+			trajectory,
+			[this] { return GetPose(); },
+			RamseteController{
+				Path::RAMSETE_B,
+				Path::RAMSETE_ZETA
+			},
+			SimpleMotorFeedforward<units::meters>{
+				Path::KS,
+				Path::KV,
+				Path::KA
+			},
+			driveKinematics,
+
+			[this] { return GetWheelSpeeds(); },
+
+			frc2::PIDController{Path::KP, 0, 0},
+			frc2::PIDController{Path::KP, 0, 0},
+
+			[this] (auto left, auto right) { TankDriveVolts(left, right); },
+			{this}
+		};
+
+		return frc2::SequentialCommandGroup(
+			frc2::InstantCommand([this, &trajectory] { SetPose(trajectory.InitialPose()); }, {this}),
+			std::move(ramseteCommand),
+			frc2::InstantCommand([this] { TankDriveVolts(0_V, 0_V); }, {this})
+		).ToPtr();
+	}
+
+	template <class T>
+	frc2::CommandPtr Drivetrain<T>::AlignWithLimelightTarget(double speed) {
+		return frc2::FunctionalCommand(
+			[this] { m_alignPIDController.SetSetpoint(0.0); },
+
+			[this, &speed] {
+				double output = m_alignPIDController.Calculate(m_limelight.GetHorizontalAngle() * m_alignPIDDirection);
+				double clampedOutput = clamp(output, -1.0, 1.0);
+				Drive(0.0, clampedOutput * speed);
+			},
+			[this] (bool wasInterrupted) { /* noop */ },
+
+			[this] { return m_alignPIDController.AtSetpoint(); }
+		).ToPtr();
+	}
+
+	template <class T>
+	frc2::CommandPtr Drivetrain<T>::AlignWithCameraTarget(/* TD::Camera camera,*/ double speed) {
+		return frc2::FunctionalCommand(
+			[this] { m_alignPIDController.SetSetpoint(0.0); },
+			[this, &speed] {
+				double output = 0.0; // camera.HorizontalAngleToTarget();
+				double clampedOutput = std::clamp(output, -1.0, 1.0);
+
+				Drive(0.0, clampedOutput * speed);
+			},
+			[this] (bool wasInterruped)  {  },
+			[this] { return m_alignPIDController.AtSetpoint(); }
+		).ToPtr();
+	}
+
+	template <class T>
 	void Drivetrain<T>::ResetTurnPIDController()
 	{
 		m_autoTurnOutput = 0;
@@ -447,7 +606,7 @@ namespace TD
 	bool Drivetrain<T>::SetAngleWithTarget(double angle, double speed)
 	{
 		m_alignPIDController.SetSetpoint(angle);
-		double output = m_alignPIDController.Calculate(0); // m_limelight.GetHorizontalAngle()l* m_alignPIDDirection);
+		double output = m_alignPIDController.Calculate(m_limelight.GetHorizontalAngle()* m_alignPIDDirection);
 		output = clamp(output, -1.0, 1.0);
 		Drive(0, output * speed);
 		return m_alignPIDController.AtSetpoint();

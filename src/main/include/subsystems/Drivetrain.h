@@ -52,6 +52,11 @@
 #include <frc2/command/SequentialCommandGroup.h>
 #include <frc2/command/SubsystemBase.h>
 
+#include <frc/trajectory/TrajectoryConfig.h>
+#include <frc/trajectory/TrajectoryGenerator.h>
+#include <frc/trajectory/TrajectoryUtil.h>
+#include <frc/trajectory/constraint/DifferentialDriveVoltageConstraint.h>
+
 #include <rev/CANSparkMax.h>
 #include <wpi/fs.h>
 
@@ -222,7 +227,7 @@ namespace TD
 
 		void SetGyro(CustomGyro<GyroTypes::NAVX> *gyro);
 
-		void SetGyro(CustomGyro<ADIS16448_IMU> *gyro);
+		void SetGyro(CustomGyro<GyroTypes::CLASSIC> *gyro);
 
 		// ----------------------- Auto -----------------------
 
@@ -261,6 +266,18 @@ namespace TD
 		 * @return Whether or not the drivetrain has reached the desired angle
 		 */
 		bool Turn(double, double);
+
+		frc2::CommandPtr MoveCmd(double speed, double rotation);
+		frc2::CommandPtr TurnCmd(units::angle::degree_t angle, double rotation);
+		frc2::CommandPtr MoveToCmd(double x, double y, double movementSpeed, double turningSpeed);
+
+		frc2::CommandPtr TurnToAngleCmd(units::angle::degree_t degrees, double speed);
+
+		frc2::CommandPtr BalanceZAxisCmd(double speed);
+
+		frc2::CommandPtr FollowPath(std::string filename, double speed);
+		frc2::CommandPtr AlignWithLimelightTarget(double speed);
+		frc2::CommandPtr AlignWithCameraTarget(double speed);
 
 		/**
 		 * @brief Prints the turn PID error to the dashboard
@@ -463,10 +480,12 @@ namespace TD
 
 		PIDController m_distancePIDController{0.1, 0, 0};
 
+		PIDController m_balancePIDContoller{0.1, 0, 0};
+
 		CustomGyroBase *m_gyro;
 
 	protected:
-		// Limelight::GetInstance();
+		Limelight m_limelight = Limelight::GetInstance();
 
 		// ----- Attributes -----s
 
