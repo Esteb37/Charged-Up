@@ -214,6 +214,38 @@ namespace TD
 	}
 
 	template <class MotorType, class EncoderType>
+	frc2::CommandPtr EncoderSubsystemBase<MotorType, EncoderType>::SetPositionCmd(double position, double speed) {
+		return frc2::FunctionalCommand(
+			[this, &position] { m_positionPID.SetSetpoint(position); },
+
+			[this, &speed] {
+				double output = m_positionPID.Calculate(GetPosition() * m_positionPIDDirection);
+				SetMotor(output * speed);
+			},
+
+			[this] (bool wasInterrupted) { SetMotor(0.0); },
+
+			[this] { return m_positionPID.AtSetpoint(); }
+		).ToPtr();
+	}
+
+	template <class MotorType, class EncoderType>
+	frc2::CommandPtr EncoderSubsystemBase<MotorType, EncoderType>::SetAngleCmd(units::angle::degree_t degrees, double speed) {
+		return frc2::FunctionalCommand(
+			[this, &degrees] { m_positionPID.SetSetpoint(std::fmod(degrees.value(), 360.0)); },
+
+			[this, &speed] {
+				double output = m_positionPID.Calculate(GetPosition() * m_positionPIDDirection);
+				SetMotor(output * speed);
+			},
+
+			[this] (bool wasInterrupted) { SetMotor(0.0); },
+
+			[this] { return m_positionPID.AtSetpoint(); }
+		).ToPtr();
+	}
+
+	template <class MotorType, class EncoderType>
 	void EncoderSubsystemBase<MotorType, EncoderType>::ConfigurePositionPID(double p, double i, double d, double tolerance, bool inverted)
 	{
 		m_positionPID.SetPID(p, i, d);
