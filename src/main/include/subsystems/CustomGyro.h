@@ -29,7 +29,6 @@
 #include "Constants.h"
 #include <AHRS.h>
 #include <frc/ADIS16448_IMU.h>
-#include <frc/geometry/Pose3D.h>
 #include <frc/interfaces/Gyro.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 

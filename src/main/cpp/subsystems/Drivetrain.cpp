@@ -261,7 +261,6 @@ namespace TD
 	template <>
 	void Drivetrain<CLASSIC>::ResetEncoders()
 	{
-
 		m_rightEncodersTotal = GetRightEncodersTotal();
 		m_leftEncodersTotal = GetLeftEncodersTotal();
 

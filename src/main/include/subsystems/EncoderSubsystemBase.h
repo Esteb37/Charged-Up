@@ -29,6 +29,7 @@
 #include <frc/Encoder.h>
 #include <frc/controller/PIDController.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc2/command/Commands.h>
 
 #include "subsystems/MotorSubsystemBase.h"
 
@@ -123,6 +124,9 @@ namespace TD
 		 * @return True if the subsystem is at the position, false otherwise
 		 */
 		bool SetPosition(double, double);
+
+		frc2::CommandPtr SetPositionCmd(double, double);
+		frc2::CommandPtr SetAngleCmd(units::angle::degree_t, double);
 
 		/**
 		 * @brief Get the encoder's position
