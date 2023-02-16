@@ -27,6 +27,7 @@
 #include "subsystems/Drivetrain.h"
 #include <cmath>
 #include <typeinfo>
+#include "diagnostic/ErrorHandlers.h"
 
 namespace TD
 {
@@ -769,6 +770,40 @@ namespace TD
 		m_pathKa = ka;
 		m_pathLeftP = leftP;
 		m_pathRightP = rightP;
+	}
+
+	template <>
+	void Drivetrain<NEO>::SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode mode) {
+		for (auto motor: motors) {
+			rev::REVLibError error = motor->SetIdleMode(mode);
+			HandleRevLibError(error);
+		}
+	}
+
+	template <>
+	void Drivetrain<NEO>::SetSparkSoftLimit(rev::CANSparkMax::SoftLimitDirection direction, double limit) {
+		softLimitDirection = direction;
+
+		for (auto motor: motors) {
+			rev::REVLibError error = motor->SetSoftLimit(softLimitDirection, limit);
+			HandleRevLibError(error);
+		}
+	}
+
+	template <>
+	void Drivetrain<NEO>::EnableSparkSoftLimit() {
+		for (auto motor: motors) {
+			rev::REVLibError error = motor->EnableSoftLimit(softLimitDirection, true);
+			HandleRevLibError(error);
+		}
+	}
+
+	template <>
+	void Drivetrain<NEO>::DisableSparkSoftLimit() {
+		for (auto motor: motors) {
+			rev::REVLibError error = motor->EnableSoftLimit(softLimitDirection, false);
+			HandleRevLibError(error);
+		}
 	}
 
 	template class Drivetrain<NEO>;
