@@ -176,6 +176,14 @@ namespace TD
 		 */
 		void SetMinMaxPosition(double, double);
 
+		/* Brakes & Security */
+
+		void SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode mode);
+		void SetSparkSoftLimit(rev::CANSparkMax::SoftLimitDirection direction, double limit);
+
+		void EnableSparkSoftLimit();
+		void DisableSparkSoftLimit();
+
 		// ---------- Speed PID -----------
 
 		/**
@@ -245,5 +253,8 @@ namespace TD
 		bool m_keepingStill = false;
 
 		bool m_positionSafetyActive = false;
+
+		// Limits & Safety
+		rev::CANSparkMax::SoftLimitDirection softLimitDirection;
 	};
 }

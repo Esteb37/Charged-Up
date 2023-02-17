@@ -412,13 +412,6 @@ namespace TD
 
 		void PrintPose();
 
-		/* Brakes & Security */
-
-		void SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode mode);
-		void SetSparkSoftLimit(rev::CANSparkMax::SoftLimitDirection direction, double limit);
-
-		void EnableSparkSoftLimit();
-		void DisableSparkSoftLimit();
 
 		using Velocity =
 			units::compound_unit<units::meters, units::inverse<units::seconds>>;
@@ -453,8 +446,6 @@ namespace TD
 		T *m_backLeft;
 
 		T *m_backRight;
-
-		std::vector<T *> motors{ m_frontLeft, m_frontRight, m_backLeft, m_backRight };
 
 		// ----- Motor controller groups-----
 
@@ -493,9 +484,6 @@ namespace TD
 		PIDController m_balancePIDContoller{0.1, 0, 0};
 
 		CustomGyroBase *m_gyro;
-
-		/* Limits & Safety */
-		rev::CANSparkMax::SoftLimitDirection softLimitDirection;
 
 	protected:
 		Limelight m_limelight = Limelight::GetInstance();
