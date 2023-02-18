@@ -1,5 +1,7 @@
 #include "human-input/XboxController.hh"
 
+#include <cmath>
+
 bool TD::XboxController::ButtonTop() {
     return controller.GetYButton();
 }
@@ -39,7 +41,7 @@ bool TD::XboxController::PovRight() {
 double TD::XboxController::AxisXLeft() {
     double value = controller.GetLeftX();
 
-    if (utility::IsInThreshold(axisThresholdLeft, value)) {
+    if (utility::IsInThreshold(axisThresholdLeft, std::fabs(value))) {
         return value;
     }
 
@@ -49,7 +51,7 @@ double TD::XboxController::AxisXLeft() {
 double TD::XboxController::AxisYLeft() {
     double value = controller.GetLeftY();
 
-    if (utility::IsInThreshold(axisThresholdLeft, value)) {
+    if (utility::IsInThreshold(axisThresholdLeft, std::fabs(value))) {
         return value;
     }
 
@@ -59,7 +61,7 @@ double TD::XboxController::AxisYLeft() {
 double TD::XboxController::AxisXRight() {
     double value = controller.GetRightX();
 
-    if (utility::IsInThreshold(axisThresholdRight, value)) {
+    if (utility::IsInThreshold(axisThresholdRight, std::fabs(value))) {
         return value;
     }
 
@@ -69,7 +71,7 @@ double TD::XboxController::AxisXRight() {
 double TD::XboxController::AxisYRight() {
     double value = controller.GetRightY();
 
-    if (utility::IsInThreshold(axisThresholdRight, value)) {
+    if (utility::IsInThreshold(axisThresholdRight, std::fabs(value))) {
         return value;
     }
 

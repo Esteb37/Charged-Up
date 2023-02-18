@@ -5,10 +5,10 @@
 namespace TD {
 
     namespace Constants {
-        unsigned char TOP_POV_ID = 0;
-        unsigned char BOTTOM_POV_ID = 4;
-        unsigned char LEFT_POV_ID = 2;
-        unsigned char RIGHT_POV_ID = 3;
+        constexpr unsigned char TOP_POV_ID = 0;
+        constexpr unsigned char BOTTOM_POV_ID = 4;
+        constexpr unsigned char LEFT_POV_ID = 2;
+        constexpr unsigned char RIGHT_POV_ID = 3;
     }
 
     class Controller {

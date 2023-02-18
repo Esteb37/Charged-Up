@@ -3,6 +3,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 namespace TD { namespace ErrorHandlers {
+    std::map<int, int> emmitedErrors{};
 
     void HandleRevLibError(rev::REVLibError error) {
         if (error == rev::REVLibError::kOk) return;
