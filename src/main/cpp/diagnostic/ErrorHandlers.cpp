@@ -1,20 +1,17 @@
 #include "diagnostic/ErrorHandlers.h"
 
-#include <frc/SmartDashboard.h>
-#include <map>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 namespace TD { namespace ErrorHandlers {
-    namespace rev {
-        std::map<int, int> emmitedErrors;
 
-        void HandleRevLibError(rev::REVLibError error) {
-            if (error == rev::REVLibError::kOk) return;
+    void HandleRevLibError(rev::REVLibError error) {
+        if (error == rev::REVLibError::kOk) return;
 
-            emmitedErrors[error] += 1;
+        int errorN = ((int) error) * REVLIB_MULTIPLIER;
+        emmitedErrors[errorN] += 1;
 
-            frc::SmartDashboard::PutString("REVLib error: oftype(" + error + "), instances(" + emmitedErrors[error] + ")");
-        }
-
+        std::string errorMsg = "REVLib error {\ntype: " + std::to_string(errorN) + "\n" + std::to_string(emmitedErrors[errorN]) + "\n}";
+        frc::SmartDashboard::PutString("REVLib Error", errorMsg);
     }
 
 }}

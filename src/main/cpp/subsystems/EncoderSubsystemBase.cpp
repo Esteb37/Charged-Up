@@ -26,8 +26,6 @@
 
 #include "subsystems/EncoderSubsystemBase.h"
 
-#include "diagnostic/ErrorHandlers.h"
-
 namespace TD
 {
 	using namespace EncoderTypes;
@@ -295,8 +293,7 @@ namespace TD
 	template <>
 	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode mode) {
 		for (auto motor: m_motorList) {
-			rev::REVLibError error = motor->SetIdleMode(mode);
-			HandleRevLibError(error);
+			motor->SetIdleMode(mode);
 		}
 	}
 
@@ -305,24 +302,21 @@ namespace TD
 		softLimitDirection = direction;
 
 		for (auto motor: m_motorList) {
-			rev::REVLibError error = motor->SetSoftLimit(softLimitDirection, limit);
-			HandleRevLibError(error);
+			motor->SetSoftLimit(softLimitDirection, limit);
 		}
 	}
 
 	template <>
 	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::EnableSparkSoftLimit() {
 		for (auto motor: m_motorList) {
-			rev::REVLibError error = motor->EnableSoftLimit(softLimitDirection, true);
-			HandleRevLibError(error);
+			motor->EnableSoftLimit(softLimitDirection, true);
 		}
 	}
 
 	template <>
 	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::DisableSparkSoftLimit() {
 		for (auto motor: m_motorList) {
-			rev::REVLibError error = motor->EnableSoftLimit(softLimitDirection, false);
-			HandleRevLibError(error);
+			motor->EnableSoftLimit(softLimitDirection, false);
 		}
 	}
 
