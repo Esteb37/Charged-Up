@@ -486,7 +486,7 @@ namespace TD
 		CustomGyroBase *m_gyro;
 
 	protected:
-		Limelight m_limelight = Limelight::GetInstance();
+		// Limelight m_limelight = Limelight::GetInstance();
 
 		// ----- Attributes -----s
 

@@ -47,9 +47,9 @@ namespace TD {
             virtual void SetTriggerThresholdRight(double min, double max) = 0;
 
         protected:
-            utility::Threshold axisThresholdLeft{0, 0};
-            utility::Threshold axisThresholdRight{0, 0};
-            utility::Threshold triggerThresholdLeft{0, 0};
-            utility::Threshold triggerThresholdRight{0, 0};
+            utility::Threshold axisThresholdLeft{0, 1};
+            utility::Threshold axisThresholdRight{0, 1};
+            utility::Threshold triggerThresholdLeft{0, 1};
+            utility::Threshold triggerThresholdRight{0, 1};
     };
 }

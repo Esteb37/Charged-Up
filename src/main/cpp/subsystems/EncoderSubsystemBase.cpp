@@ -207,6 +207,7 @@ namespace TD
 		m_positionPID.SetSetpoint(position);
 
 		double output = m_positionPID.Calculate(GetPosition() * m_positionPIDDirection);
+		output = std::clamp(output, -1.0, 1.0);
 
 		MotorSubsystemBase<MotorType>::SetMotor(output * speed);
 

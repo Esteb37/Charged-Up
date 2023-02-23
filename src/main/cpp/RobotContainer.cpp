@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "RobotContainer.h"
+#include <frc2/command/Commands.h>
 
 RobotContainer::RobotContainer()
 {
@@ -12,6 +13,15 @@ RobotContainer::RobotContainer()
 void RobotContainer::RobotInit()
 {
 	m_gyro.Calibrate();
+	ConfigureControllerBindings();
+
+	mc_controller.SetAxisThresholdLeft(0.2, 1.0);
+	mc_controller.SetAxisThresholdRight(0.2, 1.0);
+
+	shoulder.SetSparkMaxIdleMode(CANSparkMax::IdleMode::kBrake);
+	arm.SetSparkMaxIdleMode(CANSparkMax::IdleMode::kBrake);
+
+	shoulder.InvertMotor(true);
 }
 
 void RobotContainer::RobotPeriodic()
@@ -80,7 +90,10 @@ void RobotContainer::TeleopInit()
 }
 void RobotContainer::TeleopPeriodic()
 {
-	m_drivetrain.TankDriveVolts(5_V, 5_V);
+	double leftOutput = 0.75 * mc_controller.AxisYLeft();
+	double rightOutput = 0.75 * mc_controller.AxisXRight();
+
+	m_drivetrain.Drive(leftOutput, rightOutput);
 }
 
 void RobotContainer::AutonomousInit()
@@ -93,4 +106,6 @@ void RobotContainer::AutonomousPeriodic()
 {
 }
 
-void RobotContainer::ConfigureControllerBindings() {}
+void RobotContainer::ConfigureControllerBindings() {
+	m_commandController.A().OnTrue(arm.SetAngleCmd(25_deg, 0.05));
+}

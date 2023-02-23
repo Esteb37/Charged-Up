@@ -12,6 +12,9 @@
 #include "subsystems/Limelight.h"
 #include "subsystems/MotorSubsystemBase.h"
 #include "subsystems/PlanarElevator.h"
+#include "subsystems/Arm.h"
+#include "human-input/XboxController.hh"
+
 #include <frc/Filesystem.h>
 #include <frc/XboxController.h>
 #include <frc/controller/PIDController.h>
@@ -81,7 +84,12 @@ private:
 		DIO::Encoder::DRIVETRAIN_LA,
 		DIO::Encoder::DRIVETRAIN_LB};
 
-	frc::XboxController m_controller = XboxController(0);
+	// TD::Arm arm{3, 7};
+	TD::EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> shoulder{7};
+	TD::EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> arm{3};
+
+	TD::XboxController mc_controller;
+	frc::XboxController m_controller = frc::XboxController(0);
 	frc2::CommandXboxController m_commandController = CommandXboxController(0);
 
 	CustomGyro<GyroTypes::NAVX> m_gyro;
