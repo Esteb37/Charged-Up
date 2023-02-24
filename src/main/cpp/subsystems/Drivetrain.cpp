@@ -49,6 +49,15 @@ namespace TD
 	}
 
 	template <>
+	double Drivetrain<SPX>::GetRightEncoders()
+	{
+		if (m_rightEncoder == nullptr)
+			return 0.0;
+
+		return m_rightEncodersDirection * m_rightEncoder->GetDistance();
+	}
+
+	template <>
 	double Drivetrain<NEO>::GetLeftEncoders()
 	{
 		return m_leftEncodersDirection * (m_frontLeftEncoder->GetPosition() + m_backLeftEncoder->GetPosition()) / 2;
@@ -64,14 +73,23 @@ namespace TD
 	}
 
 	template <>
+	double Drivetrain<SPX>::GetLeftEncoders()
+	{
+		if (m_leftEncoder == nullptr)
+			return 0.0;
+
+		return m_leftEncodersDirection * m_leftEncoder->GetDistance();
+	}
+
+	template <>
 	Drivetrain<NEO>::Drivetrain(unsigned int frontRight, unsigned int frontLeft, unsigned int backRight, unsigned int backLeft)
 	{
 		SetName("Drivetrain");
 
-		m_frontRight = new CANSparkMax(frontRight, CANSparkMaxLowLevel::MotorType::kBrushless);
-		m_frontLeft = new CANSparkMax(frontLeft, CANSparkMaxLowLevel::MotorType::kBrushless);
-		m_backRight = new CANSparkMax(backRight, CANSparkMaxLowLevel::MotorType::kBrushless);
-		m_backLeft = new CANSparkMax(backLeft, CANSparkMaxLowLevel::MotorType::kBrushless);
+		m_frontRight = new NEO(frontRight, CANSparkMaxLowLevel::MotorType::kBrushless);
+		m_frontLeft = new NEO(frontLeft, CANSparkMaxLowLevel::MotorType::kBrushless);
+		m_backRight = new NEO(backRight, CANSparkMaxLowLevel::MotorType::kBrushless);
+		m_backLeft = new NEO(backLeft, CANSparkMaxLowLevel::MotorType::kBrushless);
 
 		// initialize encoders
 		m_frontRightEncoder = new SparkMaxRelativeEncoder(m_frontRight->GetEncoder());
@@ -95,10 +113,31 @@ namespace TD
 	{
 		SetName("Drivetrain");
 
-		m_frontRight = new VictorSP(frontRight);
-		m_frontLeft = new VictorSP(frontLeft);
-		m_backRight = new VictorSP(backRight);
-		m_backLeft = new VictorSP(backLeft);
+		m_frontRight = new CLASSIC(frontRight);
+		m_frontLeft = new CLASSIC(frontLeft);
+		m_backRight = new CLASSIC(backRight);
+		m_backLeft = new CLASSIC(backLeft);
+
+		// initialize motorcontrollergroups
+		m_right = new MotorControllerGroup(*m_frontRight, *m_backRight);
+		m_left = new MotorControllerGroup(*m_frontLeft, *m_backLeft);
+
+		// initialize drivetrain
+		m_drive = new DifferentialDrive(*m_left, *m_right);
+
+		InvertLeft();
+		InvertRightEncoders();
+	}
+
+	template <>
+	Drivetrain<SPX>::Drivetrain(unsigned int frontRight, unsigned int frontLeft, unsigned int backRight, unsigned int backLeft)
+	{
+		SetName("Drivetrain");
+
+		m_frontRight = new SPX(frontRight);
+		m_frontLeft = new SPX(frontLeft);
+		m_backRight = new SPX(backRight);
+		m_backLeft = new SPX(backLeft);
 
 		// initialize motorcontrollergroups
 		m_right = new MotorControllerGroup(*m_frontRight, *m_backRight);
@@ -122,10 +161,35 @@ namespace TD
 	{
 		SetName("Drivetrain");
 
-		m_frontRight = new VictorSP(frontRight);
-		m_frontLeft = new VictorSP(frontLeft);
-		m_backRight = new VictorSP(backRight);
-		m_backLeft = new VictorSP(backLeft);
+		m_frontRight = new CLASSIC(frontRight);
+		m_frontLeft = new CLASSIC(frontLeft);
+		m_backRight = new CLASSIC(backRight);
+		m_backLeft = new CLASSIC(backLeft);
+
+		// initialize encoders
+		m_rightEncoder = new Encoder(encoderRightA, encoderRightB);
+		m_leftEncoder = new Encoder(encoderLeftA, encoderLeftB);
+
+		// initialize motorcontrollergroups
+		m_right = new MotorControllerGroup(*m_frontRight, *m_backRight);
+		m_left = new MotorControllerGroup(*m_frontLeft, *m_backLeft);
+
+		// initialize drivetrain
+		m_drive = new DifferentialDrive(*m_left, *m_right);
+
+		InvertLeft();
+		InvertRightEncoders();
+	}
+
+	template <>
+	Drivetrain<SPX>::Drivetrain(unsigned int frontRight, unsigned int frontLeft, unsigned int backRight, unsigned int backLeft, unsigned int encoderRightA, unsigned int encoderRightB, unsigned int encoderLeftA, unsigned int encoderLeftB)
+	{
+		SetName("Drivetrain");
+
+		m_frontRight = new SPX(frontRight);
+		m_frontLeft = new SPX(frontLeft);
+		m_backRight = new SPX(backRight);
+		m_backLeft = new SPX(backLeft);
 
 		// initialize encoders
 		m_rightEncoder = new Encoder(encoderRightA, encoderRightB);
@@ -268,6 +332,16 @@ namespace TD
 		m_leftEncoder->Reset();
 	}
 
+	template <>
+	void Drivetrain<SPX>::ResetEncoders()
+	{
+		m_rightEncodersTotal = GetRightEncodersTotal();
+		m_leftEncodersTotal = GetLeftEncodersTotal();
+
+		m_rightEncoder->Reset();
+		m_leftEncoder->Reset();
+	}
+
 	template <class T>
 	void Drivetrain<T>::InvertRightEncoders(bool invert)
 	{
@@ -316,6 +390,14 @@ namespace TD
 		m_rightEncoder->SetDistancePerPulse(pcf_meters);
 		m_leftEncoder->SetDistancePerPulse(pcf_meters);
 	}
+
+	template <>
+	void Drivetrain<SPX>::SetPositionConversionFactor(double pcf_meters)
+	{
+		m_rightEncoder->SetDistancePerPulse(pcf_meters);
+		m_leftEncoder->SetDistancePerPulse(pcf_meters);
+	}
+
 
 	// ----------------------- Gyro -----------------------
 	template <class T>
@@ -745,6 +827,13 @@ namespace TD
 				m_rightEncodersDirection * units::meters_per_second_t(m_rightEncoder->GetRate())};
 	}
 
+	template <>
+	DifferentialDriveWheelSpeeds Drivetrain<SPX>::GetWheelSpeeds()
+	{
+		return {m_leftEncodersDirection * units::meters_per_second_t(m_leftEncoder->GetRate()),
+				m_rightEncodersDirection * units::meters_per_second_t(m_rightEncoder->GetRate())};
+	}
+
 	template <class T>
 	void Drivetrain<T>::TankDriveVolts(units::volt_t left, units::volt_t right)
 	{
@@ -773,4 +862,5 @@ namespace TD
 
 	template class Drivetrain<NEO>;
 	template class Drivetrain<CLASSIC>;
+	template class Drivetrain<SPX>;
 }

@@ -38,6 +38,7 @@
 #include <frc/kinematics/DifferentialDriveOdometry.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/motorcontrol/VictorSP.h>
+#include <ctre/phoenix/motorcontrol/can/WPI_VictorSPX.h>
 #include <frc/simulation/DifferentialDrivetrainSim.h>
 #include <frc/simulation/EncoderSim.h>
 #include <frc/smartdashboard/Field2d.h>
@@ -74,6 +75,7 @@ namespace TD
 	{
 		typedef CANSparkMax NEO;
 		typedef VictorSP CLASSIC;
+		typedef ctre::phoenix::motorcontrol::can::WPI_VictorSPX SPX;
 	}
 
 	template <class T>

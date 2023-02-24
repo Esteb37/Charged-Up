@@ -70,7 +70,7 @@ public:
 	void TeleopPeriodic();
 
 private:
-	Drivetrain<DrivetrainTypes::CLASSIC> m_drivetrain{
+	Drivetrain<DrivetrainTypes::SPX> m_drivetrain{
 		M::PWM::FRONT_RIGHT,
 		M::PWM::FRONT_LEFT,
 		M::PWM::BACK_RIGHT,
