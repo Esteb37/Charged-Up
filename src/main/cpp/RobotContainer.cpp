@@ -37,6 +37,8 @@ void RobotContainer::ConfigureSubsystems()
 
 	m_drivetrain.ConfigureTurnPID(PID::Turn::P, PID::Turn::I, PID::Turn::D, PID::Turn::TOLERANCE);
 
+	m_drivetrain.SetMaxSpeeds(Speed::DRIVETRAIN_MOVE, Speed::DRIVETRAIN_TURN);
+
 	m_drivetrain.ConfigurePathFollower(Path::RAMSETE_B, Path::RAMSETE_ZETA, Path::KS, Path::KV, Path::KA, Path::KP, Path::KP);
 
 	m_drivetrain.ResetPose();
@@ -44,6 +46,19 @@ void RobotContainer::ConfigureSubsystems()
 	m_arm.Configure();
 
 	m_intake.SetMaxSpeed(Speed::INTAKE);
+
+	m_turret.SetMaxSpeed(Speed::TURRET);
+
+	m_turret.SetPositionConversionFactor(DPR::TURRET);
+
+	m_turret.ConfigurePositionPID(PID::TurretAngle::P,PID::TurretAngle::I,PID::TurretAngle::D,PID::TurretAngle::TOLERANCE);
+
+	// m_turret.SetMinMaxPosition(-10,190);
+	// m_turret.SetPositionSafety(true);
+
+	m_turret.SetName("Turret");
+
+	m_turret.SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
@@ -87,9 +102,7 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 
 void RobotContainer::TeleopInit()
 {
-	m_gyro.Reset();
-	m_drivetrain.ResetPose();
-	m_arm.ResetEncoders();
+
 }
 void RobotContainer::TeleopPeriodic()
 {
@@ -108,9 +121,7 @@ void RobotContainer::TeleopPeriodic()
 
 void RobotContainer::AutonomousInit()
 {
-	m_gyro.Reset();
-	m_drivetrain.ResetEncoders();
-	m_arm.ResetEncoders();
+	Reset();
 }
 
 void RobotContainer::AutonomousPeriodic()
@@ -119,4 +130,11 @@ void RobotContainer::AutonomousPeriodic()
 
 void RobotContainer::ConfigureControllerBindings() {
 	
+}
+
+void RobotContainer::Reset(){
+	m_gyro.Reset();
+	m_drivetrain.ResetEncoders();
+	m_arm.ResetEncoders();
+	m_turret.ResetEncoder();
 }

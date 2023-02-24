@@ -73,6 +73,8 @@ public:
 
 	void TeleopPeriodic();
 
+	void Reset();
+
 private:
 	Drivetrain<DrivetrainTypes::SPX> m_drivetrain{
 		M::DT::FRONT_RIGHT,
@@ -87,6 +89,8 @@ private:
 	Arm m_arm{M::Arm::SHOULDER,M::Arm::ELBOW,M::Arm::WRIST};
 
 	Intake m_intake{{M::Intake::RIGHT,M::Intake::LEFT}};
+
+	EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> m_turret{M::TURRET};
 	
 	TD::XboxController mc_controller;
 	frc::XboxController m_controller = frc::XboxController(0);

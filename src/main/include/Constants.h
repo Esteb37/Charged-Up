@@ -27,6 +27,8 @@ using port = uint8_t;
 // MOTORS
 namespace M
 {
+	constexpr port TURRET = 0;
+
 	namespace Arm
 	{
 		constexpr port SHOULDER = 8;
@@ -160,6 +162,7 @@ namespace DPR
 	constexpr double SHOULDER = 1;
 	constexpr double ELBOW = 1;
 	constexpr double WRIST = 1;
+	constexpr double TURRET = 1;
 }
 
 namespace Speed
@@ -170,6 +173,7 @@ namespace Speed
 	constexpr double ELBOW = 1;
 	constexpr double WRIST = 1;
 	constexpr double INTAKE = 1;
+	constexpr double TURRET = 1;
 }
 
 
