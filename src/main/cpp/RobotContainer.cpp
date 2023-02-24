@@ -16,8 +16,8 @@ void RobotContainer::RobotInit()
 	m_gyro.Calibrate();
 	ConfigureControllerBindings();
 
-	mc_controller.SetAxisThresholdLeft(0.2, 1.0);
-	mc_controller.SetAxisThresholdRight(0.2, 1.0);
+	m_controller.SetLeftAxisThreshold(0.2, 1.0);
+	m_controller.SetRightAxisThreshold(0.2, 1.0);
 
 	ConfigureSubsystems();
 }
@@ -106,8 +106,8 @@ void RobotContainer::TeleopInit()
 }
 void RobotContainer::TeleopPeriodic()
 {
-	double output = mc_controller.TriggerRight() - mc_controller.TriggerLeft();
-	double rotation = mc_controller.AxisXLeft();
+	double output = m_controller.GetTriggerDifference();
+	double rotation = m_controller.GetRightX();
 
 	m_drivetrain.Drive(output, rotation * (output == 0 ? 0.5 : 1.0));
 

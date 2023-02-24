@@ -13,7 +13,7 @@
 #include "subsystems/MotorSubsystemBase.h"
 #include "subsystems/Arm.h"
 #include "subsystems/Intake.h"
-#include "human-input/XboxController.hh"
+#include "human-input/CustomController.h"
 
 #include <frc/Filesystem.h>
 #include <frc/XboxController.h>
@@ -92,9 +92,7 @@ private:
 
 	EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> m_turret{M::TURRET};
 	
-	TD::XboxController mc_controller;
-	frc::XboxController m_controller = frc::XboxController(0);
-	frc2::CommandXboxController m_commandController = CommandXboxController(0);
+	CustomController m_controller = CustomController(0);
 
 	CustomGyro<GyroTypes::NAVX> m_gyro;
 
