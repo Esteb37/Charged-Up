@@ -6,11 +6,29 @@ namespace TD {
             m_shoulder(EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>(shoulderPort)),
             m_elbow(EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>(elbowPort)),  
             m_wrist(EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>(wristPort)){
-                SetName("Arm");
-                m_shoulder.SetName("Shoulder");
-                m_elbow.SetName("Elbow");
-                m_wrist.SetName("Wrist");
+            SetName("Arm");
+            m_shoulder.SetName("Shoulder");
+            m_elbow.SetName("Elbow");
+            m_wrist.SetName("Wrist");
 
+        }
+
+        void Arm::Configure(){
+            m_shoulder.SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+            m_elbow.SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+            m_wrist.SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
+            m_shoulder.SetMaxSpeed(Speed::SHOULDER);
+            m_elbow.SetMaxSpeed(Speed::ELBOW);
+            m_wrist.SetMaxSpeed(Speed::WRIST);
+
+            m_shoulder.ConfigurePositionPID(PID::Shoulder::P,PID::Shoulder::I,PID::Shoulder::D,PID::Shoulder::TOLERANCE);
+            m_elbow.ConfigurePositionPID(PID::Elbow::P,PID::Elbow::I,PID::Elbow::D,PID::Elbow::TOLERANCE);
+            m_wrist.ConfigurePositionPID(PID::Wrist::P,PID::Wrist::I,PID::Wrist::D,PID::Wrist::TOLERANCE);
+
+            m_shoulder.SetPositionConversionFactor(DPR::SHOULDER);
+            m_elbow.SetPositionConversionFactor(DPR::ELBOW);
+            m_wrist.SetPositionConversionFactor(DPR::WRIST);
         }
 
         void Arm::Periodic() {}
@@ -67,6 +85,12 @@ namespace TD {
             m_shoulder.PrintPosition();
             m_elbow.PrintPosition();
             m_wrist.PrintPosition();
+        }
+
+        void Arm::ResetEncoders(){
+            m_shoulder.ResetEncoder();
+            m_elbow.ResetEncoder();
+            m_wrist.ResetEncoder();
         }
 
 }

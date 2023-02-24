@@ -28,59 +28,50 @@
 
 namespace TD
 {
-	template <class MotorType>
-	Intake<MotorType>::Intake(unsigned int motorPort) : MotorSubsystemBase<MotorType>(motorPort)
+	Intake::Intake(unsigned int motorPort) : MotorSubsystemBase(motorPort)
 	{
 		SubsystemBase::SetName("Intake");
 	}
-
-	template <class MotorType>
-	Intake<MotorType>::Intake(vector<unsigned int> motorPorts) : MotorSubsystemBase<MotorType>(motorPorts)
+	
+	Intake::Intake(vector<unsigned int> motorPorts) : MotorSubsystemBase(motorPorts)
 	{
 		SubsystemBase::SetName("Intake");
-        MotorSubsystemBase<MotorType>::InvertMotors({false,true});
+        InvertMotors({false,true});
 	}
-
-
-
-	template <class MotorType>
-	void Intake<MotorType>::Periodic()
+	
+	void Intake::Periodic()
 	{
 	}
 
 	// ---------- Actions -----------
 
-	template <class MotorType>
-	void Intake<MotorType>::Take()
+	
+	void Intake::Take()
 	{
-        if(MotorSubsystemBase<MotorType>::m_motorCount <= 1){
-            MotorSubsystemBase<MotorType>::SetMotor(1);
+        if(m_motorCount <= 1){
+            SetMotor(1);
         } else {
-		    MotorSubsystemBase<MotorType>::SetMotors(1);
+		    SetMotors(1);
         }
 	}
 
-    template <class MotorType>
-	void Intake<MotorType>::Spit()
+    
+	void Intake::Spit()
 	{
-		if(MotorSubsystemBase<MotorType>::m_motorCount <= 1){
-            MotorSubsystemBase<MotorType>::SetMotor(-1);
+		if(m_motorCount <= 1){
+            SetMotor(-1);
         } else {
-		    MotorSubsystemBase<MotorType>::SetMotors(-1);
+		    SetMotors(-1);
         }
 	}
 
-    template <class MotorType>
-	void Intake<MotorType>::Invert(bool invert)
+    
+	void Intake::Invert(bool invert)
 	{
-		if(MotorSubsystemBase<MotorType>::m_motorCount <= 1){
-            MotorSubsystemBase<MotorType>::InvertMotor(invert);
+		if(m_motorCount <= 1){
+            InvertMotor(invert);
         } else {
-		    MotorSubsystemBase<MotorType>::InvertMotors({invert,!invert});
+		    InvertMotors({invert,!invert});
         }
 	}
-
-	template class Intake<MotorTypes::SPARK>;
-	template class Intake<MotorTypes::VICTOR_PWM>;
-    template class Intake<MotorTypes::VICTOR_CAN>;
 }

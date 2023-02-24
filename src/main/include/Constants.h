@@ -22,72 +22,43 @@
 #include <units/velocity.h>
 #include <units/voltage.h>
 
-using port = unsigned int;
+using port = uint8_t;
 
 // MOTORS
 namespace M
 {
-	namespace CAN
+	namespace Arm
 	{
-		constexpr port SHOOTER = 4;
-		constexpr port ELEVATOR_RIGHT = 5;
-		constexpr port ELEVATOR_LEFT = 6;
-		constexpr port INTAKE = 7;
-		constexpr port TURRET = 5;
-		constexpr port TURRET_FOLLOWER = 6;
+		constexpr port SHOULDER = 8;
+		constexpr port ELBOW = 1;
+		constexpr port WRIST = 6;
 	}
 
-	namespace PWM
+	namespace DT
 	{
-		constexpr port FRONT_RIGHT = 8;
-		constexpr port FRONT_LEFT = 6;
-		constexpr port BACK_RIGHT = 9;
-		constexpr port BACK_LEFT = 7;
-		constexpr port FEEDER = 4;
+		constexpr port FRONT_RIGHT = 1;
+		constexpr port FRONT_LEFT = 2;
+		constexpr port BACK_RIGHT = 3;
+		constexpr port BACK_LEFT = 4;
 	}
 
-	namespace Servo
+	namespace Intake
 	{
-		constexpr port SHOOTER_RIGHT = 2;
-		constexpr port SHOOTER_LEFT = 3;
+		constexpr port RIGHT = 4;
+		constexpr port LEFT = 5;
 	}
 }
 
-namespace Solenoid
+
+namespace ENC
 {
-	constexpr port CLAW_FORWARD = 0;
-	constexpr port CLAW_REVERSE = 1;
-	constexpr port WRIST_FORWARD = 2;
-	constexpr port WRIST_REVERSE = 3;
-	constexpr port INTAKE_RIGHT_FORWARD = 4;
-	constexpr port INTAKE_RIGHT_REVERSE = 5;
-	constexpr port INTAKE_LEFT_FORWARD = 6;
-	constexpr port INTAKE_LEFT_REVERSE = 7;
-}
-
-namespace DIO
-{
-	namespace Encoder
+	namespace DT
 	{
-		constexpr port SHOOTER_A = 0;
-		constexpr port SHOOTER_B = 1;
-		constexpr port TURRET_A = 2;
-		constexpr port TURRET_B = 3;
-		constexpr port ELEVATOR_A = 6;
-		constexpr port ELEVATOR_B = 7;
-		constexpr port DRIVETRAIN_RA = 0;
-		constexpr port DRIVETRAIN_RB = 1;
-		constexpr port DRIVETRAIN_LA = 2;
-		constexpr port DRIVETRAIN_LB = 3;
+		constexpr port FRONT_RIGHT = 0;
+		constexpr port FRONT_LEFT = 1;
+		constexpr port BACK_RIGHT = 2;
+		constexpr port BACK_LEFT = 3;
 
-	}
-
-	namespace Limit
-	{
-		constexpr port TURRET_LEFT = 4;
-		constexpr port TURRET_RIGHT = 5;
-		constexpr port ELEVATOR_TOP = 8;
-		constexpr port ELEVATOR_BOTTOM = 9;
 	}
 }
 
@@ -125,14 +96,6 @@ namespace PID
 		constexpr double TOLERANCE = 0.5;
 	}
 
-	namespace Shooter
-	{
-		constexpr double P = 0.01;
-		constexpr double I = 0.0;
-		constexpr double D = 0.0;
-		constexpr double TOLERANCE = 0.5;
-	}
-
 	namespace TurretAlign
 	{
 		constexpr double P = 0.01;
@@ -149,26 +112,25 @@ namespace PID
 		constexpr double TOLERANCE = 0.5;
 	}
 
-	namespace Elevator
-	{
+	namespace Shoulder{
 		constexpr double P = 0.01;
 		constexpr double I = 0.0;
 		constexpr double D = 0.0;
 		constexpr double TOLERANCE = 0.5;
 	}
 
-	namespace PlanarElevator
-	{
-		constexpr double P_X = 0.01;
-		constexpr double I_X = 0.0;
-		constexpr double D_X = 0.0;
-		constexpr double TOLERANCE_X = 0.5;
+	namespace Elbow{
+		constexpr double P = 0.01;
+		constexpr double I = 0.0;
+		constexpr double D = 0.0;
+		constexpr double TOLERANCE = 0.5;
+	}
 
-		constexpr double P_Y = 0.01;
-		constexpr double I_Y = 0.0;
-		constexpr double D_Y = 0.0;
-		constexpr double TOLERANCE_Y = 0.5;
-
+	namespace Wrist{
+		constexpr double P = 0.01;
+		constexpr double I = 0.0;
+		constexpr double D = 0.0;
+		constexpr double TOLERANCE = 0.5;
 	}
 }
 
@@ -195,35 +157,21 @@ namespace DPR
 {
 	constexpr double ENCODER_PULSE = 2048;
 	constexpr double DRIVETRAIN = Wheel::CIRCUMFERENCE / ENCODER_PULSE;
-	constexpr double TURRET = 360;	 // TODO Define turret encoder to angle ratio
-	constexpr double ELEVATOR = 180; // TODO Define elevator distance per revolution
-	constexpr double SHOOTER = 180;	 // TODO Define shooter conversion factor
+	constexpr double SHOULDER = 1;
+	constexpr double ELBOW = 1;
+	constexpr double WRIST = 1;
 }
 
 namespace Speed
 {
 	constexpr double DRIVETRAIN_MOVE = 1;
 	constexpr double DRIVETRAIN_TURN = 1;
-	constexpr double SHOOTER = 1;
-	constexpr double TURRET = 1;
-	constexpr double FEEDER = 1;
-	constexpr double ELEVATOR = 1;
-	constexpr double PLANAR_ELEVATOR = 1;
+	constexpr double SHOULDER = 1;
+	constexpr double ELBOW = 1;
+	constexpr double WRIST = 1;
+	constexpr double INTAKE = 1;
 }
 
-namespace Time
-{
-	constexpr double SHOOTER_LOAD = 2;
-	constexpr double FEEDER = 5;
-}
-
-namespace Minmax
-{
-	constexpr double TURRET_MIN = 0;
-	constexpr double TURRET_MAX = 360;
-	constexpr double ELEVATOR_MIN = 250;
-	constexpr double ELEVATOR_MAX = 30;
-}
 
 using Velocity =
 	units::compound_unit<units::meters, units::inverse<units::seconds>>;

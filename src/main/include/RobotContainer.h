@@ -11,8 +11,8 @@
 #include "subsystems/EncoderSubsystemBase.h"
 #include "subsystems/Limelight.h"
 #include "subsystems/MotorSubsystemBase.h"
-#include "subsystems/PlanarElevator.h"
 #include "subsystems/Arm.h"
+#include "subsystems/Intake.h"
 #include "human-input/XboxController.hh"
 
 #include <frc/Filesystem.h>
@@ -75,23 +75,19 @@ public:
 
 private:
 	Drivetrain<DrivetrainTypes::SPX> m_drivetrain{
-		M::PWM::FRONT_RIGHT,
-		M::PWM::FRONT_LEFT,
-		M::PWM::BACK_RIGHT,
-		M::PWM::BACK_LEFT,
-		DIO::Encoder::DRIVETRAIN_RA,
-		DIO::Encoder::DRIVETRAIN_RB,
-		DIO::Encoder::DRIVETRAIN_LA,
-		DIO::Encoder::DRIVETRAIN_LB};
+		M::DT::FRONT_RIGHT,
+		M::DT::FRONT_LEFT,
+		M::DT::BACK_RIGHT,
+		M::DT::BACK_LEFT,
+		ENC::DT::FRONT_RIGHT,
+		ENC::DT::FRONT_LEFT,
+		ENC::DT::BACK_RIGHT,
+		ENC::DT::BACK_LEFT,};
 
-	// TD::Arm arm{3, 7};
-	TD::EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> shoulder{8};
-	TD::EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> arm{1};
+	Arm m_arm{M::Arm::SHOULDER,M::Arm::ELBOW,M::Arm::WRIST};
 
-
-	TD::MotorSubsystemBase<MotorTypes::SPARK> intake1{4};
-	TD::MotorSubsystemBase<MotorTypes::SPARK> intake2{5};
-
+	Intake m_intake{{M::Intake::RIGHT,M::Intake::LEFT}};
+	
 	TD::XboxController mc_controller;
 	frc::XboxController m_controller = frc::XboxController(0);
 	frc2::CommandXboxController m_commandController = CommandXboxController(0);

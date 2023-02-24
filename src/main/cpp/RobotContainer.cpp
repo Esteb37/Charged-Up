@@ -19,11 +19,6 @@ void RobotContainer::RobotInit()
 	mc_controller.SetAxisThresholdLeft(0.2, 1.0);
 	mc_controller.SetAxisThresholdRight(0.2, 1.0);
 
-	shoulder.SetSparkMaxIdleMode(CANSparkMax::IdleMode::kBrake);
-	arm.SetSparkMaxIdleMode(CANSparkMax::IdleMode::kBrake);
-
-	shoulder.InvertMotor(true);
-
 	ConfigureSubsystems();
 }
 
@@ -35,6 +30,7 @@ void RobotContainer::RobotPeriodic()
 void RobotContainer::ConfigureSubsystems()
 {
 	m_drivetrain.SetGyro(&m_gyro);
+
 	m_drivetrain.SetPositionConversionFactor(DPR::DRIVETRAIN);
 
 	m_drivetrain.ConfigureMovePID(PID::Move::P, PID::Move::I, PID::Move::D, PID::Move::TOLERANCE, true);
@@ -45,11 +41,9 @@ void RobotContainer::ConfigureSubsystems()
 
 	m_drivetrain.ResetPose();
 
-	shoulder.SetPositionConversionFactor(90/80.1);
-	//shoulder.InvertEncoder(true);
+	m_arm.Configure();
 
-	arm.SetName("Arm");
-	shoulder.SetName("Shoulder");
+	m_intake.SetMaxSpeed(Speed::INTAKE);
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
@@ -95,8 +89,7 @@ void RobotContainer::TeleopInit()
 {
 	m_gyro.Reset();
 	m_drivetrain.ResetPose();
-	arm.ResetEncoder();
-	shoulder.ResetEncoder();
+	m_arm.ResetEncoders();
 }
 void RobotContainer::TeleopPeriodic()
 {
@@ -117,16 +110,13 @@ void RobotContainer::AutonomousInit()
 {
 	m_gyro.Reset();
 	m_drivetrain.ResetEncoders();
-	arm.ResetEncoder();
-	shoulder.ResetEncoder();
-
+	m_arm.ResetEncoders();
 }
 
 void RobotContainer::AutonomousPeriodic()
 {
-	frc2::CommandScheduler::GetInstance().Schedule(shoulder.SetAngleCmd(-45_deg,0.6));	
 }
 
 void RobotContainer::ConfigureControllerBindings() {
-	m_commandController.A().OnTrue(arm.SetAngleCmd(25_deg, 0.05));
+	
 }

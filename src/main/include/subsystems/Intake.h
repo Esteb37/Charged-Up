@@ -30,12 +30,9 @@
 
 namespace TD
 {
-	template <class MotorType>
-	class Intake: virtual public MotorSubsystemBase<MotorType>
+	class Intake: virtual public MotorSubsystemBase<MotorTypes::SPARK>
 	{
 	public:
-
-
 		/**
 		 * @brief Construct a new Intake object without encoder and a single motor
 		 * @param motorPort The CAN ID of the motor

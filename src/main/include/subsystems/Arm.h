@@ -3,7 +3,7 @@
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/Commands.h>
 #include <units/angle.h>
-
+#include "Constants.h"
 #include "subsystems/EncoderSubsystemBase.h"
 
 using namespace frc2;
@@ -33,9 +33,16 @@ namespace TD {
         CommandPtr SetPose(Poses);
 
         void PrintPose();
+        
         void PrintAngles();
+
         Poses GetPose();
+
         std::string GetPoseStr();
+
+        void Configure();
+
+        void ResetEncoders();
 
     private:
         EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> m_shoulder;
