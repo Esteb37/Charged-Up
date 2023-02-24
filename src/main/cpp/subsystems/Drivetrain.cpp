@@ -27,6 +27,7 @@
 #include "subsystems/Drivetrain.h"
 #include <cmath>
 #include <typeinfo>
+#include "diagnostic/ErrorHandlers.h"
 
 namespace TD
 {
@@ -590,7 +591,7 @@ namespace TD
 			[this] { m_alignPIDController.SetSetpoint(0.0); },
 
 			[this, &speed] {
-				double output = m_alignPIDController.Calculate(m_limelight.GetHorizontalAngle() * m_alignPIDDirection);
+				double output = m_alignPIDController.Calculate(0); // m_limelight.GetHorizontalAngle() * m_alignPIDDirection);
 				double clampedOutput = clamp(output, -1.0, 1.0);
 				Drive(0.0, clampedOutput * speed);
 			},
@@ -688,7 +689,7 @@ namespace TD
 	bool Drivetrain<T>::SetAngleWithTarget(double angle, double speed)
 	{
 		m_alignPIDController.SetSetpoint(angle);
-		double output = m_alignPIDController.Calculate(m_limelight.GetHorizontalAngle()* m_alignPIDDirection);
+		double output = m_alignPIDController.Calculate(0); // m_limelight.GetHorizontalAngle()* m_alignPIDDirection);
 		output = clamp(output, -1.0, 1.0);
 		Drive(0, output * speed);
 		return m_alignPIDController.AtSetpoint();

@@ -204,7 +204,16 @@ namespace TD
 	template <class T>
 	void MotorSubsystemBase<T>::Periodic()
 	{
+		
 	}
+
+	template <>
+	void MotorSubsystemBase<SPARK>::Periodic()
+	{
+		SmartDashboard::PutNumber(SubsystemBase::GetName()+" Mode", (double)m_motor->GetIdleMode());
+	}
+
+	
 
 	template <class T>
 	bool MotorSubsystemBase<T>::GetUpperLimit()

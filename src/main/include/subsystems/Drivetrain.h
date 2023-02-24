@@ -414,6 +414,7 @@ namespace TD
 
 		void PrintPose();
 
+
 		using Velocity =
 			units::compound_unit<units::meters, units::inverse<units::seconds>>;
 		using Acceleration =
@@ -487,7 +488,7 @@ namespace TD
 		CustomGyroBase *m_gyro;
 
 	protected:
-		Limelight m_limelight = Limelight::GetInstance();
+		// Limelight m_limelight = Limelight::GetInstance();
 
 		// ----- Attributes -----s
 

@@ -93,6 +93,7 @@ namespace TD
 	template <class MotorType, class EncoderType>
 	void EncoderSubsystemBase<MotorType, EncoderType>::Periodic()
 	{
+		
 	}
 
 	template <class MotorType, class EncoderType>
@@ -207,6 +208,7 @@ namespace TD
 		m_positionPID.SetSetpoint(position);
 
 		double output = m_positionPID.Calculate(GetPosition() * m_positionPIDDirection);
+		output = std::clamp(output, -1.0, 1.0);
 
 		MotorSubsystemBase<MotorType>::SetMotor(output * speed);
 
@@ -288,6 +290,36 @@ namespace TD
 	void EncoderSubsystemBase<MotorType, EncoderType>::SetPositionSafety(bool active)
 	{
 		m_positionSafetyActive = active;
+	}
+
+	template <>
+	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode mode) {
+		for (auto motor: m_motorList) {
+			motor->SetIdleMode(mode);
+		}
+	}
+
+	template <>
+	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::SetSparkSoftLimit(rev::CANSparkMax::SoftLimitDirection direction, double limit) {
+		softLimitDirection = direction;
+
+		for (auto motor: m_motorList) {
+			motor->SetSoftLimit(softLimitDirection, limit);
+		}
+	}
+
+	template <>
+	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::EnableSparkSoftLimit() {
+		for (auto motor: m_motorList) {
+			motor->EnableSoftLimit(softLimitDirection, true);
+		}
+	}
+
+	template <>
+	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::DisableSparkSoftLimit() {
+		for (auto motor: m_motorList) {
+			motor->EnableSoftLimit(softLimitDirection, false);
+		}
 	}
 
 	template <class MotorType, class EncoderType>

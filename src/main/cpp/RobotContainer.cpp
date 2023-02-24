@@ -3,21 +3,33 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "RobotContainer.h"
+#include <frc2/command/Commands.h>
+#include <frc2/command/CommandScheduler.h>
 
 RobotContainer::RobotContainer()
 {
-	ConfigureSubsystems();
+	
 }
 
 void RobotContainer::RobotInit()
 {
 	m_gyro.Calibrate();
+	ConfigureControllerBindings();
+
+	mc_controller.SetAxisThresholdLeft(0.2, 1.0);
+	mc_controller.SetAxisThresholdRight(0.2, 1.0);
+
+	shoulder.SetSparkMaxIdleMode(CANSparkMax::IdleMode::kBrake);
+	arm.SetSparkMaxIdleMode(CANSparkMax::IdleMode::kBrake);
+
+	shoulder.InvertMotor(true);
+
+	ConfigureSubsystems();
 }
 
 void RobotContainer::RobotPeriodic()
 {
-	m_drivetrain.PrintEncoders();
-	m_drivetrain.PrintPose();
+
 }
 
 void RobotContainer::ConfigureSubsystems()
@@ -32,6 +44,12 @@ void RobotContainer::ConfigureSubsystems()
 	m_drivetrain.ConfigurePathFollower(Path::RAMSETE_B, Path::RAMSETE_ZETA, Path::KS, Path::KV, Path::KA, Path::KP, Path::KP);
 
 	m_drivetrain.ResetPose();
+
+	shoulder.SetPositionConversionFactor(90/80.1);
+	//shoulder.InvertEncoder(true);
+
+	arm.SetName("Arm");
+	shoulder.SetName("Shoulder");
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
@@ -77,20 +95,38 @@ void RobotContainer::TeleopInit()
 {
 	m_gyro.Reset();
 	m_drivetrain.ResetPose();
+	arm.ResetEncoder();
+	shoulder.ResetEncoder();
 }
 void RobotContainer::TeleopPeriodic()
 {
-	m_drivetrain.TankDriveVolts(5_V, 5_V);
+	double output = mc_controller.TriggerRight() - mc_controller.TriggerLeft();
+	double rotation = mc_controller.AxisXLeft();
+
+	m_drivetrain.Drive(output, rotation * (output == 0 ? 0.5 : 1.0));
+
+	// arm.SetMotor(mc_controller.AxisYLeft()/5);
+	// shoulder.SetMotor(mc_controller.AxisYRight()/5);
+	// arm.PrintPosition();
+	// shoulder.PrintPosition();
+	// intake1.SetMotor(mc_controller.TriggerRight()-mc_controller.TriggerLeft());
+	// intake2.SetMotor(-(mc_controller.TriggerRight()-mc_controller.TriggerLeft()));
 }
 
 void RobotContainer::AutonomousInit()
 {
 	m_gyro.Reset();
 	m_drivetrain.ResetEncoders();
+	arm.ResetEncoder();
+	shoulder.ResetEncoder();
+
 }
 
 void RobotContainer::AutonomousPeriodic()
 {
+	frc2::CommandScheduler::GetInstance().Schedule(shoulder.SetAngleCmd(-45_deg,0.6));	
 }
 
-void RobotContainer::ConfigureControllerBindings() {}
+void RobotContainer::ConfigureControllerBindings() {
+	m_commandController.A().OnTrue(arm.SetAngleCmd(25_deg, 0.05));
+}

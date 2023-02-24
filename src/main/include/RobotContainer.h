@@ -12,6 +12,9 @@
 #include "subsystems/Limelight.h"
 #include "subsystems/MotorSubsystemBase.h"
 #include "subsystems/PlanarElevator.h"
+#include "subsystems/Arm.h"
+#include "human-input/XboxController.hh"
+
 #include <frc/Filesystem.h>
 #include <frc/XboxController.h>
 #include <frc/controller/PIDController.h>
@@ -31,6 +34,7 @@
 #include <pathplanner/lib/PathPlanner.h>
 #include <pathplanner/lib/auto/RamseteAutoBuilder.h>
 #include <wpi/fs.h>
+
 using namespace pathplanner;
 
 /**
@@ -80,8 +84,17 @@ private:
 		DIO::Encoder::DRIVETRAIN_LA,
 		DIO::Encoder::DRIVETRAIN_LB};
 
-	XboxController m_controller = XboxController(0);
-	CommandXboxController m_commandController = CommandXboxController(0);
+	// TD::Arm arm{3, 7};
+	TD::EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> shoulder{8};
+	TD::EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> arm{1};
+
+
+	TD::MotorSubsystemBase<MotorTypes::SPARK> intake1{4};
+	TD::MotorSubsystemBase<MotorTypes::SPARK> intake2{5};
+
+	TD::XboxController mc_controller;
+	frc::XboxController m_controller = frc::XboxController(0);
+	frc2::CommandXboxController m_commandController = CommandXboxController(0);
 
 	CustomGyro<GyroTypes::NAVX> m_gyro;
 

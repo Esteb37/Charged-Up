@@ -33,16 +33,17 @@ namespace M
 		constexpr port ELEVATOR_RIGHT = 5;
 		constexpr port ELEVATOR_LEFT = 6;
 		constexpr port INTAKE = 7;
+		constexpr port TURRET = 5;
+		constexpr port TURRET_FOLLOWER = 6;
 	}
 
 	namespace PWM
 	{
-		constexpr port FRONT_RIGHT = 0;
-		constexpr port FRONT_LEFT = 1;
-		constexpr port BACK_RIGHT = 2;
-		constexpr port BACK_LEFT = 3;
+		constexpr port FRONT_RIGHT = 8;
+		constexpr port FRONT_LEFT = 6;
+		constexpr port BACK_RIGHT = 9;
+		constexpr port BACK_LEFT = 7;
 		constexpr port FEEDER = 4;
-		constexpr port TURRET = 5;
 	}
 
 	namespace Servo
