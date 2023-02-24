@@ -85,8 +85,12 @@ private:
 		DIO::Encoder::DRIVETRAIN_LB};
 
 	// TD::Arm arm{3, 7};
-	TD::EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> shoulder{7};
-	TD::EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> arm{3};
+	TD::EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> shoulder{8};
+	TD::EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> arm{1};
+
+
+	TD::MotorSubsystemBase<MotorTypes::SPARK> intake1{4};
+	TD::MotorSubsystemBase<MotorTypes::SPARK> intake2{5};
 
 	TD::XboxController mc_controller;
 	frc::XboxController m_controller = frc::XboxController(0);

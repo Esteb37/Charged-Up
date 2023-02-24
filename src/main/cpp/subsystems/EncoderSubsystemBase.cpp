@@ -93,6 +93,7 @@ namespace TD
 	template <class MotorType, class EncoderType>
 	void EncoderSubsystemBase<MotorType, EncoderType>::Periodic()
 	{
+		
 	}
 
 	template <class MotorType, class EncoderType>

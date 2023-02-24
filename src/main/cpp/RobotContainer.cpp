@@ -4,10 +4,11 @@
 
 #include "RobotContainer.h"
 #include <frc2/command/Commands.h>
+#include <frc2/command/CommandScheduler.h>
 
 RobotContainer::RobotContainer()
 {
-	ConfigureSubsystems();
+	
 }
 
 void RobotContainer::RobotInit()
@@ -22,12 +23,13 @@ void RobotContainer::RobotInit()
 	arm.SetSparkMaxIdleMode(CANSparkMax::IdleMode::kBrake);
 
 	shoulder.InvertMotor(true);
+
+	ConfigureSubsystems();
 }
 
 void RobotContainer::RobotPeriodic()
 {
-	m_drivetrain.PrintEncoders();
-	m_drivetrain.PrintPose();
+
 }
 
 void RobotContainer::ConfigureSubsystems()
@@ -42,6 +44,12 @@ void RobotContainer::ConfigureSubsystems()
 	m_drivetrain.ConfigurePathFollower(Path::RAMSETE_B, Path::RAMSETE_ZETA, Path::KS, Path::KV, Path::KA, Path::KP, Path::KP);
 
 	m_drivetrain.ResetPose();
+
+	shoulder.SetPositionConversionFactor(90/80.1);
+	//shoulder.InvertEncoder(true);
+
+	arm.SetName("Arm");
+	shoulder.SetName("Shoulder");
 }
 
 frc2::Command *RobotContainer::GetAutonomousCommand()
@@ -87,23 +95,36 @@ void RobotContainer::TeleopInit()
 {
 	m_gyro.Reset();
 	m_drivetrain.ResetPose();
+	arm.ResetEncoder();
+	shoulder.ResetEncoder();
 }
 void RobotContainer::TeleopPeriodic()
 {
-	double leftOutput = 0.75 * mc_controller.AxisYLeft();
-	double rightOutput = 0.75 * mc_controller.AxisXRight();
+	double output = mc_controller.TriggerRight() - mc_controller.TriggerLeft();
+	double rotation = mc_controller.AxisXLeft();
 
-	m_drivetrain.Drive(leftOutput, rightOutput);
+	m_drivetrain.Drive(output, rotation * (output == 0 ? 0.5 : 1.0));
+
+	// arm.SetMotor(mc_controller.AxisYLeft()/5);
+	// shoulder.SetMotor(mc_controller.AxisYRight()/5);
+	// arm.PrintPosition();
+	// shoulder.PrintPosition();
+	// intake1.SetMotor(mc_controller.TriggerRight()-mc_controller.TriggerLeft());
+	// intake2.SetMotor(-(mc_controller.TriggerRight()-mc_controller.TriggerLeft()));
 }
 
 void RobotContainer::AutonomousInit()
 {
 	m_gyro.Reset();
 	m_drivetrain.ResetEncoders();
+	arm.ResetEncoder();
+	shoulder.ResetEncoder();
+
 }
 
 void RobotContainer::AutonomousPeriodic()
 {
+	frc2::CommandScheduler::GetInstance().Schedule(shoulder.SetAngleCmd(-45_deg,0.6));	
 }
 
 void RobotContainer::ConfigureControllerBindings() {
