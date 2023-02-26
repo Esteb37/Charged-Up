@@ -180,7 +180,7 @@ namespace TD
 	{
 		if (std::is_same<EncoderType, NEO>::value)
 		{
-			((NEO *)m_encoder)->SetInverted(invert);
+			m_encoderInverted = invert;
 		}
 		else
 		{
@@ -193,7 +193,7 @@ namespace TD
 	{
 		if (std::is_same<EncoderType, NEO>::value)
 		{
-			return ((NEO *)m_encoder)->GetPosition();
+			return ((NEO *)m_encoder)->GetPosition() * (m_encoderInverted ? -1 : 1);
 		}
 		else
 		{
@@ -360,7 +360,7 @@ namespace TD
 	{
 		if (std::is_same<EncoderType, NEO>::value)
 		{
-			return ((NEO *)m_encoder)->GetVelocity();
+			return ((NEO *)m_encoder)->GetVelocity() * (m_encoderInverted ? -1 : 1)
 		}
 		else
 		{

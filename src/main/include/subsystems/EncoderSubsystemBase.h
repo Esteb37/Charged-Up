@@ -254,6 +254,8 @@ namespace TD
 
 		bool m_positionSafetyActive = false;
 
+		bool m_encoderInverted = false;
+
 		// Limits & Safety
 		rev::CANSparkMax::SoftLimitDirection softLimitDirection;
 	};
