@@ -3,12 +3,11 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "RobotContainer.h"
-#include <frc2/command/Commands.h>
 #include <frc2/command/CommandScheduler.h>
+#include <frc2/command/Commands.h>
 
 RobotContainer::RobotContainer()
 {
-	
 }
 
 void RobotContainer::RobotInit()
@@ -24,7 +23,6 @@ void RobotContainer::RobotInit()
 
 void RobotContainer::RobotPeriodic()
 {
-
 }
 
 void RobotContainer::ConfigureSubsystems()
@@ -51,7 +49,7 @@ void RobotContainer::ConfigureSubsystems()
 
 	m_turret.SetPositionConversionFactor(DPR::TURRET);
 
-	m_turret.ConfigurePositionPID(PID::TurretAngle::P,PID::TurretAngle::I,PID::TurretAngle::D,PID::TurretAngle::TOLERANCE);
+	m_turret.ConfigurePositionPID(PID::TurretAngle::P, PID::TurretAngle::I, PID::TurretAngle::D, PID::TurretAngle::TOLERANCE);
 
 	// m_turret.SetMinMaxPosition(-10,190);
 	// m_turret.SetPositionSafety(true);
@@ -102,7 +100,6 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 
 void RobotContainer::TeleopInit()
 {
-
 }
 void RobotContainer::TeleopPeriodic()
 {
@@ -128,13 +125,32 @@ void RobotContainer::AutonomousPeriodic()
 {
 }
 
-void RobotContainer::ConfigureControllerBindings() {
-	
+void RobotContainer::ConfigureControllerBindings()
+{
+
+	m_controller.Y().OnTrue(GetArmPoseCmd(Arm::Poses::kConeHigh));
+
+	m_controller.A().OnTrue(GetArmPoseCmd(Arm::Poses::kConeLow));
+
+	m_controller.X().OnTrue(GetArmPoseCmd(Arm::Poses::kHome));
+
+	m_controller.B().OnTrue(GetArmPoseCmd(Arm::Poses::kConeMiddle));
 }
 
-void RobotContainer::Reset(){
+void RobotContainer::Reset()
+{
 	m_gyro.Reset();
 	m_drivetrain.ResetEncoders();
 	m_arm.ResetEncoders();
 	m_turret.ResetEncoder();
+}
+
+frc2::CommandPtr RobotContainer::GetArmPoseCmd(Arm::Poses pose)
+{
+	return frc2::InstantCommand([this, pose]
+								{
+		m_currentCommand.Cancel();
+		m_currentCommand = std::move(m_arm.SetPose(pose));
+		m_currentCommand.Schedule(); })
+		.ToPtr();
 }

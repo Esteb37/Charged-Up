@@ -51,7 +51,6 @@ namespace M
 	}
 }
 
-
 namespace ENC
 {
 	namespace DT
@@ -114,21 +113,24 @@ namespace PID
 		constexpr double TOLERANCE = 0.5;
 	}
 
-	namespace Shoulder{
+	namespace Shoulder
+	{
 		constexpr double P = 0.01;
 		constexpr double I = 0.0;
 		constexpr double D = 0.0;
 		constexpr double TOLERANCE = 0.5;
 	}
 
-	namespace Elbow{
+	namespace Elbow
+	{
 		constexpr double P = 0.01;
 		constexpr double I = 0.0;
 		constexpr double D = 0.0;
 		constexpr double TOLERANCE = 0.5;
 	}
 
-	namespace Wrist{
+	namespace Wrist
+	{
 		constexpr double P = 0.01;
 		constexpr double I = 0.0;
 		constexpr double D = 0.0;
@@ -176,6 +178,47 @@ namespace Speed
 	constexpr double TURRET = 1;
 }
 
+namespace Angles
+{
+	namespace Shoulder
+	{
+		constexpr auto HOME = 10_deg;
+		constexpr auto PICKUP = 15_deg;
+		constexpr auto CONE_LOW = -15_deg;
+		constexpr auto CONE_MIDDLE = 30_deg;
+		constexpr auto CONE_HIGH = 80.63_deg;
+		constexpr auto BOX_LOW = 0_deg;
+		constexpr auto BOX_MIDDLE = 0_deg;
+		constexpr auto BOX_HIGH = 0_deg;
+		constexpr auto TRAY = 0_deg;
+	}
+
+	namespace Elbow
+	{
+		constexpr auto HOME = 20_deg;
+		constexpr auto PICKUP = 20_deg;
+		constexpr auto CONE_LOW = 75_deg;
+		constexpr auto CONE_MIDDLE = 82.26_deg;
+		constexpr auto CONE_HIGH = 10_deg;
+		constexpr auto BOX_LOW = 0_deg;
+		constexpr auto BOX_MIDDLE = 0_deg;
+		constexpr auto BOX_HIGH = 0_deg;
+		constexpr auto TRAY = 0_deg;
+	}
+
+	namespace Wrist
+	{
+		constexpr auto HOME = 30_deg;
+		constexpr auto PICKUP = 30_deg;
+		constexpr auto CONE_LOW = 210_deg;
+		constexpr auto CONE_MIDDLE = 0_deg;
+		constexpr auto CONE_HIGH = 0_deg;
+		constexpr auto BOX_LOW = 0_deg;
+		constexpr auto BOX_MIDDLE = 0_deg;
+		constexpr auto BOX_HIGH = 0_deg;
+		constexpr auto TRAY = 0_deg;
+	}
+}
 
 using Velocity =
 	units::compound_unit<units::meters, units::inverse<units::seconds>>;

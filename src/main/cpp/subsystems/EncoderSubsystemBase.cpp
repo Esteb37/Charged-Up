@@ -93,7 +93,6 @@ namespace TD
 	template <class MotorType, class EncoderType>
 	void EncoderSubsystemBase<MotorType, EncoderType>::Periodic()
 	{
-		
 	}
 
 	template <class MotorType, class EncoderType>
@@ -216,35 +215,49 @@ namespace TD
 	}
 
 	template <class MotorType, class EncoderType>
-	frc2::CommandPtr EncoderSubsystemBase<MotorType, EncoderType>::SetPositionCmd(double position, double speed) {
+	frc2::CommandPtr EncoderSubsystemBase<MotorType, EncoderType>::SetPositionCmd(double position, double speed)
+	{
 		return frc2::FunctionalCommand(
-			[this, &position] { m_positionPID.SetSetpoint(position); },
+				   [this, position]
+				   {
+					   m_positionPID.SetSetpoint(position);
+				   },
 
-			[this, &speed] {
-				double output = m_positionPID.Calculate(GetPosition() * m_positionPIDDirection);
-				SetMotor(output * speed);
-			},
+				   [this, speed]
+				   {
+					   double output = m_positionPID.Calculate(GetPosition() * m_positionPIDDirection);
+					   SetMotor(output * speed);
+				   },
 
-			[this] (bool wasInterrupted) { SetMotor(0.0); },
+				   [this](bool wasInterrupted)
+				   {
+					   SetMotor(0.0);
+				   },
 
-			[this] { return m_positionPID.AtSetpoint(); }
-		).ToPtr();
+				   [this]
+				   { return m_positionPID.AtSetpoint(); })
+			.ToPtr();
 	}
 
 	template <class MotorType, class EncoderType>
-	frc2::CommandPtr EncoderSubsystemBase<MotorType, EncoderType>::SetAngleCmd(units::angle::degree_t degrees, double speed) {
+	frc2::CommandPtr EncoderSubsystemBase<MotorType, EncoderType>::SetAngleCmd(units::angle::degree_t degrees, double speed)
+	{
 		return frc2::FunctionalCommand(
-			[this, &degrees] { m_positionPID.SetSetpoint(std::fmod(degrees.value(), 360.0)); },
+				   [this, degrees]
+				   { m_positionPID.SetSetpoint(std::fmod(degrees.value(), 360.0)); },
 
-			[this, &speed] {
-				double output = m_positionPID.Calculate(GetPosition() * m_positionPIDDirection);
-				SetMotor(output * speed);
-			},
+				   [this, speed]
+				   {
+					   double output = m_positionPID.Calculate(GetPosition() * m_positionPIDDirection);
+					   SetMotor(output * speed);
+				   },
 
-			[this] (bool wasInterrupted) { SetMotor(0.0); },
+				   [this](bool wasInterrupted)
+				   { SetMotor(0.0); },
 
-			[this] { return m_positionPID.AtSetpoint(); }
-		).ToPtr();
+				   [this]
+				   { return m_positionPID.AtSetpoint(); })
+			.ToPtr();
 	}
 
 	template <class MotorType, class EncoderType>
@@ -293,31 +306,39 @@ namespace TD
 	}
 
 	template <>
-	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode mode) {
-		for (auto motor: m_motorList) {
+	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode mode)
+	{
+		for (auto motor : m_motorList)
+		{
 			motor->SetIdleMode(mode);
 		}
 	}
 
 	template <>
-	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::SetSparkSoftLimit(rev::CANSparkMax::SoftLimitDirection direction, double limit) {
+	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::SetSparkSoftLimit(rev::CANSparkMax::SoftLimitDirection direction, double limit)
+	{
 		softLimitDirection = direction;
 
-		for (auto motor: m_motorList) {
+		for (auto motor : m_motorList)
+		{
 			motor->SetSoftLimit(softLimitDirection, limit);
 		}
 	}
 
 	template <>
-	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::EnableSparkSoftLimit() {
-		for (auto motor: m_motorList) {
+	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::EnableSparkSoftLimit()
+	{
+		for (auto motor : m_motorList)
+		{
 			motor->EnableSoftLimit(softLimitDirection, true);
 		}
 	}
 
 	template <>
-	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::DisableSparkSoftLimit() {
-		for (auto motor: m_motorList) {
+	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::DisableSparkSoftLimit()
+	{
+		for (auto motor : m_motorList)
+		{
 			motor->EnableSoftLimit(softLimitDirection, false);
 		}
 	}
