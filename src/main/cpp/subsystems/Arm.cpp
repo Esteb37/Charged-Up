@@ -115,7 +115,7 @@ namespace TD
         return Sequence(
             InstantCommand([this, pose]()
                            { m_pose = Poses::kMoving;
-                               SmartDashboard::PutString("Target", PoseToString(pose)); }),
+                               SmartDashboard::PutString("Arm Target", PoseToString(pose)); }),
             Parallel(
                 SetShoulderAngle(shoulderAngle, Speed::SHOULDER),
                 SetElbowAngle(elbowAngle, Speed::ELBOW),
@@ -160,6 +160,8 @@ namespace TD
             return "Box High";
         case Poses::kTaxi:
             return "Taxi";
+        default:
+            return "Unknown";
         }
     }
 

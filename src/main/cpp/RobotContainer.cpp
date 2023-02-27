@@ -107,13 +107,6 @@ void RobotContainer::TeleopPeriodic()
 	double rotation = m_controller.GetRightX();
 
 	m_drivetrain.Drive(output, rotation * (output == 0 ? 0.5 : 1.0));
-
-	// arm.SetMotor(mc_controller.AxisYLeft()/5);
-	// shoulder.SetMotor(mc_controller.AxisYRight()/5);
-	// arm.PrintPosition();
-	// shoulder.PrintPosition();
-	// intake1.SetMotor(mc_controller.TriggerRight()-mc_controller.TriggerLeft());
-	// intake2.SetMotor(-(mc_controller.TriggerRight()-mc_controller.TriggerLeft()));
 }
 
 void RobotContainer::AutonomousInit()
@@ -164,6 +157,21 @@ void RobotContainer::ConfigureControllerBindings()
 		.OnFalse(SetArmPose(Arm::Poses::kTaxi));
 
 	m_controller.Start().OnTrue(SetArmPose(Arm::Poses::kTaxi));
+
+	Trigger povUpTrigger([this]
+						 { return m_controller.GetPOV() == 0; });
+
+	Trigger povDownTrigger([this]
+						   { return m_controller.GetPOV() == 180; });
+
+	Trigger povRightTrigger([this]
+							{ return m_controller.GetPOV() == 90; });
+
+	povUpTrigger.OnTrue(SetTurretPose(Turret::Poses::kFront));
+
+	povDownTrigger.OnTrue(SetTurretPose(Turret::Poses::kBack));
+
+	povRightTrigger.OnTrue(SetTurretPose(Turret::Poses::kSide));
 }
 
 void RobotContainer::Reset()
@@ -213,8 +221,18 @@ CommandPtr RobotContainer::SetArmPose(Arm::Poses pose)
 {
 	return frc2::InstantCommand([this, pose]
 								{
-		m_currentCommand.Cancel();
-		m_currentCommand = GetArmPoseCmd(pose);
-		m_currentCommand.Schedule(); })
+		m_currentArmCommand.Cancel();
+		m_currentArmCommand = GetArmPoseCmd(pose);
+		m_currentArmCommand.Schedule(); })
+		.ToPtr();
+}
+
+CommandPtr RobotContainer::SetTurretPose(Turret::Poses pose)
+{
+	return frc2::InstantCommand([this, pose]
+								{
+		m_currentTurretCommand.Cancel();
+		m_currentTurretCommand = m_turret.SetPose(pose);
+		m_currentTurretCommand.Schedule(); })
 		.ToPtr();
 }

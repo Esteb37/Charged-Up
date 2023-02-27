@@ -32,6 +32,10 @@ namespace TD
             kTaxi
         };
 
+        void Configure();
+
+        void ResetEncoders();
+
         void Periodic() override;
 
         CommandPtr SetShoulderAngle(units::angle::degree_t, double speed);
@@ -50,18 +54,12 @@ namespace TD
 
         std::string GetPoseStr();
 
-        void Configure();
-
-        void ResetEncoders();
-
         static std::string PoseToString(Poses pose);
 
     private:
         EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> m_shoulder;
         EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> m_elbow;
         EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> m_wrist;
-
-        frc2::CommandPtr *m_currentCommand = nullptr;
 
         Poses m_pose = Poses::kHome;
     };

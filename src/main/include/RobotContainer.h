@@ -9,11 +9,10 @@
 #include "subsystems/Arm.h"
 #include "subsystems/CustomGyro.h"
 #include "subsystems/Drivetrain.h"
-#include "subsystems/ElevatorBase.h"
-#include "subsystems/EncoderSubsystemBase.h"
 #include "subsystems/Intake.h"
 #include "subsystems/Limelight.h"
 #include "subsystems/MotorSubsystemBase.h"
+#include "subsystems/Turret.h"
 
 #include <frc/Filesystem.h>
 #include <frc/XboxController.h>
@@ -80,6 +79,8 @@ public:
 
 	CommandPtr SetArmPose(Arm::Poses);
 
+	CommandPtr SetTurretPose(Turret::Poses);
+
 private:
 	Drivetrain<DrivetrainTypes::SPX> m_drivetrain{
 		M::DT::FRONT_RIGHT,
@@ -96,13 +97,15 @@ private:
 
 	Intake m_intake{{M::Intake::RIGHT, M::Intake::LEFT}};
 
-	EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> m_turret{M::TURRET};
+	Turret m_turret{M::TURRET};
 
 	CustomController m_controller = CustomController(0);
 
 	CustomGyro<GyroTypes::NAVX> m_gyro;
 
-	CommandPtr m_currentCommand = InstantCommand().ToPtr();
+	CommandPtr m_currentArmCommand = InstantCommand().ToPtr();
+
+	CommandPtr m_currentTurretCommand = InstantCommand().ToPtr();
 
 	bool auto_done = false;
 };
