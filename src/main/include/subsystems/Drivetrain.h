@@ -29,6 +29,7 @@
 #include "Constants.h"
 #include "subsystems/CustomGyro.h"
 #include "subsystems/Limelight.h"
+#include <ctre/phoenix/motorcontrol/can/WPI_VictorSPX.h>
 #include <frc/Encoder.h>
 #include <frc/Filesystem.h>
 #include <frc/controller/PIDController.h>
@@ -38,7 +39,6 @@
 #include <frc/kinematics/DifferentialDriveOdometry.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/motorcontrol/VictorSP.h>
-#include <ctre/phoenix/motorcontrol/can/WPI_VictorSPX.h>
 #include <frc/simulation/DifferentialDrivetrainSim.h>
 #include <frc/simulation/EncoderSim.h>
 #include <frc/smartdashboard/Field2d.h>
@@ -413,7 +413,6 @@ namespace TD
 		Pose2d GetPose();
 
 		void PrintPose();
-
 
 		using Velocity =
 			units::compound_unit<units::meters, units::inverse<units::seconds>>;

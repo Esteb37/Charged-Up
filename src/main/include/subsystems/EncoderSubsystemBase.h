@@ -105,9 +105,9 @@ namespace TD
 		// ---------- Encoder ----------
 
 		/**
-		 * @brief Sets the encoder's value to 0
+		 * @brief Sets the encoder's value
 		 */
-		void ResetEncoder();
+		void ResetEncoder(double = 0);
 
 		/**
 		 * @brief Inverts the encoder's direction
@@ -255,6 +255,8 @@ namespace TD
 		bool m_positionSafetyActive = false;
 
 		bool m_encoderInverted = false;
+
+		double m_classicOffset = 0;
 
 		// Limits & Safety
 		rev::CANSparkMax::SoftLimitDirection softLimitDirection;

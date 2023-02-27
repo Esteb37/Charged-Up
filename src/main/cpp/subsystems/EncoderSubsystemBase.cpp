@@ -163,15 +163,16 @@ namespace TD
 	}
 
 	template <class MotorType, class EncoderType>
-	void EncoderSubsystemBase<MotorType, EncoderType>::ResetEncoder()
+	void EncoderSubsystemBase<MotorType, EncoderType>::ResetEncoder(double position)
 	{
 		if (std::is_same<EncoderType, NEO>::value)
 		{
-			((NEO *)m_encoder)->SetPosition(0);
+			((NEO *)m_encoder)->SetPosition(position);
 		}
 		else
 		{
 			((CLASSIC *)m_encoder)->Reset();
+			m_classicOffset = position;
 		}
 	}
 
@@ -197,7 +198,7 @@ namespace TD
 		}
 		else
 		{
-			return ((CLASSIC *)m_encoder)->GetDistance();
+			return ((CLASSIC *)m_encoder)->GetDistance() + m_classicOffset;
 		}
 	}
 
@@ -360,7 +361,7 @@ namespace TD
 	{
 		if (std::is_same<EncoderType, NEO>::value)
 		{
-			return ((NEO *)m_encoder)->GetVelocity() * (m_encoderInverted ? -1 : 1)
+			return ((NEO *)m_encoder)->GetVelocity() * (m_encoderInverted ? -1 : 1);
 		}
 		else
 		{

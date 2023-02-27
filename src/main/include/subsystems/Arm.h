@@ -2,6 +2,7 @@
 
 #include "Constants.h"
 #include "subsystems/EncoderSubsystemBase.h"
+#include <frc2/command/Command.h>
 #include <frc2/command/Commands.h>
 #include <frc2/command/SubsystemBase.h>
 #include <units/angle.h>
@@ -15,6 +16,7 @@ namespace TD
     public:
         Arm(uint8_t shoulderPort, uint8_t elbowPort, uint8_t wristPort);
 
+        // DO NOT CHANGE ORDER
         enum Poses
         {
             kHome,
@@ -27,6 +29,7 @@ namespace TD
             kBoxHigh,
             kTray,
             kMoving,
+            kTaxi
         };
 
         void Periodic() override;

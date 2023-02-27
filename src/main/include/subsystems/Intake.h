@@ -26,11 +26,12 @@
 
 #pragma once
 
+#include "Constants.h"
 #include "subsystems/MotorSubsystemBase.h"
-
+#include <frc2/command/Commands.h>
 namespace TD
 {
-	class Intake: virtual public MotorSubsystemBase<MotorTypes::SPARK>
+	class Intake : virtual public MotorSubsystemBase<MotorTypes::SPARK>
 	{
 	public:
 		/**
@@ -50,7 +51,18 @@ namespace TD
 		// ---------- Actions -----------
 
 		void Take();
-		void Spit();
-        void Invert(bool invert = true);
+
+		void Spit(double speed = 1);
+
+		void Invert(bool invert = true);
+
+		CommandPtr SpitCmd(double speed = 1);
+
+		CommandPtr TakeCmd(double speed = 1);
+
+		void Stop();
+
+	private:
+		Timer m_spitTimer = frc::Timer();
 	};
 }

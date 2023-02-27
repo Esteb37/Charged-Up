@@ -176,6 +176,8 @@ namespace Speed
 	constexpr double WRIST = 1;
 	constexpr double INTAKE = 1;
 	constexpr double TURRET = 1;
+	constexpr double BOX_SPIT = 1;
+	constexpr double CONE_SPIT = 1;
 }
 
 namespace Angles
@@ -191,6 +193,7 @@ namespace Angles
 		constexpr auto BOX_MIDDLE = 0_deg;
 		constexpr auto BOX_HIGH = 0_deg;
 		constexpr auto TRAY = 0_deg;
+		constexpr auto TAXI = 0_deg;
 	}
 
 	namespace Elbow
@@ -204,6 +207,7 @@ namespace Angles
 		constexpr auto BOX_MIDDLE = 0_deg;
 		constexpr auto BOX_HIGH = 0_deg;
 		constexpr auto TRAY = 0_deg;
+		constexpr auto TAXI = 0_deg;
 	}
 
 	namespace Wrist
@@ -217,7 +221,13 @@ namespace Angles
 		constexpr auto BOX_MIDDLE = 0_deg;
 		constexpr auto BOX_HIGH = 0_deg;
 		constexpr auto TRAY = 0_deg;
+		constexpr auto TAXI = 0_deg;
 	}
+}
+
+namespace Times
+{
+	constexpr auto SPIT = 1_s;
 }
 
 using Velocity =

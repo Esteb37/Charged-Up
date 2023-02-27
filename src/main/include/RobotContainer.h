@@ -49,13 +49,14 @@ using namespace TD;
 using namespace std;
 using namespace frc;
 using namespace frc2;
+using namespace frc2::cmd;
 
 class RobotContainer
 {
 public:
 	RobotContainer();
 
-	frc2::Command *GetAutonomousCommand();
+	Command *GetAutonomousCommand();
 
 	void ConfigureSubsystems();
 
@@ -75,7 +76,9 @@ public:
 
 	void Reset();
 
-	frc2::CommandPtr GetArmPoseCmd(Arm::Poses);
+	CommandPtr GetArmPoseCmd(Arm::Poses);
+
+	CommandPtr SetArmPose(Arm::Poses);
 
 private:
 	Drivetrain<DrivetrainTypes::SPX> m_drivetrain{
@@ -99,7 +102,7 @@ private:
 
 	CustomGyro<GyroTypes::NAVX> m_gyro;
 
-	frc2::CommandPtr m_currentCommand = frc2::InstantCommand().ToPtr();
+	CommandPtr m_currentCommand = InstantCommand().ToPtr();
 
 	bool auto_done = false;
 };

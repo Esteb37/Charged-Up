@@ -105,28 +105,23 @@ namespace TD
             elbowAngle = Angles::Elbow::TRAY;
             wristAngle = Angles::Wrist::TRAY;
             break;
+        case Poses::kTaxi:
+            shoulderAngle = Angles::Shoulder::TAXI;
+            elbowAngle = Angles::Elbow::TAXI;
+            wristAngle = Angles::Wrist::TAXI;
+            break;
         }
 
-        auto moveCommand = Parallel(
-            SetShoulderAngle(shoulderAngle, Speed::SHOULDER),
-            SetElbowAngle(elbowAngle, Speed::ELBOW),
-            SetWristAngle(wristAngle, Speed::WRIST));
-
-        auto cmd = Either(
-            InstantCommand().ToPtr(),
-            Sequence(
-                InstantCommand([this, pose]()
-                               { m_pose = Poses::kMoving;
+        return Sequence(
+            InstantCommand([this, pose]()
+                           { m_pose = Poses::kMoving;
                                SmartDashboard::PutString("Target", PoseToString(pose)); }),
-                std::move(moveCommand),
-                InstantCommand([this, pose]()
-                               { m_pose = pose; })),
-            [this, pose]()
-            {
-                return m_pose == pose;
-            });
-
-        return cmd;
+            Parallel(
+                SetShoulderAngle(shoulderAngle, Speed::SHOULDER),
+                SetElbowAngle(elbowAngle, Speed::ELBOW),
+                SetWristAngle(wristAngle, Speed::WRIST)),
+            InstantCommand([this, pose]()
+                           { m_pose = pose; }));
     }
 
     Arm::Poses Arm::GetPose()
@@ -156,13 +151,15 @@ namespace TD
         case Poses::kConeMiddle:
             return "Cone Middle";
         case Poses::kConeHigh:
-            return "ConeHigh";
+            return "Cone High";
         case Poses::kBoxLow:
             return "Box Low";
         case Poses::kBoxMiddle:
             return "Box Middle";
         case Poses::kBoxHigh:
             return "Box High";
+        case Poses::kTaxi:
+            return "Taxi";
         }
     }
 
@@ -180,8 +177,8 @@ namespace TD
 
     void Arm::ResetEncoders()
     {
-        m_shoulder.ResetEncoder();
-        m_elbow.ResetEncoder();
-        m_wrist.ResetEncoder();
+        m_shoulder.ResetEncoder(Angles::Shoulder::HOME.value());
+        m_elbow.ResetEncoder(Angles::Elbow::HOME.value());
+        m_wrist.ResetEncoder(Angles::Wrist::HOME.value());
     }
 }

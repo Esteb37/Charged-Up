@@ -59,7 +59,7 @@ void RobotContainer::ConfigureSubsystems()
 	m_turret.SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 }
 
-frc2::Command *RobotContainer::GetAutonomousCommand()
+Command *RobotContainer::GetAutonomousCommand()
 {
 
 	DifferentialDriveKinematics kinematics{Wheel::TRACK_WIDTH};
@@ -81,8 +81,8 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 		kinematics,
 		[this]
 		{ return m_drivetrain.GetWheelSpeeds(); },
-		frc2::PIDController{Path::KP, 0, 0},
-		frc2::PIDController{Path::KP, 0, 0},
+		PIDController{Path::KP, 0, 0},
+		PIDController{Path::KP, 0, 0},
 		[this](auto left, auto right)
 		{ m_drivetrain.TankDriveVolts(left, right); },
 		{&m_drivetrain}};
@@ -91,11 +91,11 @@ frc2::Command *RobotContainer::GetAutonomousCommand()
 	m_drivetrain.SetPose(trajectory.InitialPose());
 
 	// no auto
-	return new frc2::SequentialCommandGroup(
-		std::move(ramseteCommand),
-		frc2::InstantCommand([this]
-							 { m_drivetrain.TankDriveVolts(0_V, 0_V); },
-							 {}));
+	return new SequentialCommandGroup(
+		move(ramseteCommand),
+		InstantCommand([this]
+					   { m_drivetrain.TankDriveVolts(0_V, 0_V); },
+					   {}));
 }
 
 void RobotContainer::TeleopInit()
@@ -128,13 +128,42 @@ void RobotContainer::AutonomousPeriodic()
 void RobotContainer::ConfigureControllerBindings()
 {
 
-	m_controller.Y().OnTrue(GetArmPoseCmd(Arm::Poses::kConeHigh));
+	m_controller.RightBumper().
+	operator&&(m_controller.A())
+		.OnTrue(SetArmPose(Arm::Poses::kConeLow));
 
-	m_controller.A().OnTrue(GetArmPoseCmd(Arm::Poses::kConeLow));
+	m_controller.RightBumper().
+	operator&&(m_controller.B())
+		.OnTrue(SetArmPose(Arm::Poses::kConeMiddle));
 
-	m_controller.X().OnTrue(GetArmPoseCmd(Arm::Poses::kHome));
+	m_controller.RightBumper().
+	operator&&(m_controller.Y())
+		.OnTrue(SetArmPose(Arm::Poses::kConeHigh));
 
-	m_controller.B().OnTrue(GetArmPoseCmd(Arm::Poses::kConeMiddle));
+	m_controller.RightBumper().
+	operator&&(m_controller.X())
+		.WhileTrue(SetArmPose(Arm::Poses::kPickup))
+		.OnFalse(SetArmPose(Arm::Poses::kTaxi));
+
+	// Left Bumper
+	m_controller.LeftBumper().
+	operator&&(m_controller.A())
+		.OnTrue(SetArmPose(Arm::Poses::kBoxLow));
+
+	m_controller.LeftBumper().
+	operator&&(m_controller.B())
+		.OnTrue(SetArmPose(Arm::Poses::kBoxMiddle));
+
+	m_controller.LeftBumper().
+	operator&&(m_controller.Y())
+		.OnTrue(SetArmPose(Arm::Poses::kBoxHigh));
+
+	m_controller.LeftBumper().
+	operator&&(m_controller.X())
+		.WhileTrue(SetArmPose(Arm::Poses::kTray))
+		.OnFalse(SetArmPose(Arm::Poses::kTaxi));
+
+	m_controller.Start().OnTrue(SetArmPose(Arm::Poses::kTaxi));
 }
 
 void RobotContainer::Reset()
@@ -145,12 +174,47 @@ void RobotContainer::Reset()
 	m_turret.ResetEncoder();
 }
 
-frc2::CommandPtr RobotContainer::GetArmPoseCmd(Arm::Poses pose)
+CommandPtr RobotContainer::GetArmPoseCmd(Arm::Poses pose)
+{
+	// Cancel movement if any, start new movement towards pose
+
+	bool isPlacing = pose >= Arm::Poses::kConeLow &&
+					 pose <= Arm::Poses::kBoxHigh;
+
+	bool isPickup = pose == Arm::Poses::kPickup ||
+					pose == Arm::Poses::kTray;
+
+	if (isPlacing)
+	{
+		double spitSpeed = pose <= Arm::Poses::kConeHigh ? Speed::CONE_SPIT : Speed::BOX_SPIT;
+
+		return Sequence(
+			// Move towards position
+			m_arm.SetPose(pose),
+
+			// Spit object
+			m_intake.SpitCmd(spitSpeed),
+
+			m_arm.SetPose(Arm::Poses::kTaxi));
+	}
+	else if (isPickup)
+	{
+		return Sequence(
+			// Move towards position
+			m_arm.SetPose(pose),
+			// Intake object, it will run repeatedly until interrupted (when the button is released)
+			m_intake.TakeCmd(Speed::INTAKE).Repeatedly());
+	}
+
+	return m_arm.SetPose(pose);
+}
+
+CommandPtr RobotContainer::SetArmPose(Arm::Poses pose)
 {
 	return frc2::InstantCommand([this, pose]
 								{
 		m_currentCommand.Cancel();
-		m_currentCommand = std::move(m_arm.SetPose(pose));
+		m_currentCommand = GetArmPoseCmd(pose);
 		m_currentCommand.Schedule(); })
 		.ToPtr();
 }
