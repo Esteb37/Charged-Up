@@ -19,18 +19,37 @@ namespace TD
         m_elbow.SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode::kBrake);
         m_wrist.SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
+        // TODO : Check Max Speeds
         m_shoulder.SetMaxSpeed(Speed::SHOULDER);
         m_elbow.SetMaxSpeed(Speed::ELBOW);
         m_wrist.SetMaxSpeed(Speed::WRIST);
 
+        // TODO : Test PID
         m_shoulder.ConfigurePositionPID(PID::Shoulder::P, PID::Shoulder::I, PID::Shoulder::D, PID::Shoulder::TOLERANCE);
         m_elbow.ConfigurePositionPID(PID::Elbow::P, PID::Elbow::I, PID::Elbow::D, PID::Elbow::TOLERANCE);
         m_wrist.ConfigurePositionPID(PID::Wrist::P, PID::Wrist::I, PID::Wrist::D, PID::Wrist::TOLERANCE);
 
+        // TODO : Check PCFs
         m_shoulder.SetPositionConversionFactor(DPR::SHOULDER);
         m_elbow.SetPositionConversionFactor(DPR::ELBOW);
         m_wrist.SetPositionConversionFactor(DPR::WRIST);
-    }
+
+        // TODO : Check Inversions
+        m_shoulder.InvertEncoder(false);
+        m_elbow.InvertEncoder(false);
+        m_wrist.InvertEncoder(false);
+        m_shoulder.InvertMotor(false);
+        m_elbow.InvertMotor(false);
+        m_wrist.InvertMotor(false);
+
+        // TODO : If PID works, change this
+        // m_shoulder.SetMinMaxPosition(-180,180);
+        // m_shoulder.SetPositionSafety(true);
+        // m_elbow.SetMinMaxPosition(-180,180);
+        // m_elbow.SetPositionSafety(true);
+        // m_wrist.SetMinMaxPosition(-180,180);
+        // m_wrist.SetPositionSafety(true);
+        }
 
     void Arm::Periodic()
     {

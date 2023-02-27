@@ -27,7 +27,7 @@ using port = uint8_t;
 // MOTORS
 namespace M
 {
-	constexpr port TURRET = 0;
+	constexpr port TURRET = 9;
 
 	namespace Arm
 	{
@@ -65,6 +65,7 @@ namespace ENC
 
 namespace PID
 {
+	// TODO : Tune PIDs
 	namespace Move
 	{
 		constexpr double P = 8.6846;
@@ -161,6 +162,8 @@ namespace DPR
 {
 	constexpr double ENCODER_PULSE = 2048;
 	constexpr double DRIVETRAIN = Wheel::CIRCUMFERENCE / ENCODER_PULSE;
+
+	// TODO : Find encoder pulses per revolution
 	constexpr double SHOULDER = 1;
 	constexpr double ELBOW = 1;
 	constexpr double WRIST = 1;
@@ -169,6 +172,7 @@ namespace DPR
 
 namespace Speed
 {
+	// TODO : Tune speeds
 	constexpr double DRIVETRAIN_MOVE = 1;
 	constexpr double DRIVETRAIN_TURN = 1;
 	constexpr double SHOULDER = 1;
@@ -182,6 +186,7 @@ namespace Speed
 
 namespace Angles
 {
+	// TODO : Calculate angles for each position
 	namespace Shoulder
 	{
 		constexpr auto HOME = 10_deg;
@@ -227,6 +232,7 @@ namespace Angles
 
 namespace Times
 {
+	// TODO : Check if this time is correct
 	constexpr auto SPIT = 1_s;
 }
 

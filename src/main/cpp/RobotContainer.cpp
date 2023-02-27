@@ -13,11 +13,13 @@ RobotContainer::RobotContainer()
 void RobotContainer::RobotInit()
 {
 	m_gyro.Calibrate();
-	ConfigureControllerBindings();
 
 	m_controller.SetLeftAxisThreshold(0.2, 1.0);
 	m_controller.SetRightAxisThreshold(0.2, 1.0);
+	m_controller.SetLeftTriggerThreshold(0.2, 1.0);
+	m_controller.SetRightTriggerThreshold(0.2, 1.0);
 
+	ConfigureControllerBindings();
 	ConfigureSubsystems();
 }
 
@@ -27,36 +29,41 @@ void RobotContainer::RobotPeriodic()
 
 void RobotContainer::ConfigureSubsystems()
 {
+	// ------------------- Drivetrain -------------------
 	m_drivetrain.SetGyro(&m_gyro);
-
 	m_drivetrain.SetPositionConversionFactor(DPR::DRIVETRAIN);
 
+	// TODO : Configure PID
 	m_drivetrain.ConfigureMovePID(PID::Move::P, PID::Move::I, PID::Move::D, PID::Move::TOLERANCE, true);
-
 	m_drivetrain.ConfigureTurnPID(PID::Turn::P, PID::Turn::I, PID::Turn::D, PID::Turn::TOLERANCE);
 
 	m_drivetrain.SetMaxSpeeds(Speed::DRIVETRAIN_MOVE, Speed::DRIVETRAIN_TURN);
-
 	m_drivetrain.ConfigurePathFollower(Path::RAMSETE_B, Path::RAMSETE_ZETA, Path::KS, Path::KV, Path::KA, Path::KP, Path::KP);
-
 	m_drivetrain.ResetPose();
 
+	// ------------------- Arm -------------------
 	m_arm.Configure();
 
+	// ------------------- Intake -------------------
+	// TODO : Check Max Speed
 	m_intake.SetMaxSpeed(Speed::INTAKE);
+	// TODO : Check inversion
+	m_intake.Invert(false);
 
+	// ------------------- Turret -------------------
+	// TODO : Check Max Speed, PID and PCF
+	m_turret.SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 	m_turret.SetMaxSpeed(Speed::TURRET);
-
 	m_turret.SetPositionConversionFactor(DPR::TURRET);
-
 	m_turret.ConfigurePositionPID(PID::TurretAngle::P, PID::TurretAngle::I, PID::TurretAngle::D, PID::TurretAngle::TOLERANCE);
 
+	// TODO : Check inversions
+	m_turret.InvertMotor(false);
+	m_turret.InvertEncoder(false);
+
+	// TODO : If PID works, check this
 	// m_turret.SetMinMaxPosition(-10,190);
 	// m_turret.SetPositionSafety(true);
-
-	m_turret.SetName("Turret");
-
-	m_turret.SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 }
 
 Command *RobotContainer::GetAutonomousCommand()
@@ -107,6 +114,20 @@ void RobotContainer::TeleopPeriodic()
 	double rotation = m_controller.GetRightX();
 
 	m_drivetrain.Drive(output, rotation * (output == 0 ? 0.5 : 1.0));
+
+	m_turret.SetMotor(m_controller.GetLeftY());
+
+	// TODO : Check if these speeds are adequate to prevent the robot from tipping
+	if (m_arm.GetPose() != Arm::Poses::kPickup || m_arm.GetPose() != Arm::Poses::kTaxi)
+	{
+		m_controller.SetRightAxisSensibility(1 / 3);
+		m_controller.SetLeftAxisSensibility(1 / 3);
+	}
+	else
+	{
+		m_controller.SetRightAxisSensibility(1);
+		m_controller.SetLeftAxisSensibility(1);
+	}
 }
 
 void RobotContainer::AutonomousInit()
@@ -120,6 +141,13 @@ void RobotContainer::AutonomousPeriodic()
 
 void RobotContainer::ConfigureControllerBindings()
 {
+
+	/* ------------------- Right Bumper -------------------
+	 * A - Cone Low
+	 * B - Cone Middle
+	 * Y - Cone High
+	 * X - Pickup
+	 */
 
 	m_controller.RightBumper().
 	operator&&(m_controller.A())
@@ -138,7 +166,13 @@ void RobotContainer::ConfigureControllerBindings()
 		.WhileTrue(SetArmPose(Arm::Poses::kPickup))
 		.OnFalse(SetArmPose(Arm::Poses::kTaxi));
 
-	// Left Bumper
+	/* ------------------- Left Bumper -------------------
+	 * A - Box Low
+	 * B - Box Middle
+	 * Y - Box High
+	 * X - Tray
+	 */
+
 	m_controller.LeftBumper().
 	operator&&(m_controller.A())
 		.OnTrue(SetArmPose(Arm::Poses::kBoxLow));
@@ -156,8 +190,11 @@ void RobotContainer::ConfigureControllerBindings()
 		.WhileTrue(SetArmPose(Arm::Poses::kTray))
 		.OnFalse(SetArmPose(Arm::Poses::kTaxi));
 
-	m_controller.Start().OnTrue(SetArmPose(Arm::Poses::kTaxi));
-
+	/* ------------------- POV -------------------
+	 * Up - Front
+	 * Down - Back
+	 * Right - Side
+	 */
 	Trigger povUpTrigger([this]
 						 { return m_controller.GetPOV() == 0; });
 
@@ -172,6 +209,9 @@ void RobotContainer::ConfigureControllerBindings()
 	povDownTrigger.OnTrue(SetTurretPose(Turret::Poses::kBack));
 
 	povRightTrigger.OnTrue(SetTurretPose(Turret::Poses::kSide));
+
+	// Return to Taxi with start
+	m_controller.Start().OnTrue(SetArmPose(Arm::Poses::kTaxi));
 }
 
 void RobotContainer::Reset()
@@ -184,7 +224,6 @@ void RobotContainer::Reset()
 
 CommandPtr RobotContainer::GetArmPoseCmd(Arm::Poses pose)
 {
-	// Cancel movement if any, start new movement towards pose
 
 	bool isPlacing = pose >= Arm::Poses::kConeLow &&
 					 pose <= Arm::Poses::kBoxHigh;
@@ -203,6 +242,7 @@ CommandPtr RobotContainer::GetArmPoseCmd(Arm::Poses pose)
 			// Spit object
 			m_intake.SpitCmd(spitSpeed),
 
+			// Return to taxi
 			m_arm.SetPose(Arm::Poses::kTaxi));
 	}
 	else if (isPickup)
@@ -210,6 +250,7 @@ CommandPtr RobotContainer::GetArmPoseCmd(Arm::Poses pose)
 		return Sequence(
 			// Move towards position
 			m_arm.SetPose(pose),
+
 			// Intake object, it will run repeatedly until interrupted (when the button is released)
 			m_intake.TakeCmd(Speed::INTAKE).Repeatedly());
 	}
