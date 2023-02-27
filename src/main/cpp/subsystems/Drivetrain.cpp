@@ -25,7 +25,6 @@
 */
 
 #include "subsystems/Drivetrain.h"
-#include "diagnostic/ErrorHandlers.h"
 #include <cmath>
 #include <typeinfo>
 
