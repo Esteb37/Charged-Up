@@ -502,17 +502,27 @@ namespace TD
 	}
 
 	template <class T>
-	frc2::CommandPtr Drivetrain<T>::MoveToCmd(double x, double y, double movementSpeed, double turningSpeed)
+	frc2::CommandPtr Drivetrain<T>::MoveToCmd(double x, double y, double movementSpeed, double turningSpeed, bool goBackwards)
 	{
 		double targetX = x - m_currentX;
 		double targetY = y - m_currentY;
+
+		// TODO : Implement backwards movement
 
 		double angleToTargetPoint = GetAbsoluteAngle(targetX, targetY);
 		double squaredDistanceToTarget = (targetX * targetX) + (targetY * targetY);
 		double distance = std::sqrt(squaredDistanceToTarget);
 
 		return TurnCmd(units::angle::degree_t{angleToTargetPoint}, turningSpeed)
+			.AndThen(InstantCommand([this] ResetEncoders()))
 			.AndThen(MoveCmd(distance, movementSpeed));
+	}
+
+	template <class T>
+	void Drivetrain<T>::SetInitialPosition(double x, double y)
+	{
+		m_currentX = x;
+		m_currentY = y;
 	}
 
 	template <class T>

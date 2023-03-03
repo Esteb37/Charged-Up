@@ -72,25 +72,30 @@ Command *RobotContainer::GetAutonomousCommand()
 	auto selectedPath = m_chooser.GetSelected();
 
 	auto placeConeLeave = Sequence(
+
+		// Set initial position
+		InstantCommand([this]
+					   { m_drivetrain.SetInitialPosition(Positions::INITIAL.x.value(), Positions::INITIAL.y.value()); }),
+
 		// Place cone
 		move(m_arm.SetPose(Arm::Poses::kConeHigh)),
 
-		// While moving towards the item, retract arm, then turn turret
+		// While moving towards the item backwards, retract arm, then turn turret
 		Parallel(
 			Sequence(move(m_arm.SetPose(Arm::Poses::kTaxi)),
 					 move(m_turret.SetPose(Turret::Poses::kBack))),
-			move(m_drivetrain.MoveToCmd(Positions::PREPARE::PICK_ITEM_1.x.value(), Positions::PREPARE::PICK_ITEM_1.y.value(), 1, 1))));
+			move(m_drivetrain.MoveToCmd(Positions::PREPARE::PICK_ITEM_1.x.value(), Positions::PREPARE::PICK_ITEM_1.y.value(), 1, 1, true))));
 
 	auto placeConePickBoxPlaceBox = Sequence(
 		move(placeConeLeave),
 		// Setup pickup
 		move(m_arm.SetPose(Arm::Poses::kPickup)),
 
-		// Move towards item while taking
+		// Move backwards towards item while taking
 		Run([this]
 			{ m_intake.Take(); })
 			.Repeatedly()
-			.RaceWith(move(m_drivetrain.MoveToCmd(Positions::PICK::ITEM_1.x.value(), Positions::PICK::ITEM_1.y.value(), 1, 1))),
+			.RaceWith(move(m_drivetrain.MoveToCmd(Positions::PICK::ITEM_1.x.value(), Positions::PICK::ITEM_1.y.value(), 1, 1, true))),
 
 		// While moving back, retract arm and turn turret
 		Parallel(
@@ -106,7 +111,7 @@ Command *RobotContainer::GetAutonomousCommand()
 	auto placeConePickBoxPlaceBoxBalance = Sequence(
 		move(placeConePickBoxPlaceBox),
 
-		// While moving towards platform, retract arm
+		// While moving forward towards platform, retract arm
 		Parallel(
 			move(m_arm.SetPose(Arm::Poses::kTaxi)),
 			move(m_drivetrain.MoveToCmd(Positions::PREPARE::BALANCE.x.value(), Positions::PREPARE::BALANCE.y.value(), 1, 1))),

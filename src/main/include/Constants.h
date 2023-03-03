@@ -272,6 +272,8 @@ namespace Positions
 		units::unit_t<units::radians> theta;
 	};
 
+	Position INITIAL = Position{0_m, 0_m, 0_rad};
+
 	namespace PLACE
 	{
 		constexpr auto CONE_RR = Position{0_m, 0_m, 0_rad};

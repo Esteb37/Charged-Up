@@ -271,7 +271,7 @@ namespace TD
 
 		CommandPtr MoveCmd(double speed, double rotation);
 		CommandPtr TurnCmd(units::angle::degree_t angle, double rotation);
-		CommandPtr MoveToCmd(double x, double y, double movementSpeed, double turningSpeed);
+		CommandPtr MoveToCmd(double x, double y, double movementSpeed, double turningSpeed, bool goBackwards = false);
 
 		CommandPtr TurnToAngleCmd(units::angle::degree_t degrees, double speed);
 
@@ -280,6 +280,8 @@ namespace TD
 		CommandPtr FollowPath(std::string filename, double speed);
 		CommandPtr AlignWithLimelightTarget(double speed);
 		CommandPtr AlignWithCameraTarget(double speed);
+
+		void SetInitialPosition(double x, double y);
 
 		/**
 		 * @brief Prints the turn PID error to the dashboard
