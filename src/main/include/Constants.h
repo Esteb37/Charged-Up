@@ -263,6 +263,45 @@ namespace Path
 	constexpr double KP = 0.05;
 }
 
+namespace Positions
+{
+	struct Position
+	{
+		units::unit_t<units::meters> x;
+		units::unit_t<units::meters> y;
+		units::unit_t<units::radians> theta;
+	};
+
+	namespace PLACE
+	{
+		constexpr auto CONE_RR = Position{0_m, 0_m, 0_rad};
+		constexpr auto CONE_RL = Position{0_m, 0_m, 0_rad};
+		constexpr auto CONE_MR = Position{0_m, 0_m, 0_rad};
+		constexpr auto CONE_ML = Position{0_m, 0_m, 0_rad};
+		constexpr auto CONE_LR = Position{0_m, 0_m, 0_rad};
+		constexpr auto CONE_LL = Position{0_m, 0_m, 0_rad};
+		constexpr auto BOX_R = Position{0_m, 0_m, 0_rad};
+		constexpr auto BOX_M = Position{0_m, 0_m, 0_rad};
+		constexpr auto BOX_L = Position{0_m, 0_m, 0_rad};
+	}
+
+	namespace PICK
+	{
+		constexpr auto ITEM_1 = Position{0_m, 0_m, 0_rad};
+		constexpr auto ITEM_2 = Position{0_m, 0_m, 0_rad};
+		constexpr auto ITEM_3 = Position{0_m, 0_m, 0_rad};
+		constexpr auto ITEM_4 = Position{0_m, 0_m, 0_rad};
+	}
+
+	namespace PREPARE
+	{
+		constexpr auto PICK_ITEM_1 = Position{0_m, 0_m, 0_rad};
+		constexpr auto BALANCE = Position{0_m, 0_m, 0_rad};
+	}
+
+	constexpr auto BALANCE = Position{0_m, 0_m, 0_rad};
+
+}
 constexpr double shooterRPMFromDistance(double distance)
 {
 	return 60; // TODO: place RPM function here

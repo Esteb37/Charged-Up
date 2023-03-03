@@ -68,11 +68,69 @@ void RobotContainer::ConfigureSubsystems()
 
 Command *RobotContainer::GetAutonomousCommand()
 {
+	// Get the selected path from the SmartDashboard
+	auto selectedPath = m_chooser.GetSelected();
+
+	auto placeConeLeave = Sequence(
+		// Place cone
+		move(m_arm.SetPose(Arm::Poses::kConeHigh)),
+
+		// While moving towards the item, retract arm, then turn turret
+		Parallel(
+			Sequence(move(m_arm.SetPose(Arm::Poses::kTaxi)),
+					 move(m_turret.SetPose(Turret::Poses::kBack))),
+			move(m_drivetrain.MoveToCmd(Positions::PREPARE::PICK_ITEM_1.x.value(), Positions::PREPARE::PICK_ITEM_1.y.value(), 1, 1))));
+
+	auto placeConePickBoxPlaceBox = Sequence(
+		move(placeConeLeave),
+		// Setup pickup
+		move(m_arm.SetPose(Arm::Poses::kPickup)),
+
+		// Move towards item while taking
+		Run([this]
+			{ m_intake.Take(); })
+			.Repeatedly()
+			.RaceWith(move(m_drivetrain.MoveToCmd(Positions::PICK::ITEM_1.x.value(), Positions::PICK::ITEM_1.y.value(), 1, 1))),
+
+		// While moving back, retract arm and turn turret
+		Parallel(
+			Sequence(move(m_arm.SetPose(Arm::Poses::kTaxi)), move(m_turret.SetPose(Turret::Poses::kFront))),
+			move(m_drivetrain.MoveToCmd(Positions::PLACE::BOX_L.x.value(), Positions::PLACE::BOX_L.y.value(), 1, 1))),
+
+		// Move arm to high box pose
+		move(m_arm.SetPose(Arm::Poses::kBoxHigh)),
+
+		// Place box
+		move(m_intake.SpitCmd(1)));
+
+	auto placeConePickBoxPlaceBoxBalance = Sequence(
+		move(placeConePickBoxPlaceBox),
+
+		// While moving towards platform, retract arm
+		Parallel(
+			move(m_arm.SetPose(Arm::Poses::kTaxi)),
+			move(m_drivetrain.MoveToCmd(Positions::PREPARE::BALANCE.x.value(), Positions::PREPARE::BALANCE.y.value(), 1, 1))),
+
+		// Hop onto platform
+		move(m_drivetrain.MoveToCmd(Positions::BALANCE.x.value(), Positions::BALANCE.y.value(), 1, 1)),
+
+		// Balance
+		move(m_drivetrain.BalanceZAxisCmd(1)));
+
+	return move(placeConePickBoxPlaceBoxBalance.get());
+}
+
+Command *RobotContainer::GetPathFollowingCommand(string pathName)
+{
 
 	DifferentialDriveKinematics kinematics{Wheel::TRACK_WIDTH};
 
 	fs::path deployDirectory = frc::filesystem::GetDeployDirectory();
-	deployDirectory = deployDirectory / "output" / "auto.wpilib.json";
+
+	auto fileName = pathName + ".wpilib.json";
+
+	deployDirectory = deployDirectory / "output" / fileName;
+
 	auto trajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory.string());
 
 	RamseteCommand ramseteCommand{

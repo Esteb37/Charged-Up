@@ -548,10 +548,7 @@ namespace TD
 				   [this, speed]
 				   {
 					   double output = m_balancePIDContoller.Calculate(m_gyro->GetPitch().value());
-					   double clampedOutput = std::clamp(output, -1.0, 1.0);
-
-					   m_autoMoveOutput = clampedOutput * speed;
-					   AutoDrive();
+					   Drive(std::clamp(output, -1.0, 1.0) * speed, 0);
 				   },
 
 				   [this](bool wasInterrupted) { /* noop */ },

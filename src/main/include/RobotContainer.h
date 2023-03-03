@@ -57,6 +57,8 @@ public:
 
 	Command *GetAutonomousCommand();
 
+	Command *GetPathFollowingCommand(string pathName);
+
 	void ConfigureSubsystems();
 
 	void ConfigureControllerBindings();
@@ -108,4 +110,6 @@ private:
 	CommandPtr m_currentTurretCommand = InstantCommand().ToPtr();
 
 	bool auto_done = false;
+
+	SendableChooser<string> m_chooser;
 };

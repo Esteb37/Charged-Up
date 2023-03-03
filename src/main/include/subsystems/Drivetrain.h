@@ -269,17 +269,17 @@ namespace TD
 		 */
 		bool Turn(double, double);
 
-		frc2::CommandPtr MoveCmd(double speed, double rotation);
-		frc2::CommandPtr TurnCmd(units::angle::degree_t angle, double rotation);
-		frc2::CommandPtr MoveToCmd(double x, double y, double movementSpeed, double turningSpeed);
+		CommandPtr MoveCmd(double speed, double rotation);
+		CommandPtr TurnCmd(units::angle::degree_t angle, double rotation);
+		CommandPtr MoveToCmd(double x, double y, double movementSpeed, double turningSpeed);
 
-		frc2::CommandPtr TurnToAngleCmd(units::angle::degree_t degrees, double speed);
+		CommandPtr TurnToAngleCmd(units::angle::degree_t degrees, double speed);
 
-		frc2::CommandPtr BalanceZAxisCmd(double speed);
+		CommandPtr BalanceZAxisCmd(double speed);
 
-		frc2::CommandPtr FollowPath(std::string filename, double speed);
-		frc2::CommandPtr AlignWithLimelightTarget(double speed);
-		frc2::CommandPtr AlignWithCameraTarget(double speed);
+		CommandPtr FollowPath(std::string filename, double speed);
+		CommandPtr AlignWithLimelightTarget(double speed);
+		CommandPtr AlignWithCameraTarget(double speed);
 
 		/**
 		 * @brief Prints the turn PID error to the dashboard
