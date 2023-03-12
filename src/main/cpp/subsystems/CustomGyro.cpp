@@ -104,16 +104,18 @@ namespace TD
     template <class T>
     void CustomGyro<T>::ResetAngle()
     {
-        m_gyro->Reset();
+        // m_gyro->Reset();
     }
 
     template <class T>
     void CustomGyro<T>::ResetDisplacement()
     {
+        /*
         if (typeid(T) == typeid(NAVX))
         {
             ((NAVX *)m_gyro)->ResetDisplacement();
         }
+        */
     }
 
     template <class T>

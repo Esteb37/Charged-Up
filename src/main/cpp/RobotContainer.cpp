@@ -12,7 +12,7 @@ RobotContainer::RobotContainer()
 
 void RobotContainer::RobotInit()
 {
-	m_gyro.Calibrate();
+	// m_gyro.Calibrate();
 
 	m_controller.SetLeftAxisThreshold(0.2, 1.0);
 	m_controller.SetRightAxisThreshold(0.2, 1.0);
@@ -60,6 +60,8 @@ void RobotContainer::ConfigureSubsystems()
 	// TODO : Check inversions
 	m_turret.InvertMotor(false);
 	m_turret.InvertEncoder(false);
+
+	m_arm.m_shoulder.InvertMotor(true);
 
 	// TODO : If PID works, check this
 	// m_turret.SetMinMaxPosition(-10,190);
@@ -122,7 +124,11 @@ Command *RobotContainer::GetAutonomousCommand()
 		// Balance
 		move(m_drivetrain.BalanceZAxisCmd(1)));
 
-	return move(placeConePickBoxPlaceBoxBalance.get());
+
+	auto moveforward = frc2::cmd::Run([this] { m_drivetrain.Drive(0.5, 0.0); }).WithTimeout(5_s);
+
+	// Resort to timer; TODO
+	return nullptr; // moveforward.get(); // move(placeConePickBoxPlaceBoxBalance.get());
 }
 
 Command *RobotContainer::GetPathFollowingCommand(string pathName)
@@ -170,16 +176,30 @@ Command *RobotContainer::GetPathFollowingCommand(string pathName)
 
 void RobotContainer::TeleopInit()
 {
+	timer.Stop();
+	m_turret.ResetEncoder();
 }
+
 void RobotContainer::TeleopPeriodic()
 {
-	double output = m_controller.GetTriggerDifference();
-	double rotation = m_controller.GetRightX();
+	double output = controller_a.GetLeftY();
+	double rotation = controller_a.GetRightX();
 
-	m_drivetrain.Drive(output, rotation * (output == 0 ? 0.5 : 1.0));
+	//m_drivetrain.Drive(output, rotation * (output == 0 ? 0.5 : 1.0));
 
-	m_turret.SetMotor(m_controller.GetLeftY());
+	double turret_output = controller_a.GetRightTriggerAxis() - controller_a.GetLeftTriggerAxis();
 
+	if(controller_a.GetAButton()){
+		m_turret.SetMotor(turret_output);
+	}
+
+	if(controller_a.GetAButtonReleased()){
+		m_turret.SetMotor(0);
+	}
+
+	m_turret.PrintPosition();
+
+	/*
 	// TODO : Check if these speeds are adequate to prevent the robot from tipping
 	if (m_arm.GetPose() != Arm::Poses::kPickup || m_arm.GetPose() != Arm::Poses::kTaxi)
 	{
@@ -191,15 +211,68 @@ void RobotContainer::TeleopPeriodic()
 		m_controller.SetRightAxisSensibility(1);
 		m_controller.SetLeftAxisSensibility(1);
 	}
+
+	*/
+/*
+	if (controller_b.GetRightBumper()) {
+		m_arm.m_wrist.SetMotor(0.5);
+	} else if (controller_b.GetLeftBumper()) {
+		m_arm.m_wrist.SetMotor(-0.5);
+	} else {
+		m_arm.m_wrist.SetMotor(0.0);
+	}
+
+	double longArmOutput = controller_b.GetLeftY();
+	double shortArmOutput = controller_b.GetRightY();
+
+	if (std::fabs(longArmOutput) > 0.2) {
+		m_arm.m_shoulder.SetMotor(longArmOutput);
+	} else {
+		m_arm.m_shoulder.SetMotor(0);
+	}
+
+	if (std::fabs(shortArmOutput) > 0.2) {
+		m_arm.m_elbow.SetMotor(shortArmOutput);
+	} else {
+		m_arm.m_elbow.SetMotor(0.0);
+	}
+
+	if (controller_b.GetYButton()) {
+		m_intake.Take();
+	} else if (controller_b.GetAButton()) {
+		m_intake.Spit();
+	} else {
+		m_intake.SetMotors(0.0);
+	}
+
+	/*
+	if (controller.GetXButton() && !controller.GetBButton()) {
+		m_arm.m_shoulder.SetMotor(((int)controller.GetRightBumper()) - ((int) controller.GetLeftBumper()));
+	}
+
+	if (controller.GetBButton() && !controller.GetXButton()) {
+		m_arm.m_elbow.SetMotor(((int)controller.GetRightBumper()) - ((int) controller.GetLeftBumper()));
+	}
+
+	m_intake.SetMotor(((int) controller.GetYButton()) - ((int) controller.GetAButton()));
+	*/
 }
 
 void RobotContainer::AutonomousInit()
 {
 	Reset();
+
+	timer.Reset();
+	timer.Start();
+
+
+
+	// m_arm.SetPose(Arm::Poses::kHome);
 }
 
 void RobotContainer::AutonomousPeriodic()
 {
+	
 }
 
 void RobotContainer::ConfigureControllerBindings()
@@ -211,7 +284,7 @@ void RobotContainer::ConfigureControllerBindings()
 	 * Y - Cone High
 	 * X - Pickup
 	 */
-
+/*
 	m_controller.RightBumper().
 	operator&&(m_controller.A())
 		.OnTrue(SetArmPose(Arm::Poses::kConeLow));
@@ -235,7 +308,7 @@ void RobotContainer::ConfigureControllerBindings()
 	 * Y - Box High
 	 * X - Tray
 	 */
-
+/*
 	m_controller.LeftBumper().
 	operator&&(m_controller.A())
 		.OnTrue(SetArmPose(Arm::Poses::kBoxLow));
@@ -251,7 +324,7 @@ void RobotContainer::ConfigureControllerBindings()
 	m_controller.LeftBumper().
 	operator&&(m_controller.X())
 		.WhileTrue(SetArmPose(Arm::Poses::kTray))
-		.OnFalse(SetArmPose(Arm::Poses::kTaxi));
+		.OnFalse(SetArmPose(Arm::Poses::kTaxi));*/
 
 	/* ------------------- POV -------------------
 	 * Up - Front
@@ -275,6 +348,7 @@ void RobotContainer::ConfigureControllerBindings()
 
 	// Return to Taxi with start
 	m_controller.Start().OnTrue(SetArmPose(Arm::Poses::kTaxi));
+
 }
 
 void RobotContainer::Reset()

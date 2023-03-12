@@ -514,7 +514,7 @@ namespace TD
 		double distance = std::sqrt(squaredDistanceToTarget);
 
 		return TurnCmd(units::angle::degree_t{angleToTargetPoint}, turningSpeed)
-			.AndThen(InstantCommand([this] ResetEncoders()))
+			.AndThen(InstantCommand([this] { ResetEncoders(); }).ToPtr())
 			.AndThen(MoveCmd(distance, movementSpeed));
 	}
 

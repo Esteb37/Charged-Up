@@ -55,7 +55,7 @@ namespace TD
 		for (unsigned int i = 0; i < m_motorCount; i++)
 		{
 			m_motorList.at(i) = new CANSparkMax(motorPorts[i],
-												isBrushless ? CANSparkMaxLowLevel::MotorType::kBrushless : CANSparkMaxLowLevel::MotorType::kBrushed);
+												CANSparkMaxLowLevel::MotorType::kBrushless);
 		}
 	}
 

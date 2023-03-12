@@ -26,6 +26,8 @@
 
 #include "subsystems/EncoderSubsystemBase.h"
 
+#include <stdexcept>
+
 namespace TD
 {
 	using namespace EncoderTypes;
@@ -305,6 +307,10 @@ namespace TD
 	{
 		m_positionSafetyActive = active;
 	}
+	
+	template <class MotorType, class EncoderType>
+	void EncoderSubsystemBase<MotorType, EncoderType>::SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode mode) {
+	}
 
 	template <>
 	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode mode)
@@ -313,6 +319,10 @@ namespace TD
 		{
 			motor->SetIdleMode(mode);
 		}
+	}
+	
+	template <class MotorType, class EncoderType>
+	void EncoderSubsystemBase<MotorType, EncoderType>::SetSparkSoftLimit(rev::CANSparkMax::SoftLimitDirection direction, double limit) {
 	}
 
 	template <>
@@ -325,6 +335,10 @@ namespace TD
 			motor->SetSoftLimit(softLimitDirection, limit);
 		}
 	}
+	
+	template <class MotorType, class EncoderType>
+	void EncoderSubsystemBase<MotorType, EncoderType>::EnableSparkSoftLimit() {
+	}
 
 	template <>
 	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::EnableSparkSoftLimit()
@@ -335,6 +349,10 @@ namespace TD
 		}
 	}
 
+	template <class MotorType, class EncoderType>
+	void EncoderSubsystemBase<MotorType, EncoderType>::DisableSparkSoftLimit() {
+	}
+	
 	template <>
 	void EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>::DisableSparkSoftLimit()
 	{

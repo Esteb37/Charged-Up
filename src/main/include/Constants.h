@@ -27,7 +27,7 @@ using port = uint8_t;
 // MOTORS
 namespace M
 {
-	constexpr port TURRET = 9;
+	constexpr port TURRET = 7;
 
 	namespace Arm
 	{
@@ -38,16 +38,16 @@ namespace M
 
 	namespace DT
 	{
-		constexpr port FRONT_RIGHT = 1;
-		constexpr port FRONT_LEFT = 2;
-		constexpr port BACK_RIGHT = 3;
-		constexpr port BACK_LEFT = 4;
+		constexpr port FRONT_LEFT = 10;
+		constexpr port FRONT_RIGHT = 13;
+		constexpr port BACK_RIGHT = 12;
+		constexpr port BACK_LEFT = 11;
 	}
 
 	namespace Intake
 	{
-		constexpr port RIGHT = 4;
-		constexpr port LEFT = 5;
+		constexpr port RIGHT = 5;
+		constexpr port LEFT = 4;
 	}
 }
 
@@ -108,8 +108,8 @@ namespace PID
 
 	namespace TurretAngle
 	{
-		constexpr double P = 0.01;
-		constexpr double I = 0.0;
+		constexpr double P = 0.05;
+		constexpr double I = 0.0001;
 		constexpr double D = 0.0;
 		constexpr double TOLERANCE = 0.5;
 	}
@@ -164,24 +164,24 @@ namespace DPR
 	constexpr double DRIVETRAIN = Wheel::CIRCUMFERENCE / ENCODER_PULSE;
 
 	// TODO : Find encoder pulses per revolution
-	constexpr double SHOULDER = 1;
-	constexpr double ELBOW = 1;
-	constexpr double WRIST = 1;
-	constexpr double TURRET = 1;
+	constexpr double SHOULDER = 360 / (100.0 * 2.9);
+	constexpr double ELBOW =    360 / (100.0 * 2.9);
+	constexpr double WRIST =    360 / (100.0);
+	constexpr double TURRET =   360 / (64.0  * 4.5);
 }
 
 namespace Speed
 {
 	// TODO : Tune speeds
-	constexpr double DRIVETRAIN_MOVE = 1;
-	constexpr double DRIVETRAIN_TURN = 1;
-	constexpr double SHOULDER = 1;
-	constexpr double ELBOW = 1;
-	constexpr double WRIST = 1;
-	constexpr double INTAKE = 1;
-	constexpr double TURRET = 1;
-	constexpr double BOX_SPIT = 1;
-	constexpr double CONE_SPIT = 1;
+	constexpr double DRIVETRAIN_MOVE = 1.0;
+	constexpr double DRIVETRAIN_TURN = 1.0;
+	constexpr double SHOULDER =  0.45;
+	constexpr double ELBOW =     0.45;
+	constexpr double WRIST =     0.45;
+	constexpr double INTAKE =    0.45;
+	constexpr double TURRET =    1;
+	constexpr double BOX_SPIT =  0.45;
+	constexpr double CONE_SPIT = 0.45;
 }
 
 namespace Angles
@@ -189,44 +189,44 @@ namespace Angles
 	// TODO : Calculate angles for each position
 	namespace Shoulder
 	{
-		constexpr auto HOME = 10_deg;
+		constexpr auto HOME = 8_deg;
 		constexpr auto PICKUP = 15_deg;
-		constexpr auto CONE_LOW = -15_deg;
-		constexpr auto CONE_MIDDLE = 30_deg;
-		constexpr auto CONE_HIGH = 80.63_deg;
-		constexpr auto BOX_LOW = 0_deg;
-		constexpr auto BOX_MIDDLE = 0_deg;
-		constexpr auto BOX_HIGH = 0_deg;
-		constexpr auto TRAY = 0_deg;
-		constexpr auto TAXI = 0_deg;
+		constexpr auto CONE_LOW = -5_deg;
+		constexpr auto CONE_MIDDLE = 45_deg;
+		constexpr auto CONE_HIGH = 93.94_deg;
+		constexpr auto BOX_LOW = -5_deg;
+		constexpr auto BOX_MIDDLE = 10_deg;
+		constexpr auto BOX_HIGH = 52.92_deg;
+		constexpr auto TRAY = 30.2_deg;
+		constexpr auto TAXI = 10_deg;
 	}
 
 	namespace Elbow
 	{
 		constexpr auto HOME = 20_deg;
-		constexpr auto PICKUP = 20_deg;
+		constexpr auto PICKUP = 139.51_deg;
 		constexpr auto CONE_LOW = 75_deg;
-		constexpr auto CONE_MIDDLE = 82.26_deg;
-		constexpr auto CONE_HIGH = 10_deg;
-		constexpr auto BOX_LOW = 0_deg;
-		constexpr auto BOX_MIDDLE = 0_deg;
-		constexpr auto BOX_HIGH = 0_deg;
-		constexpr auto TRAY = 0_deg;
-		constexpr auto TAXI = 0_deg;
+		constexpr auto CONE_MIDDLE = 92.6_deg;
+		constexpr auto CONE_HIGH = 170_deg;
+		constexpr auto BOX_LOW = 210_deg;
+		constexpr auto BOX_MIDDLE = 63.97_deg;
+		constexpr auto BOX_HIGH = 101.88_deg;
+		constexpr auto TRAY = 43.03_deg;
+		constexpr auto TAXI = 20_deg;
 	}
 
 	namespace Wrist
 	{
 		constexpr auto HOME = 30_deg;
-		constexpr auto PICKUP = 30_deg;
+		constexpr auto PICKUP = 145.49_deg;
 		constexpr auto CONE_LOW = 210_deg;
-		constexpr auto CONE_MIDDLE = 0_deg;
-		constexpr auto CONE_HIGH = 0_deg;
-		constexpr auto BOX_LOW = 0_deg;
-		constexpr auto BOX_MIDDLE = 0_deg;
-		constexpr auto BOX_HIGH = 0_deg;
-		constexpr auto TRAY = 0_deg;
-		constexpr auto TAXI = 0_deg;
+		constexpr auto CONE_MIDDLE = 222.4_deg;
+		constexpr auto CONE_HIGH = 193.94_deg;
+		constexpr auto BOX_LOW = 221.03_deg;
+		constexpr auto BOX_MIDDLE = 216.03_deg;
+		constexpr auto BOX_HIGH = 221.03_deg;
+		constexpr auto TRAY = 257.9_deg;
+		constexpr auto TAXI = 330_deg;
 	}
 }
 
@@ -272,7 +272,7 @@ namespace Positions
 		units::unit_t<units::radians> theta;
 	};
 
-	Position INITIAL = Position{0_m, 0_m, 0_rad};
+	constexpr Position INITIAL = Position{0_m, 0_m, 0_rad};
 
 	namespace PLACE
 	{

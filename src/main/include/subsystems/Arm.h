@@ -56,10 +56,11 @@ namespace TD
 
         static std::string PoseToString(Poses pose);
 
-    private:
         EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> m_shoulder;
         EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> m_elbow;
         EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO> m_wrist;
+
+    private:
 
         Poses m_pose = Poses::kHome;
     };

@@ -11,6 +11,7 @@ namespace TD
         m_shoulder.SetName("Shoulder");
         m_elbow.SetName("Elbow");
         m_wrist.SetName("Wrist");
+
     }
 
     void Arm::Configure()
@@ -128,6 +129,9 @@ namespace TD
             shoulderAngle = Angles::Shoulder::TAXI;
             elbowAngle = Angles::Elbow::TAXI;
             wristAngle = Angles::Wrist::TAXI;
+            break;
+        case Poses::kMoving:
+        default:
             break;
         }
 

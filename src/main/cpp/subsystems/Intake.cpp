@@ -37,6 +37,7 @@ namespace TD
 	{
 		SubsystemBase::SetName("Intake");
 		InvertMotors({false, true});
+
 	}
 
 	void Intake::Periodic()
@@ -47,6 +48,10 @@ namespace TD
 
 	void Intake::Take()
 	{
+		m_motorList[1]->Set(-1.0);
+		m_motorList[0]->Set(-1.0);
+
+		return;
 		if (m_motorCount <= 1)
 		{
 			SetMotor(1);
@@ -59,6 +64,11 @@ namespace TD
 
 	void Intake::Spit(double speed)
 	{
+		m_motorList[1]->Set(1.0);
+		m_motorList[0]->Set(1.0);
+
+		return;
+
 		if (m_motorCount <= 1)
 		{
 			SetMotor(-1 * speed);

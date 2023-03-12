@@ -112,4 +112,9 @@ private:
 	bool auto_done = false;
 
 	SendableChooser<string> m_chooser;
+
+	frc::XboxController controller_a{0};
+	frc::XboxController controller_b{1};
+
+	frc::Timer timer;
 };
