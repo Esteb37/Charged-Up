@@ -116,18 +116,18 @@ namespace PID
 
 	namespace Shoulder
 	{
-		constexpr double P = 0.01;
+		constexpr double P = 0.2;
 		constexpr double I = 0.0;
 		constexpr double D = 0.0;
-		constexpr double TOLERANCE = 0.5;
+		constexpr double TOLERANCE = 0.1;
 	}
 
 	namespace Elbow
 	{
-		constexpr double P = 0.01;
+		constexpr double P = 0.1;
 		constexpr double I = 0.0;
 		constexpr double D = 0.0;
-		constexpr double TOLERANCE = 0.5;
+		constexpr double TOLERANCE = 0.1;
 	}
 
 	namespace Wrist
@@ -136,6 +136,15 @@ namespace PID
 		constexpr double I = 0.0;
 		constexpr double D = 0.0;
 		constexpr double TOLERANCE = 0.5;
+	}
+
+	namespace Balance
+	{
+		constexpr double P = 0.05;
+		constexpr double I = 0.0;
+		constexpr double D = 0.0;
+		constexpr double TOLERANCE = 0.5;
+		constexpr double SPEED = 0.7;
 	}
 }
 
@@ -178,7 +187,7 @@ namespace Speed
 	constexpr double SHOULDER =  0.45;
 	constexpr double ELBOW =     0.45;
 	constexpr double WRIST =     0.45;
-	constexpr double INTAKE =    0.45;
+	constexpr double INTAKE =    0.25;
 	constexpr double TURRET =    1;
 	constexpr double BOX_SPIT =  0.45;
 	constexpr double CONE_SPIT = 0.45;
@@ -189,12 +198,12 @@ namespace Angles
 	// TODO : Calculate angles for each position
 	namespace Shoulder
 	{
-		constexpr auto HOME = 8_deg;
+		constexpr auto HOME = 0_deg;
 		constexpr auto PICKUP = 15_deg;
-		constexpr auto CONE_LOW = -5_deg;
+		constexpr auto CONE_LOW = 0_deg;
 		constexpr auto CONE_MIDDLE = 45_deg;
 		constexpr auto CONE_HIGH = 93.94_deg;
-		constexpr auto BOX_LOW = -5_deg;
+		constexpr auto BOX_LOW = 0_deg;
 		constexpr auto BOX_MIDDLE = 10_deg;
 		constexpr auto BOX_HIGH = 52.92_deg;
 		constexpr auto TRAY = 30.2_deg;
@@ -203,12 +212,12 @@ namespace Angles
 
 	namespace Elbow
 	{
-		constexpr auto HOME = 20_deg;
+		constexpr auto HOME = 30_deg;
 		constexpr auto PICKUP = 139.51_deg;
-		constexpr auto CONE_LOW = 75_deg;
-		constexpr auto CONE_MIDDLE = 92.6_deg;
-		constexpr auto CONE_HIGH = 170_deg;
-		constexpr auto BOX_LOW = 210_deg;
+		constexpr auto CONE_LOW = 96_deg;
+		constexpr auto CONE_MIDDLE = 80.6_deg;
+		constexpr auto CONE_HIGH = 110_deg;
+		constexpr auto BOX_LOW = 70_deg;
 		constexpr auto BOX_MIDDLE = 63.97_deg;
 		constexpr auto BOX_HIGH = 101.88_deg;
 		constexpr auto TRAY = 43.03_deg;

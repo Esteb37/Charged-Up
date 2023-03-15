@@ -549,22 +549,25 @@ namespace TD
 	}
 
 	template <class T>
-	frc2::CommandPtr Drivetrain<T>::BalanceZAxisCmd(double speed)
+	frc2::CommandPtr Drivetrain<T>::BalanceRoll(double speed)
 	{
 		return frc2::FunctionalCommand(
 				   [this]
-				   { m_balancePIDContoller.SetSetpoint(0.0); },
+				   { m_balancePIDController.SetSetpoint(0.0); },
 
 				   [this, speed]
 				   {
-					   double output = m_balancePIDContoller.Calculate(m_gyro->GetPitch().value());
-					   Drive(std::clamp(output, -1.0, 1.0) * speed, 0);
+					
+					double output = m_balancePIDController.Calculate(m_gyro->GetRoll().value());
+					double clampedOutput = std::clamp(output, -1.0, 1.0);
+					Drive(clampedOutput*speed*m_balancePIDDirection, 0);
+					SmartDashboard::PutNumber("Balance PID", clampedOutput );
 				   },
 
 				   [this](bool wasInterrupted) { /* noop */ },
 
 				   [this]
-				   { return m_balancePIDContoller.AtSetpoint(); })
+				   { return m_balancePIDController.AtSetpoint(); })
 			.ToPtr();
 	}
 
@@ -748,6 +751,14 @@ namespace TD
 		m_alignPIDController.SetPID(p, i, d);
 		m_alignPIDController.SetTolerance(tolerance);
 		m_alignPIDDirection = inverted ? -1 : 1;
+	}
+
+	template <class T>
+	void Drivetrain<T>::ConfigureBalancePID(double p, double i, double d, double tolerance, bool inverted)
+	{
+		m_balancePIDController.SetPID(p, i, d);
+		m_balancePIDController.SetTolerance(tolerance);
+		m_balancePIDDirection = inverted ? -1 : 1;
 	}
 
 	template <class T>

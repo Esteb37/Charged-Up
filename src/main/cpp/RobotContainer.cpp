@@ -61,7 +61,7 @@ void RobotContainer::ConfigureSubsystems()
 	m_turret.InvertMotor(false);
 	m_turret.InvertEncoder(false);
 
-	m_arm.m_shoulder.InvertMotor(true);
+	m_drivetrain.ConfigureBalancePID(PID::Balance::P, PID::Balance::I, PID::Balance::D, PID::Balance::TOLERANCE);
 
 	// TODO : If PID works, check this
 	// m_turret.SetMinMaxPosition(-10,190);
@@ -122,13 +122,19 @@ Command *RobotContainer::GetAutonomousCommand()
 		move(m_drivetrain.MoveToCmd(Positions::BALANCE.x.value(), Positions::BALANCE.y.value(), 1, 1)),
 
 		// Balance
-		move(m_drivetrain.BalanceZAxisCmd(1)));
+		move(m_drivetrain.BalanceRoll(1)));
 
 
 	auto moveforward = frc2::cmd::Run([this] { m_drivetrain.Drive(0.5, 0.0); }).WithTimeout(5_s);
 
+	auto thing = 
+	m_arm.SetPose(Arm::Poses::kHome)
+	.AndThen(m_arm.SetPose(Arm::Poses::kPickup))
+	.AndThen(m_turret.SetPose(Turret::Poses::kSide))
+	.AndThen(m_arm.SetPose(Arm::Poses::kConeHigh));
+
 	// Resort to timer; TODO
-	return nullptr; // moveforward.get(); // move(placeConePickBoxPlaceBoxBalance.get());
+	return thing.get(); // moveforward.get(); // move(placeConePickBoxPlaceBoxBalance.get());
 }
 
 Command *RobotContainer::GetPathFollowingCommand(string pathName)
@@ -178,6 +184,7 @@ void RobotContainer::TeleopInit()
 {
 	timer.Stop();
 	m_turret.ResetEncoder();
+	m_arm.ResetEncoders();
 }
 
 void RobotContainer::TeleopPeriodic()
@@ -185,19 +192,34 @@ void RobotContainer::TeleopPeriodic()
 	double output = controller_a.GetLeftY();
 	double rotation = controller_a.GetRightX();
 
-	//m_drivetrain.Drive(output, rotation * (output == 0 ? 0.5 : 1.0));
+	m_drivetrain.Drive(output, rotation * (output == 0 ? 0.5 : 1.0));
+
+	m_gyro.PrintAngles();
 
 	double turret_output = controller_a.GetRightTriggerAxis() - controller_a.GetLeftTriggerAxis();
 
-	if(controller_a.GetAButton()){
-		m_turret.SetMotor(turret_output);
+	if(controller_a.GetBackButton()) {
+		m_arm.m_elbow.SetMotor(turret_output);
 	}
 
-	if(controller_a.GetAButtonReleased()){
-		m_turret.SetMotor(0);
+	if(controller_a.GetBackButtonReleased()) {
+		m_arm.m_elbow.SetMotor(0.0);
+	}
+
+	if(controller_a.GetLeftStickButton()) {
+		m_arm.m_shoulder.SetMotor(turret_output);
+	}
+
+	if(controller_a.GetLeftStickButtonReleased()) {
+		m_arm.m_shoulder.SetMotor(0.0);
 	}
 
 	m_turret.PrintPosition();
+
+	m_arm.PrintAngles();
+	m_arm.PrintPose();
+
+
 
 	/*
 	// TODO : Check if these speeds are adequate to prevent the robot from tipping
@@ -261,13 +283,6 @@ void RobotContainer::TeleopPeriodic()
 void RobotContainer::AutonomousInit()
 {
 	Reset();
-
-	timer.Reset();
-	timer.Start();
-
-
-
-	// m_arm.SetPose(Arm::Poses::kHome);
 }
 
 void RobotContainer::AutonomousPeriodic()
@@ -284,7 +299,8 @@ void RobotContainer::ConfigureControllerBindings()
 	 * Y - Cone High
 	 * X - Pickup
 	 */
-/*
+
+
 	m_controller.RightBumper().
 	operator&&(m_controller.A())
 		.OnTrue(SetArmPose(Arm::Poses::kConeLow));
@@ -308,7 +324,7 @@ void RobotContainer::ConfigureControllerBindings()
 	 * Y - Box High
 	 * X - Tray
 	 */
-/*
+
 	m_controller.LeftBumper().
 	operator&&(m_controller.A())
 		.OnTrue(SetArmPose(Arm::Poses::kBoxLow));
@@ -324,13 +340,15 @@ void RobotContainer::ConfigureControllerBindings()
 	m_controller.LeftBumper().
 	operator&&(m_controller.X())
 		.WhileTrue(SetArmPose(Arm::Poses::kTray))
-		.OnFalse(SetArmPose(Arm::Poses::kTaxi));*/
+		.OnFalse(SetArmPose(Arm::Poses::kTaxi));
 
 	/* ------------------- POV -------------------
 	 * Up - Front
 	 * Down - Back
 	 * Right - Side
 	 */
+	m_controller.A().OnTrue(m_drivetrain.BalanceRoll(PID::Balance::SPEED));
+
 	Trigger povUpTrigger([this]
 						 { return m_controller.GetPOV() == 0; });
 

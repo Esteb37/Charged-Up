@@ -275,7 +275,7 @@ namespace TD
 
 		CommandPtr TurnToAngleCmd(units::angle::degree_t degrees, double speed);
 
-		CommandPtr BalanceZAxisCmd(double speed);
+		CommandPtr BalanceRoll(double speed);
 
 		CommandPtr FollowPath(std::string filename, double speed);
 		CommandPtr AlignWithLimelightTarget(double speed);
@@ -388,6 +388,16 @@ namespace TD
 		void ConfigureDistancePID(double, double, double, double, bool = false);
 
 		/**
+		 * @brief Configures balance PID values and tolerance
+		 * @param p The proportional value
+		 * @param i The integral value
+		 * @param d The derivative value
+		 * @param tolerance The tolerance value
+		 * @param inverted Invert output calculation
+		 */
+		void ConfigureBalancePID(double, double, double, double, bool = false);
+
+		/**
 		 * @brief Get the absolute angle from a coordinate independent of quadrant
 		 * @param x The x coordinate
 		 * @param y The y coordinate
@@ -484,7 +494,7 @@ namespace TD
 
 		PIDController m_distancePIDController{0.1, 0, 0};
 
-		PIDController m_balancePIDContoller{0.1, 0, 0};
+		PIDController m_balancePIDController{0.1, 0, 0};
 
 		CustomGyroBase *m_gyro;
 
@@ -508,6 +518,8 @@ namespace TD
 		int m_alignPIDDirection = 1;
 
 		int m_distancePIDDirection = 1;
+
+		int m_balancePIDDirection = 1;
 
 		double m_currentX = 0;
 

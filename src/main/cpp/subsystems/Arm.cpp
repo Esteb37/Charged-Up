@@ -38,7 +38,9 @@ namespace TD
         // TODO : Check Inversions
         m_shoulder.InvertEncoder(false);
         m_elbow.InvertEncoder(false);
+        m_elbow.m_encoder->SetPosition(30.0);
         m_wrist.InvertEncoder(false);
+        
         m_shoulder.InvertMotor(false);
         m_elbow.InvertMotor(false);
         m_wrist.InvertMotor(false);
@@ -63,13 +65,13 @@ namespace TD
     }
 
     CommandPtr Arm::SetElbowAngle(units::angle::degree_t angle, double speed)
-    {
+    {   
         return m_elbow.SetPositionCmd(angle.value(), speed);
     }
 
     CommandPtr Arm::SetWristAngle(units::angle::degree_t angle, double speed)
     {
-        return m_wrist.SetPositionCmd(angle.value(), speed);
+        return m_wrist.SetPositionCmd(angle.value(), speed * 0);
     }
 
     CommandPtr Arm::SetPose(Poses pose)
