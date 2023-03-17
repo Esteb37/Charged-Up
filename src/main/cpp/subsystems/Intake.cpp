@@ -48,10 +48,6 @@ namespace TD
 
 	void Intake::Take()
 	{
-		m_motorList[1]->Set(-1.0);
-		m_motorList[0]->Set(-1.0);
-
-		return;
 		if (m_motorCount <= 1)
 		{
 			SetMotor(1);
@@ -64,11 +60,6 @@ namespace TD
 
 	void Intake::Spit(double speed)
 	{
-		m_motorList[1]->Set(1.0);
-		m_motorList[0]->Set(1.0);
-
-		return;
-
 		if (m_motorCount <= 1)
 		{
 			SetMotor(-1 * speed);
@@ -97,8 +88,7 @@ namespace TD
 		return frc2::FunctionalCommand(
 				   [this]
 				   {
-					   m_spitTimer.Reset();
-					   m_spitTimer.Start();
+						
 				   },
 				   [this, speed]
 				   {
@@ -107,7 +97,6 @@ namespace TD
 				   [this](bool wasInterrupted)
 				   {
 					   Stop();
-					   m_spitTimer.Stop();
 				   },
 
 				   [this]
@@ -117,8 +106,21 @@ namespace TD
 
 	frc2::CommandPtr Intake::TakeCmd(double speed)
 	{
-		return InstantCommand([this, speed]
-							  { Take(); })
+		return frc2::FunctionalCommand(
+				   [this]
+				   {
+				   },
+				   [this, speed]
+				   {
+					   Spit(-speed);
+				   },
+				   [this](bool wasInterrupted)
+				   {
+					   Stop();
+				   },
+
+				   [this]
+				   { return m_spitTimer.HasElapsed(Times::SPIT); })
 			.ToPtr();
 	}
 

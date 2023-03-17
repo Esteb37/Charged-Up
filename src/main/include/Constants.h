@@ -46,8 +46,7 @@ namespace M
 
 	namespace Intake
 	{
-		constexpr port RIGHT = 5;
-		constexpr port LEFT = 4;
+		constexpr port CLAW = 5;
 	}
 }
 
@@ -55,10 +54,10 @@ namespace ENC
 {
 	namespace DT
 	{
-		constexpr port FRONT_RIGHT = 0;
-		constexpr port FRONT_LEFT = 1;
-		constexpr port BACK_RIGHT = 2;
-		constexpr port BACK_LEFT = 3;
+		constexpr port RA = 0;
+		constexpr port RB = 1;
+		constexpr port LA = 2;
+		constexpr port LB = 3;
 
 	}
 }
@@ -132,7 +131,7 @@ namespace PID
 
 	namespace Wrist
 	{
-		constexpr double P = 0.01;
+		constexpr double P = 0.1;
 		constexpr double I = 0.0;
 		constexpr double D = 0.0;
 		constexpr double TOLERANCE = 0.5;
@@ -186,7 +185,7 @@ namespace Speed
 	constexpr double DRIVETRAIN_TURN = 1.0;
 	constexpr double SHOULDER =  0.45;
 	constexpr double ELBOW =     0.45;
-	constexpr double WRIST =     0.45;
+	constexpr double WRIST =     0.5;
 	constexpr double INTAKE =    0.25;
 	constexpr double TURRET =    1;
 	constexpr double BOX_SPIT =  0.45;
@@ -199,43 +198,43 @@ namespace Angles
 	namespace Shoulder
 	{
 		constexpr auto HOME = 0_deg;
-		constexpr auto PICKUP = 15_deg;
+		constexpr auto PICKUP = 0.5_deg;
 		constexpr auto CONE_LOW = 0_deg;
-		constexpr auto CONE_MIDDLE = 45_deg;
-		constexpr auto CONE_HIGH = 93.94_deg;
+		constexpr auto CONE_MIDDLE = 54_deg;
+		constexpr auto CONE_HIGH = 83.7_deg;
 		constexpr auto BOX_LOW = 0_deg;
-		constexpr auto BOX_MIDDLE = 10_deg;
-		constexpr auto BOX_HIGH = 52.92_deg;
+		constexpr auto BOX_MIDDLE = 54_deg;
+		constexpr auto BOX_HIGH = 83.5_deg;
 		constexpr auto TRAY = 30.2_deg;
-		constexpr auto TAXI = 10_deg;
+		constexpr auto TAXI = 0_deg;
 	}
 
 	namespace Elbow
 	{
-		constexpr auto HOME = 30_deg;
-		constexpr auto PICKUP = 139.51_deg;
-		constexpr auto CONE_LOW = 96_deg;
-		constexpr auto CONE_MIDDLE = 80.6_deg;
-		constexpr auto CONE_HIGH = 110_deg;
-		constexpr auto BOX_LOW = 70_deg;
-		constexpr auto BOX_MIDDLE = 63.97_deg;
-		constexpr auto BOX_HIGH = 101.88_deg;
+		constexpr auto HOME = 0_deg;
+		constexpr auto PICKUP = 78.6_deg;
+		constexpr auto CONE_LOW = 78.6_deg;
+		constexpr auto CONE_MIDDLE = 18_deg;
+		constexpr auto CONE_HIGH = 42.1_deg;
+		constexpr auto BOX_LOW = 45_deg;
+		constexpr auto BOX_MIDDLE = 18_deg;
+		constexpr auto BOX_HIGH = 42.1_deg;
 		constexpr auto TRAY = 43.03_deg;
-		constexpr auto TAXI = 20_deg;
+		constexpr auto TAXI = 0_deg;
 	}
 
 	namespace Wrist
 	{
-		constexpr auto HOME = 30_deg;
-		constexpr auto PICKUP = 145.49_deg;
-		constexpr auto CONE_LOW = 210_deg;
-		constexpr auto CONE_MIDDLE = 222.4_deg;
-		constexpr auto CONE_HIGH = 193.94_deg;
-		constexpr auto BOX_LOW = 221.03_deg;
-		constexpr auto BOX_MIDDLE = 216.03_deg;
-		constexpr auto BOX_HIGH = 221.03_deg;
-		constexpr auto TRAY = 257.9_deg;
-		constexpr auto TAXI = 330_deg;
+		constexpr auto HOME = 0_deg;
+		constexpr auto PICKUP = 20.6_deg;
+		constexpr auto CONE_LOW = 20.6_deg;
+		constexpr auto CONE_MIDDLE = -5_deg;
+		constexpr auto CONE_HIGH = 26.70_deg;
+		constexpr auto BOX_LOW = -14.03_deg;
+		constexpr auto BOX_MIDDLE = -5_deg;
+		constexpr auto BOX_HIGH = 26.70_deg;
+		constexpr auto TRAY = 70_deg;
+		constexpr auto TAXI = 0_deg;
 	}
 }
 

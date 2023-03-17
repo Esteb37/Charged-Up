@@ -72,7 +72,6 @@ namespace TD{
         return 0.0;
     }
 
-
     void CustomController::SetLeftAxisThreshold(double min, double max) {
         axisThresholdLeft = utility::Threshold{min, max};
     }

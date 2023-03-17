@@ -38,7 +38,7 @@ namespace TD
 		m_motorCount = 1;
 
 		m_motor = new CANSparkMax(motorPort,
-								  isBrushless ? CANSparkMaxLowLevel::MotorType::kBrushless : CANSparkMaxLowLevel::MotorType::kBrushed);
+								  isBrushless ? CANSparkMaxLowLevel::MotorType::kBrushless : CANSparkMaxLowLevel::MotorType::kBrushless);
 	}
 
 	template <>

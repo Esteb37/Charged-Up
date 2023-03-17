@@ -3,9 +3,9 @@
 namespace TD
 {
 
-    Arm::Arm(uint8_t shoulderPort, uint8_t elbowPort, uint8_t wristPort) : m_shoulder(EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>(shoulderPort)),
-                                                                           m_elbow(EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>(elbowPort)),
-                                                                           m_wrist(EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>(wristPort))
+    Arm::Arm(uint8_t shoulderPort, uint8_t elbowPort, uint8_t wristPort) : m_shoulder(EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>(shoulderPort, true)),
+                                                                           m_elbow(EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>(elbowPort, true)),
+                                                                           m_wrist(EncoderSubsystemBase<MotorTypes::SPARK, EncoderTypes::NEO>(wristPort, true))
     {
         SetName("Arm");
         m_shoulder.SetName("Shoulder");
@@ -16,9 +16,6 @@ namespace TD
 
     void Arm::Configure()
     {
-        m_shoulder.SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-        m_elbow.SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode::kBrake);
-        m_wrist.SetSparkMaxIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
         // TODO : Check Max Speeds
         m_shoulder.SetMaxSpeed(Speed::SHOULDER);
@@ -38,7 +35,6 @@ namespace TD
         // TODO : Check Inversions
         m_shoulder.InvertEncoder(false);
         m_elbow.InvertEncoder(false);
-        m_elbow.m_encoder->SetPosition(30.0);
         m_wrist.InvertEncoder(false);
         
         m_shoulder.InvertMotor(false);
@@ -71,7 +67,7 @@ namespace TD
 
     CommandPtr Arm::SetWristAngle(units::angle::degree_t angle, double speed)
     {
-        return m_wrist.SetPositionCmd(angle.value(), speed * 0);
+        return m_wrist.SetPositionCmd(angle.value(), speed );
     }
 
     CommandPtr Arm::SetPose(Poses pose)
@@ -142,9 +138,9 @@ namespace TD
                            { m_pose = Poses::kMoving;
                                SmartDashboard::PutString("Arm Target", PoseToString(pose)); }),
             Parallel(
+                SetWristAngle(wristAngle, Speed::WRIST)),
                 SetShoulderAngle(shoulderAngle, Speed::SHOULDER),
                 SetElbowAngle(elbowAngle, Speed::ELBOW),
-                SetWristAngle(wristAngle, Speed::WRIST)),
             InstantCommand([this, pose]()
                            { m_pose = pose; }));
     }

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Constants.h"
+#include <frc2/command/button/CommandXboxController.h>
 #include "human-input/CustomController.h"
 #include "subsystems/Arm.h"
 #include "subsystems/CustomGyro.h"
@@ -89,15 +90,15 @@ private:
 		M::DT::FRONT_LEFT,
 		M::DT::BACK_RIGHT,
 		M::DT::BACK_LEFT,
-		ENC::DT::FRONT_RIGHT,
-		ENC::DT::FRONT_LEFT,
-		ENC::DT::BACK_RIGHT,
-		ENC::DT::BACK_LEFT,
+		ENC::DT::RA,
+		ENC::DT::RB,
+		ENC::DT::LA,
+		ENC::DT::LB,
 	};
 
 	Arm m_arm{M::Arm::SHOULDER, M::Arm::ELBOW, M::Arm::WRIST};
 
-	Intake m_intake{{M::Intake::RIGHT, M::Intake::LEFT}};
+	Intake m_intake{M::Intake::CLAW};
 
 	Turret m_turret{M::TURRET};
 
@@ -113,8 +114,8 @@ private:
 
 	SendableChooser<string> m_chooser;
 
-	frc::XboxController controller_a{0};
-	frc::XboxController controller_b{1};
+	frc2::CommandXboxController controller_a{0};
+	frc2::CommandXboxController controller_b{1};
 
 	frc::Timer timer;
 };
