@@ -118,4 +118,7 @@ private:
 	frc2::CommandXboxController controller_b{1};
 
 	frc::Timer timer;
+	bool auto_flag1 = false;
+	bool auto_flag2 = false;
+	bool auto_flag3 = false;
 };

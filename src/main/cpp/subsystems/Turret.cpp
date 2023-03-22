@@ -36,7 +36,7 @@ namespace TD
                             m_pose = Poses::kMoving;
                             SmartDashboard::PutString(
                                 "Turret Target", PoseToString(pose)); }),
-            SetPositionCmd(angle, Speed::TURRET),
+            SetPositionCmd(angle, Speed::TURRET).WithTimeout(1.5_s),
             InstantCommand([this, pose]()
                            { m_pose = pose; }));
     }

@@ -12,7 +12,7 @@ RobotContainer::RobotContainer()
 
 void RobotContainer::RobotInit()
 {
-	// m_gyro.Calibrate();
+	m_gyro.Calibrate();
 
 	m_controller.SetLeftAxisThreshold(0.2, 1.0);
 	m_controller.SetRightAxisThreshold(0.2, 1.0);
@@ -172,8 +172,6 @@ Command *RobotContainer::GetPathFollowingCommand(string pathName)
 
 void RobotContainer::TeleopInit()
 {
-	m_arm.ResetEncoders();
-	m_turret.ResetEncoder();
 }
 
 void RobotContainer::TeleopPeriodic()
@@ -183,31 +181,13 @@ void RobotContainer::TeleopPeriodic()
 
 	m_drivetrain.Drive(output, rotation * (output == 0 ? 0.5 : 1.0));
 
-
-	/*if(controller_a.GetRightStickButton()) {
-		m_arm.m_elbow.SetMotor(-diff_output);
-	}
-
-	if(controller_a.GetRightStickButtonReleased()) {
-		m_arm.m_elbow.SetMotor(0.0);
-	}
-
-	if(controller_a.GetLeftStickButton()) {
-		m_arm.m_shoulder.SetMotor(diff_output);
-	}
-
-	if(controller_a.GetLeftStickButtonReleased()) {
-		m_arm.m_shoulder.SetMotor(0.0);
-	}*/
-
-	// m_arm.m_wrist.SetMotor(controller_b.GetRightY());
-
 	m_turret.PrintPosition();
 
 	m_arm.PrintAngles();
 	m_arm.PrintPose();
 
-	// m_intake.SetMotor(controller_b.GetRightTriggerAxis()-controller_b.GetLeftTriggerAxis());
+	m_gyro.PrintAngles();
+	
 
 	if (controller_b.GetLeftStickButton()) {
 		m_arm.m_elbow.SetMotor(-controller_b.GetLeftY() * 0.5);
@@ -216,86 +196,69 @@ void RobotContainer::TeleopPeriodic()
 	if (controller_b.GetLeftStickButtonReleased()) {
 		m_arm.m_elbow.SetMotor(0);
 	}
-/*
-	if (controller_b.GetRightStickButton()) {
-		m_arm.m_wrist.SetMotor(controller_b.GetRightY() * 0.5);
-	}
 
-	if (controller_b.GetRightStickButtonReleased()) {
-		m_arm.m_wrist.SetMotor(0);
-	}
-	*/
 
-	// m_arm.m_wrist.SetMotor(controller_b.GetRightTriggerAxis() - controller_b.GetLeftTriggerAxis());
 
 	m_intake.SetMotor(controller_b.GetRightTriggerAxis() - controller_b.GetLeftTriggerAxis());
 
-	// TODO : Check if these speeds are adequate to prevent the robot from tipping
-	/*
-	if (m_arm.GetPose() != Arm::Poses::kPickup || m_arm.GetPose() != Arm::Poses::kTaxi)
-	{
-		m_controller.SetRightAxisSensibility(1 / 3);
-		m_controller.SetLeftAxisSensibility(1 / 3);
-	}
-	else
-	{
-		m_controller.SetRightAxisSensibility(1);
-		m_controller.SetLeftAxisSensibility(1);
-	}
-	/*
-
-/*
-	if (controller_b.GetRightBumper()) {
-		m_arm.m_wrist.SetMotor(0.5);
-	} else if (controller_b.GetLeftBumper()) {
-		m_arm.m_wrist.SetMotor(-0.5);
-	} else {
-		m_arm.m_wrist.SetMotor(0.0);
-	}
-
-	double longArmOutput = controller_b.GetLeftY();
-	double shortArmOutput = controller_b.GetRightY();
-
-	if (std::fabs(longArmOutput) > 0.2) {
-		m_arm.m_shoulder.SetMotor(longArmOutput);
-	} else {
-		m_arm.m_shoulder.SetMotor(0);
-	}
-
-	if (std::fabs(shortArmOutput) > 0.2) {
-		m_arm.m_elbow.SetMotor(shortArmOutput);
-	} else {
-		m_arm.m_elbow.SetMotor(0.0);
-	}
-
-	if (controller_b.GetYButton()) {
-		m_intake.Take();
-	} else if (controller_b.GetAButton()) {
-		m_intake.Spit();
-	} else {
-		m_intake.SetMotors(0.0);
-	}
-
-	if (controller.GetXButton() && !controller.GetBButton()) {
-		m_arm.m_shoulder.SetMotor(((int)controller.GetRightBumper()) - ((int) controller.GetLeftBumper()));
-	}
-
-	if (controller.GetBButton() && !controller.GetXButton()) {
-		m_arm.m_elbow.SetMotor(((int)controller.GetRightBumper()) - ((int) controller.GetLeftBumper()));
-	}
-
-	m_intake.SetMotor(((int) controller.GetYButton()) - ((int) controller.GetAButton()));
-	*/
 }
 
 void RobotContainer::AutonomousInit()
 {
 	Reset();
-	// m_drivetrain.MoveTo(2, 0.0, 1.0, 0.0);
+	
+	timer.Stop();
+	timer.Reset();
+	auto_flag1 = false;
+	auto_flag2 = false;
+	auto_flag3 = false;
+	
 }
 
 void RobotContainer::AutonomousPeriodic()
 {
+
+	auto command1 = Sequence(
+		SetArmPose(Arm::Poses::kBoxMiddle).WithTimeout(3_s)
+	);
+
+	auto command2 = Sequence(
+		SetArmPose(Arm::Poses::kTaxi).WithTimeout(3_s)
+	);
+
+	auto command3 = Sequence(
+		m_drivetrain.BalanceRoll(0.7)
+	);
+
+	
+	if(!auto_flag1){
+		auto_flag1 = true;
+		timer.Reset();
+		timer.Start();
+		CommandScheduler::GetInstance().Schedule(move(command1));
+	} else{
+
+		if(timer.Get()>2.5_s && timer.Get()<3_s){
+			m_intake.SetMotor(-0.5);
+		} 
+		
+		if(timer.Get()>3_s && timer.Get()<5_s){
+			m_intake.SetMotor(0);
+			if(!auto_flag2){
+				auto_flag2 = true;
+				command1.Cancel();
+				CommandScheduler::GetInstance().Schedule(move(command2));
+			}
+		}
+
+		if(timer.Get()>5_s && timer.Get()<11_s){
+			m_drivetrain.Drive(0.6,0.15);
+			command2.Cancel();
+		}
+
+
+	}
+
 }
 
 void RobotContainer::ConfigureControllerBindings()
@@ -405,13 +368,15 @@ CommandPtr RobotContainer::GetArmPoseCmd(Arm::Poses pose)
 
 		return Sequence(
 			// Move towards position
-			m_arm.SetPose(pose),
+			m_arm.SetPose(pose));
+			
+			/*,
 
 			// Spit object
 			m_intake.SpitCmd(spitSpeed),
 
 			// Return to taxi
-			m_arm.SetPose(Arm::Poses::kTaxi));
+			m_arm.SetPose(Arm::Poses::kTaxi));*/
 	}
 	else if (isPickup)
 	{

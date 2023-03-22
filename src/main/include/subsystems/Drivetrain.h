@@ -269,7 +269,7 @@ namespace TD
 		 */
 		bool Turn(double, double);
 
-		CommandPtr MoveCmd(double speed, double rotation);
+		CommandPtr MoveCmd(double distance, double speed);
 		CommandPtr TurnCmd(units::angle::degree_t angle, double rotation);
 		CommandPtr MoveToCmd(double x, double y, double movementSpeed, double turningSpeed, bool goBackwards = false);
 

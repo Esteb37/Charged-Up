@@ -137,12 +137,15 @@ namespace TD
             InstantCommand([this, pose]()
                            { m_pose = Poses::kMoving;
                                SmartDashboard::PutString("Arm Target", PoseToString(pose)); }),
+
+            SetShoulderAngle(shoulderAngle, Speed::SHOULDER),
+
             Parallel(
-                SetWristAngle(wristAngle, Speed::WRIST)),
-                SetShoulderAngle(shoulderAngle, Speed::SHOULDER),
-                SetElbowAngle(elbowAngle, Speed::ELBOW),
+                SetWristAngle(wristAngle, Speed::WRIST),
+                SetElbowAngle(elbowAngle, Speed::ELBOW)).WithTimeout(3_s),
             InstantCommand([this, pose]()
-                           { m_pose = pose; }));
+                           { m_pose = pose; })
+        );
     }
 
     Arm::Poses Arm::GetPose()

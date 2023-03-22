@@ -118,7 +118,7 @@ namespace PID
 		constexpr double P = 0.2;
 		constexpr double I = 0.0;
 		constexpr double D = 0.0;
-		constexpr double TOLERANCE = 0.1;
+		constexpr double TOLERANCE = 0.5;
 	}
 
 	namespace Elbow
@@ -126,7 +126,7 @@ namespace PID
 		constexpr double P = 0.1;
 		constexpr double I = 0.0;
 		constexpr double D = 0.0;
-		constexpr double TOLERANCE = 0.1;
+		constexpr double TOLERANCE = 0.5;
 	}
 
 	namespace Wrist
@@ -204,7 +204,7 @@ namespace Angles
 		constexpr auto CONE_HIGH = 83.7_deg;
 		constexpr auto BOX_LOW = 0_deg;
 		constexpr auto BOX_MIDDLE = 54_deg;
-		constexpr auto BOX_HIGH = 83.5_deg;
+		constexpr auto BOX_HIGH = 98.5_deg;
 		constexpr auto TRAY = 30.2_deg;
 		constexpr auto TAXI = 0_deg;
 	}
